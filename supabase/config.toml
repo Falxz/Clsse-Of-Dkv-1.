@@ -1,0 +1,5 @@
+[functions.create-account]
+verify_jwt = true
+
+[functions.manage-user]
+verify_jwt = true
