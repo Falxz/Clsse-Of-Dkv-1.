@@ -108,6 +108,20 @@ button,.btn{min-height:42px}
 }
 
 
+
+/* TOP-RIGHT SETTINGS MENU: keep feature controls off the dashboard and main nav */
+.top-settings-wrap{position:relative;display:inline-flex;align-items:center}
+.top-settings-menu{position:absolute;z-index:1000;right:0;top:calc(100% + 10px);width:min(290px,calc(100vw - 28px));padding:9px;background:var(--panel, #111d30);border:1px solid var(--line, #2a3b55);border-radius:14px;box-shadow:0 16px 42px #0005}
+.top-settings-label{padding:7px 10px 9px;color:var(--muted,#91a0b7);font-size:10px;font-weight:800;letter-spacing:.12em}
+.top-settings-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border:0;border-radius:10px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.top-settings-item:hover{background:#ffffff10}
+.top-settings-item>span:first-child{font-size:18px;color:#8fc0ff}
+.top-settings-item b,.top-settings-item small{display:block}
+.top-settings-item b{font-size:13px}
+.top-settings-item small{margin-top:3px;color:var(--muted,#91a0b7);font-size:11px}
+.top-settings-arrow{margin-left:auto;font-size:22px;color:var(--muted,#91a0b7)}
+@media(max-width:760px){.top-settings-menu{right:0;top:calc(100% + 8px)}.top-actions{position:relative}}
+
 /* MOBILE-FIRST NAVIGATION AND LAYOUT FIX */
 .mobile-menu-toggle{display:none}
 @media(max-width:760px){
@@ -229,13 +243,13 @@ body{background:radial-gradient(900px 500px at 8% -8%,#344c9a55,transparent 65%)
    <div class="nav-group"><button type="button" class="nav-group-title" aria-expanded="true">📅 <span>Absensi & Jadwal</span><small>−</small></button><div class="nav-group-items"><button data-page="attendance">▣ &nbsp; Absensi QR</button><button data-page="calendar">▦ &nbsp; Kalender Kelas</button><button data-page="duty">▦ &nbsp; Jadwal Piket</button><button data-page="cleaning">✓ &nbsp; Checklist Kebersihan</button></div></div>
    <div class="nav-group"><button type="button" class="nav-group-title" aria-expanded="true">💬 <span>Informasi Kelas</span><small>−</small></button><div class="nav-group-items"><button data-page="announcements">⚑ &nbsp; Pengumuman</button><button data-page="chat">▤ &nbsp; Chat Kelas</button><button data-page="suggestions">✉ &nbsp; Kotak Saran</button></div></div>
    <div class="nav-group"><button type="button" class="nav-group-title" aria-expanded="true">🖼️ <span>Media Kelas</span><small>−</small></button><div class="nav-group-items"><button data-page="student-card">▣ &nbsp; Kartu Digital</button><button data-page="gallery">▧ &nbsp; Galeri Kelas</button></div></div>
-   <div class="nav-group"><button type="button" class="nav-group-title" aria-expanded="true">⚙️ <span>Pengaturan</span><small>−</small></button><div class="nav-group-items"><button data-page="audit" class="admin-only" data-permission="view_audit">◷ &nbsp; Audit Admin</button><button data-page="feature-management" class="staff-only">◉ &nbsp; Manajemen Fitur</button><button data-page="permissions" class="dev-only">⚙ &nbsp; Hak Akses</button><button data-page="developer" class="dev-only">✦ &nbsp; Developer</button></div></div>
+   <div class="nav-group"><button type="button" class="nav-group-title" aria-expanded="true">⚙️ <span>Pengaturan</span><small>−</small></button><div class="nav-group-items"><button data-page="audit" class="admin-only" data-permission="view_audit">◷ &nbsp; Audit Admin</button><button data-page="permissions" class="dev-only">⚙ &nbsp; Hak Akses</button><button data-page="developer" class="dev-only">✦ &nbsp; Developer</button></div></div>
    <div id="navNoResults" class="nav-no-results hidden">Menu tidak ditemukan.</div>
   </nav>
   <div class="side-bottom"><div class="profile"><div class="avatar" id="avatar">U</div><div><b id="sideName">User</b><div class="small muted" id="sideRole">USER</div></div></div><button id="logoutBtn" class="btn ghost">↪ &nbsp; Logout</button></div>
  </aside>
  <main class="main">
-  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
+  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><div class="top-settings-wrap staff-only" id="topSettingsWrap"><button class="btn" id="topSettingsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="topSettingsMenu" title="Menu pengaturan">☰</button><div class="top-settings-menu hidden" id="topSettingsMenu" role="menu"><div class="top-settings-label">PENGATURAN</div><button type="button" class="top-settings-item" id="openFeatureManagement" role="menuitem"><span>◉</span><span><b>Manajemen Fitur</b><small>Aktifkan atau nonaktifkan fitur</small></span><span class="top-settings-arrow">›</span></button></div></div><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
   <section id="page-overview">
    <div class="premium-banner"><div class="eyebrow">YOUR CLASSROOM · ONE SPACE</div><h3>Semua aktivitas kelas, lebih rapi dan terhubung.</h3><p>Kelola tempat duduk, kehadiran, informasi, dan aktivitas siswa dari satu dashboard.</p></div>
    <div class="grid-stats">
@@ -866,7 +880,12 @@ document.querySelectorAll(".nav-group-title").forEach(btn=>btn.addEventListener(
 const mobileMenuToggle=$("mobileMenuToggle");
 mobileMenuToggle.onclick=()=>{const opened=$("appView").querySelector(".sidebar").classList.toggle("menu-open");mobileMenuToggle.setAttribute("aria-expanded",String(opened));mobileMenuToggle.textContent=opened?"✕ TUTUP":"☰ MENU"};
 $("studentSearch").addEventListener("input",e=>{studentFilter=e.target.value;renderStudents()});
-$("notificationBtn").onclick=openNotifications;$("refreshActivity").onclick=loadActivity;$("saveSnapshot").onclick=saveSnapshot;$("refreshSnapshots").onclick=loadSnapshots;$("pdfPlan").onclick=exportPdf;
+$("notificationBtn").onclick=openNotifications;
+const topSettingsToggle=$("topSettingsToggle"),topSettingsMenu=$("topSettingsMenu");
+function closeTopSettings(){if(topSettingsMenu){topSettingsMenu.classList.add("hidden");topSettingsToggle?.setAttribute("aria-expanded","false")}}
+if(topSettingsToggle&&topSettingsMenu){topSettingsToggle.onclick=e=>{e.stopPropagation();const opening=topSettingsMenu.classList.contains("hidden");topSettingsMenu.classList.toggle("hidden",!opening);topSettingsToggle.setAttribute("aria-expanded",String(opening))};document.addEventListener("click",e=>{if(!$("topSettingsWrap")?.contains(e.target))closeTopSettings()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeTopSettings()})}
+$("openFeatureManagement")?.addEventListener("click",async()=>{closeTopSettings();if(!isAdmin()){toast("Menu ini khusus Admin dan Developer.","error");return}setPage("feature-management");await loadFeatureSettings();renderFeatureSettings()});
+$("refreshActivity").onclick=loadActivity;$("saveSnapshot").onclick=saveSnapshot;$("refreshSnapshots").onclick=loadSnapshots;$("pdfPlan").onclick=exportPdf;
 $("runHealth").onclick=runSystemHealth;$("downloadBackup").onclick=downloadBackup;$("restoreBackupFile").onchange=e=>restoreBackupFile(e.target.files?.[0]);$("loadUsers").onclick=loadUsers;$("saveGlobalSettings").onclick=saveGlobalSettings;
 $("registerForm").addEventListener("submit",registerUser);$("authSwitch").onclick=toggleAuth;$("developerAccessBtn").onclick=()=>{$("maintenanceView").classList.add("hidden");$("loginView").classList.remove("hidden")};
 $("maintenanceEnable").onclick=()=>setMaintenance(true);$("maintenanceDisable").onclick=()=>setMaintenance(false);$("unlockSecretBtn").onclick=unlockSecret;$("lockSecretBtn").onclick=lockSecret;$("saveSecretSeat").onclick=saveSecretAssignment;
