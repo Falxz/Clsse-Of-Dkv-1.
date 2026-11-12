@@ -1,61 +1,53 @@
-# CLASS SEAT SPINNER — Premium Responsive Upgrade
+# CLASS SEAT SPINNER — UPGRADE V2
 
-## Isi paket
-- `index.html` — UI premium responsif untuk HP/tablet/laptop/PC, login, register user, role UI, manual/auto spin, undo/reset, denah, copy/download, maintenance, Developer Console, dan Secret Seating Control.
-- `supabase/schema.sql` — schema awal + migrasi upgrade. Jalankan seluruh file ini di SQL Editor (aman untuk project yang sebelumnya sudah menjalankan versi awal; memakai IF NOT EXISTS/ALTER IF NOT EXISTS).
-- `supabase/functions/create-account/index.ts` — Edge Function pembuatan akun oleh Admin/Developer.
+Paket ini menambahkan fitur aplikasi dan panel Developer ke project Class Seat Spinner yang sudah ada. Desain dark premium dan layout mobile dari `index.html` sebelumnya dipertahankan.
 
-## 1. Hubungkan Supabase
-Project URL dan publishable key yang sebelumnya diberikan sudah dimasukkan ke `index.html`.
-Publishable key memang boleh berada di browser. Jangan pernah memasukkan service_role key atau database password ke file HTML/GitHub.
+## Fitur tambahan yang tersedia
 
-## 2. Jalankan SQL upgrade
-1. Supabase Dashboard → SQL Editor → New query.
-2. Salin seluruh isi `supabase/schema.sql` dari file ini.
-3. Klik Run.
-4. Pastikan hasilnya `Success`.
-SQL upgrade menambahkan `seat_no`, `seat_assignments`, maintenance settings, serta RPC yang memeriksa role Developer di database.
+### Fitur utama
+1. Dashboard statistik (memakai statistik yang sudah ada dan tetap diperbarui dari data Supabase).
+2. Activity Log dengan audit otomatis untuk perubahan daftar siswa dan hasil spin.
+3. Denah 21 meja × 2 kursi tetap tersedia, dengan ringkasan kursi.
+4. Pengaturan warna aksen dan nama aplikasi melalui Global Settings.
+5. Export PDF melalui dialog cetak browser (pilih **Save as PDF**).
+6. Notification Center dari aktivitas terbaru.
+7. Pencarian siswa pada daftar siswa.
+8. Saved Seating Versions / snapshot dan pemulihan versi oleh Developer.
+9. Pengaturan durasi animasi dan efek suara spin.
+10. Pengamanan akses role di database dan Edge Function.
 
-## 3. Aktifkan pendaftaran User
-1. Supabase Dashboard → Authentication → Providers → Email.
-2. Pastikan Email provider aktif.
-3. Di Authentication → Settings, aktifkan sign-ups / allow new users.
-4. Jika Confirm email aktif, user harus membuka email konfirmasi sebelum login.
-Akun yang mendaftar sendiri selalu dibuat dengan role `user` oleh trigger database. User tidak dapat memilih role Admin/Developer dari form.
+### Developer Console
+- System Health: tes query database dan status subscribe Realtime.
+- Backup & Restore: unduh JSON backup dan pulihkan backup. Restore mengganti data siswa, hasil spin, dan secret seating saat ini.
+- User Management: ubah role, nonaktifkan, dan aktifkan akun melalui Edge Function `manage-user`.
+- Global Settings: nama aplikasi, warna aksen, durasi spin, dan suara.
+- Maintenance Scheduler: memakai fitur maintenance start/end yang sudah tersedia pada schema premium. Jadwalkan waktu mulai dan selesai di panel Maintenance Mode.
 
-## 4. Deploy Edge Function create-account
-Deploy folder `supabase/functions/create-account` sebagai function bernama `create-account`.
-Dengan Supabase CLI:
+## PENTING: cara memasang pada project yang sudah berjalan
+
+1. **Backup dulu** dari Supabase sebelum mengubah database. Jangan hapus tabel atau project lama.
+2. Buka Supabase → SQL Editor → New Query.
+3. Buka `supabase/migration_v2.sql`, salin seluruh isinya, lalu Run. Migration ini bersifat tambahan dan tidak menghapus data existing.
+4. Ganti file website di project GitHub/Vercel dengan `index.html` dari paket ini. Pertahankan URL dan Publishable Key Supabase project milikmu. File yang disertakan sudah memakai konfigurasi project yang ada di percakapan ini; cek lagi sebelum deploy.
+5. Deploy Edge Functions dari root project Supabase:
+
 ```bash
-supabase link --project-ref PROJECT_REF
 supabase functions deploy create-account
-```
-Pastikan runtime Edge Function memiliki `SUPABASE_URL`, `SUPABASE_ANON_KEY`, dan `SUPABASE_SERVICE_ROLE_KEY`. Service role hanya disimpan sebagai secret server-side, jangan pernah di HTML atau GitHub.
-
-## 5. Developer pertama
-Jika Developer sudah dibuat sebelumnya, tidak perlu mengulang. Jika belum:
-1. Authentication → Users → Add user.
-2. Salin UID akun.
-3. Jalankan:
-```sql
-update public.profiles
-set role='developer', display_name='Developer'
-where id='UUID_USER';
+supabase functions deploy manage-user
 ```
 
-## 6. Fitur baru
-- Register: user daftar sendiri, role selalu `user`.
-- Maintenance: Developer mengatur pesan dan jadwal mulai/selesai. Maintenance otomatis aktif pada waktu mulai dan berakhir pada estimasi selesai; Developer tetap dapat masuk.
-- Secret Seating Control: menu Developer tersembunyi dari role lain dan meminta verifikasi ulang password. Database RPC juga memeriksa role Developer. Penempatan kursi hanya bisa dibuat untuk siswa yang belum spin dan kursi yang belum terisi.
-- Kursi khusus: `spin_no` menyimpan urutan spin, `seat_no` menyimpan kursi fisik. Ini memungkinkan siswa tertentu mendapat kursi yang ditentukan sementara siswa lain tetap acak.
-- Auto spin: interval 2,4 detik; pause/resume/stop.
-- Layout: CSS responsive; navigasi dan kartu menyesuaikan layar.
+6. Pastikan Edge Functions memiliki secrets bawaan Supabase: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, dan `SUPABASE_SERVICE_ROLE_KEY`. **Service Role Key hanya boleh berada di server/Edge Function, jangan pernah ditaruh di `index.html`, GitHub, atau file publik.**
+7. Push ke GitHub dan tunggu deployment Vercel selesai.
+8. Login sebagai Developer. Buka Developer Console, jalankan System Health, lalu tes fitur satu per satu.
 
-## 7. Deploy website
-Upload isi folder project ke GitHub dengan `index.html` di root. GitHub Pages → Settings → Pages → Deploy from branch → main → /(root).
+## Instalasi baru
+Untuk project baru, jalankan `supabase/schema.sql` terlebih dahulu, kemudian `supabase/migration_v2.sql`. File `schema.sql` sudah memperbaiki masalah policy profiles yang sebelumnya dapat menyebabkan error `policy already exists` saat SQL dijalankan ulang.
 
-## Catatan
-- Kapasitas maksimal 42 siswa/kursi.
-- Secret Seating dapat menempatkan siswa di kursi mana pun yang masih kosong. Jika jumlah siswa lebih sedikit dari nomor kursi tujuan, denah akan memiliki beberapa kursi kosong sebelum kursi khusus tersebut; sistem tetap menyelesaikan undian tanpa memindahkan siswa dari kursi yang ditentukan.
-- Jalankan SQL upgrade sebelum memakai fitur baru.
-- Aktifkan Realtime untuk `students` dan `spin_history` jika publication belum aktif.
+## Catatan keamanan dan batasan
+- Public registration tetap membuat akun dengan role `user`.
+- Hanya Developer yang dapat mengubah role, menonaktifkan akun, mengubah Global Settings, dan restore backup.
+- Admin dapat spin, mengelola daftar siswa, dan membuat akun User sesuai izin yang sudah ada.
+- User hanya melihat data dan tidak mendapat kontrol spin.
+- Backup JSON berisi nama siswa dan riwayat tempat duduk. Simpan file backup secara pribadi.
+- Export PDF menggunakan fitur Print browser; pada Android, pilih opsi simpan sebagai PDF jika tersedia.
+- Migration belum dieksekusi ke Supabase dan Edge Functions belum dideploy otomatis. Jalankan langkah di atas sendiri melalui dashboard/CLI.

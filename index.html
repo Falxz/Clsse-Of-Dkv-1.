@@ -105,6 +105,53 @@ button,.btn{min-height:42px}
  .grid-stats{gap:7px}
 }
 
+
+/* MOBILE-FIRST NAVIGATION AND LAYOUT FIX */
+.mobile-menu-toggle{display:none}
+@media(max-width:760px){
+  .app{display:block;min-height:100dvh}
+  .sidebar{position:sticky;top:0;height:auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 10px;padding:11px 14px;background:#0b1322f2;backdrop-filter:blur(18px)}
+  .side-brand{padding:0;min-width:0}
+  .brand{font-size:14px}
+  .mobile-menu-toggle{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;font-size:11px;min-height:38px}
+  .role-pill{display:none}
+  .nav{display:none;grid-column:1/-1;flex-direction:column;overflow:visible;gap:5px;padding:7px 0 2px;border-top:1px solid #26364e}
+  .sidebar.menu-open .nav{display:flex}
+  .nav button{width:100%;text-align:left;white-space:normal;padding:12px 13px;font-size:13px}
+  .nav button.active{box-shadow:inset 3px 0 #80b7ff}
+  .side-bottom{display:none}
+  .main{width:100%;padding:17px 13px 30px}
+  .topbar{align-items:flex-start;gap:8px;margin-bottom:16px}
+  .topbar h2{font-size:19px;line-height:1.25}
+  .top-actions{gap:5px}
+  #syncStatus{font-size:10px}
+  #mobileLogout{min-height:36px;padding:7px 10px}
+  .dev-panel-grid,.content-grid{grid-template-columns:minmax(0,1fr)}
+  .dev-panel-grid{gap:12px}
+  .form-row{grid-template-columns:minmax(0,1fr)}
+  .card{min-width:0;padding:15px;border-radius:17px}
+  .toolbar{gap:7px}
+  .toolbar .btn{flex:1 1 140px}
+  .maintenance-card{padding:24px 17px;border-radius:22px}
+  .maintenance-countdown{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .modal{max-height:calc(100dvh - 32px);overflow:auto;padding:20px}
+}
+@media(max-width:420px){
+  .main{padding-left:10px;padding-right:10px}
+  .brand{font-size:12px}
+  .topbar h2{font-size:17px}
+  .grid-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .grid-stats .card{padding:12px}
+  .stat-num{font-size:21px}
+  .seat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wheel{width:min(245px,74vw)}
+  .maintenance-countdown{gap:5px}
+  .count-unit b{font-size:18px}
+  .count-unit span{font-size:8px}
+  .toolbar .btn{flex-basis:100%}
+}
+
+@media print{body{background:#fff!important;color:#111!important}.sidebar,.topbar,.toolbar,.toast-wrap,#modalRoot,.maintenance-screen,.login-wrap{display:none!important}#appView{display:block!important;background:#fff!important}.main{padding:0!important}.main>section{display:none!important}#page-seating{display:block!important}.card,#seatCapture,.seat{background:#fff!important;color:#111!important;box-shadow:none!important;border:1px solid #bbb!important}.seat-person{background:#f4f4f4!important;color:#111!important}.muted,.seat-head{color:#333!important}}
 </style>
 </head>
 <body>
@@ -143,18 +190,21 @@ button,.btn{min-height:42px}
 <div id="appView" class="app hidden">
  <aside class="sidebar">
   <div class="side-brand"><div class="brand">CLASS SEAT <span>SPINNER</span></div></div>
+  <button type="button" class="btn mobile-menu-toggle" id="mobileMenuToggle" aria-expanded="false" aria-controls="mainNav">☰ MENU</button>
   <div id="rolePill" class="role-pill">USER ACCESS</div>
-  <nav class="nav">
+  <nav class="nav" id="mainNav">
    <button data-page="overview" class="active">⌂ &nbsp; Overview</button>
+   <button data-page="activity">◷ &nbsp; Activity Log</button>
    <button data-page="seating">▦ &nbsp; Seating Plan</button>
    <button data-page="spin" class="admin-only">◉ &nbsp; Spin Wheel</button>
    <button data-page="students" class="admin-only">☷ &nbsp; Student List</button>
-   <button data-page="accounts" class="dev-only">♙ &nbsp; Accounts</button>\n   <button data-page="developer" class="dev-only">✦ &nbsp; Developer</button>
+   <button data-page="accounts" class="dev-only">♙ &nbsp; Accounts</button>
+   <button data-page="developer" class="dev-only">✦ &nbsp; Developer</button>
   </nav>
   <div class="side-bottom"><div class="profile"><div class="avatar" id="avatar">U</div><div><b id="sideName">User</b><div class="small muted" id="sideRole">USER</div></div></div><button id="logoutBtn" class="btn ghost">↪ &nbsp; Logout</button></div>
  </aside>
  <main class="main">
-  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
+  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
   <section id="page-overview">
    <div class="grid-stats">
     <div class="card hover"><span class="stat-icon">👥</span><div class="stat-label">TOTAL SISWA</div><div class="stat-num" id="statTotal">0</div></div>
@@ -167,6 +217,9 @@ button,.btn{min-height:42px}
     <div class="card"><div class="section-title">✨ Aktivitas terbaru</div><div id="overviewHistory" class="history"><div class="empty">Belum ada hasil spin.</div></div></div>
    </div>
   </section>
+  <section id="page-activity" class="hidden">
+   <div class="card"><div class="section-title">◷ Activity Log</div><p class="inline-note">Catatan aktivitas spin, perubahan daftar siswa, snapshot, dan tindakan Developer.</p><div class="toolbar"><button class="btn" id="refreshActivity">↻ REFRESH</button></div><div id="activityList" class="history"><div class="empty">Memuat aktivitas...</div></div></div>
+  </section>
   <section id="page-spin" class="hidden">
    <div class="grid-stats"><div class="card"><div class="stat-label">SUDAH TERPILIH</div><div class="stat-num" id="spinDone">0</div></div><div class="card"><div class="stat-label">SISA SISWA</div><div class="stat-num" id="spinLeft">0</div></div><div class="card"><div class="stat-label">KURSI TERISI</div><div class="stat-num" id="spinSeats">0/42</div></div><div class="card"><div class="stat-label">MODE</div><div class="stat-num" style="font-size:18px">FAIR RANDOM</div></div></div>
    <div class="content-grid">
@@ -175,13 +228,14 @@ button,.btn{min-height:42px}
    </div>
   </section>
   <section id="page-seating" class="hidden">
-   <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div class="eyebrow">CLASSROOM LAYOUT</div><h3 class="section-title" style="margin:5px 0">🪑 Seating Plan · 21 Tables</h3><div class="muted small" id="seatSummary">0 dari 42 kursi terisi</div></div><div class="toolbar" style="margin:0"><button class="btn" id="copyPlan">▣ COPY TEXT</button><button class="btn primary" id="downloadPlan">▧ DOWNLOAD IMAGE</button></div></div></div>
+   <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div class="eyebrow">CLASSROOM LAYOUT</div><h3 class="section-title" style="margin:5px 0">🪑 Seating Plan · 21 Tables</h3><div class="muted small" id="seatSummary">0 dari 42 kursi terisi</div></div><div class="toolbar" style="margin:0"><button class="btn" id="copyPlan">▣ COPY TEXT</button><button class="btn" id="pdfPlan">▤ EXPORT PDF</button><button class="btn primary" id="downloadPlan">▧ DOWNLOAD IMAGE</button></div></div></div>
    <div id="seatCapture" style="padding:4px;border-radius:18px"><div class="seat-grid" id="seatGrid"></div></div>
+   <div class="card" style="margin-top:16px"><div class="section-title">◫ Saved Seating Versions</div><p class="inline-note">Admin dan Developer dapat menyimpan versi susunan bangku. Restore versi hanya dapat dilakukan Developer.</p><div class="toolbar"><input id="snapshotName" class="field" style="max-width:280px" placeholder="Nama versi, contoh: Susunan November"><button class="btn primary admin-only" id="saveSnapshot">SIMPAN VERSI</button><button class="btn admin-only" id="refreshSnapshots">REFRESH</button></div><div id="snapshotList" class="history"><div class="empty">Belum ada versi tersimpan.</div></div></div>
   </section>
   <section id="page-students" class="hidden">
    <div class="content-grid">
     <div class="card"><div class="section-title">✍️ Input daftar siswa</div><label>Nama siswa (satu nama per baris)</label><textarea id="bulkNames" class="field" rows="10" placeholder="Ahmad&#10;Budi&#10;Candra&#10;Dimas"></textarea><div class="toolbar" style="margin-top:12px"><button id="addBulk" class="btn primary">＋ TAMBAHKAN NAMA</button><button id="clearInput" class="btn">BERSIHKAN</button></div><p class="muted small">Maksimal 42 siswa. Daftar hanya dapat diedit sebelum proses spin dimulai. Hapus hasil spin terlebih dahulu untuk mengubah daftar.</p></div>
-    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="section-title">👥 Student list</div><span class="tag" id="studentCount">0 SISWA</span></div><div id="studentList" class="student-list"><div class="empty">Belum ada siswa.</div></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="section-title">👥 Student list</div><span class="tag" id="studentCount">0 SISWA</span></div><input id="studentSearch" class="field" type="search" placeholder="Cari nama siswa..." style="margin:10px 0" aria-label="Cari siswa"><div id="studentList" class="student-list"><div class="empty">Belum ada siswa.</div></div></div>
    </div>
   </section>
   <section id="page-accounts" class="hidden">
@@ -220,6 +274,18 @@ button,.btn{min-height:42px}
       <p class="inline-note">Penempatan hanya berlaku untuk kursi yang belum terisi. Hasil undian lainnya tetap acak. Pengaturan ini disimpan dan divalidasi di database.</p>
      </div>
     </div>
+    <div class="card dev-only">
+     <div class="eyebrow">SYSTEM HEALTH</div><h3 class="section-title">System Health</h3><p class="inline-note">Pemeriksaan koneksi database dan kanal realtime.</p><div id="healthStatus" class="history-row"><span>Belum diperiksa</span><span class="muted">—</span></div><button class="btn" id="runHealth" style="margin-top:12px">JALANKAN PEMERIKSAAN</button>
+    </div>
+    <div class="card dev-only">
+     <div class="eyebrow">BACKUP & RESTORE</div><h3 class="section-title">Backup Data</h3><p class="inline-note">Backup mencakup daftar siswa, hasil spin, dan secret seating. Restore akan mengganti data kelas saat ini, jadi buat backup baru sebelum memulihkan.</p><div class="toolbar"><button class="btn primary" id="downloadBackup">⬇ DOWNLOAD BACKUP JSON</button><label class="btn" for="restoreBackupFile" style="display:inline-flex;align-items:center;margin:0">⬆ PILIH FILE BACKUP</label><input id="restoreBackupFile" type="file" accept="application/json,.json" class="hidden"></div><div class="inline-note" id="backupStatus">Backup hanya tersedia untuk Developer.</div>
+    </div>
+    <div class="card dev-only">
+     <div class="eyebrow">USER MANAGEMENT</div><h3 class="section-title">Pengelolaan Akun</h3><p class="inline-note">Nonaktifkan akun atau ubah role. Perubahan dilakukan melalui Edge Function dengan service role di server.</p><button class="btn" id="loadUsers">MUAT DAFTAR AKUN</button><div id="userList" class="history" style="margin-top:12px"><div class="empty">Tekan tombol untuk memuat akun.</div></div>
+    </div>
+    <div class="card dev-only">
+     <div class="eyebrow">GLOBAL SETTINGS</div><h3 class="section-title">Pengaturan Global</h3><label>Nama kelas / aplikasi</label><input id="globalClassName" class="field" placeholder="CLASS SEAT SPINNER"><div class="form-row" style="margin-top:12px"><div><label>Warna aksen</label><input id="globalAccent" type="color" class="field" value="#77aaff" style="padding:5px;height:46px"></div><div><label>Durasi animasi spin (ms)</label><input id="globalSpinDuration" class="field" type="number" min="500" max="8000" step="100" value="1250"></div></div><label style="margin-top:12px"><input id="globalSpinSound" type="checkbox"> Aktifkan efek suara spin</label><button class="btn primary" id="saveGlobalSettings" style="margin-top:12px">SIMPAN PENGATURAN</button>
+    </div>
    </div>
   </section>
  </main>
@@ -231,14 +297,14 @@ const SUPABASE_URL="https://ptslyxelqkaiwohfdeic.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_8Ew_ysuy6EYNusoutA0Obw_4DB02dK0";
 const supabaseReady=SUPABASE_URL.startsWith("https://")&&SUPABASE_ANON_KEY!=="YOUR_SUPABASE_ANON_KEY"&&window.supabase;
 const sb=supabaseReady?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
-let profile=null, students=[], history=[], autoState="idle", autoTimer=null, busy=false, realtime=[];
+let profile=null, students=[], history=[], autoState="idle", autoTimer=null, busy=false, realtime=[], studentFilter="", globalSpinDuration=1250, globalSpinSound=false;
 const $=id=>document.getElementById(id), isAdmin=()=>["admin","developer"].includes(profile?.role), isDev=()=>profile?.role==="developer";
 function toast(msg,type="success"){const el=document.createElement("div");el.className="toast "+type;el.textContent=msg;$("toastRoot").append(el);setTimeout(()=>el.remove(),3400)}
 function modal(title,body,actions){$("modalRoot").innerHTML=`<div class="modal-backdrop"><div class="modal"><div class="eyebrow">CLASS SEAT SPINNER</div><h3>${title}</h3><div>${body}</div><div class="modal-actions">${actions}</div></div></div>`}
 function closeModal(){$("modalRoot").innerHTML=""}
 function confirmBox(title,msg,yes,kind="danger"){return new Promise(resolve=>{modal(title,`<p>${msg}</p>`,`<button class="btn" id="cancelModal">Batal</button><button class="btn ${kind}" id="yesModal">${yes}</button>`);$("cancelModal").onclick=()=>{closeModal();resolve(false)};$("yesModal").onclick=()=>{closeModal();resolve(true)}})}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"],developer:["DEVELOPER CONSOLE","System & Secret Controls"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
+function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"],developer:["DEVELOPER CONSOLE","System & Secret Controls"],activity:["CLASS ACTIVITY","Activity Log"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
 function setRoleUI(){document.querySelectorAll(".admin-only").forEach(e=>e.classList.toggle("hidden",!isAdmin()));document.querySelectorAll(".dev-only").forEach(e=>e.classList.toggle("hidden",!isDev()));$("rolePill").textContent=profile.role.toUpperCase()+" ACCESS";$("sideName").textContent=profile.display_name||profile.email;$("sideRole").textContent=profile.role.toUpperCase();$("avatar").textContent=(profile.display_name||profile.email||"U")[0].toUpperCase();$("newRole").value="user"}
 function seatNo(i){return {table:Math.floor(i/2)+1,seat:i%2===0?"A":"B"}}
 function remaining(){const used=new Set(history.map(x=>x.student_id));return students.filter(s=>!used.has(s.id))}
@@ -246,12 +312,12 @@ function render(){const filled=history.length,total=students.length,rem=remainin
  renderHistory();renderSeats();renderStudents();$("overviewHistory").innerHTML=history.slice(-4).reverse().map((h)=>`<div class="history-row"><span>🎯 ${esc(h.student_name||"Siswa")}</span><b>Meja ${seatNo((h.seat_no??h.spin_no)-1).table} · ${seatNo((h.seat_no??h.spin_no)-1).seat}</b></div>`).join("")||'<div class="empty">Belum ada hasil spin.</div>'}
 function renderHistory(){$("spinHistory").innerHTML=history.slice().reverse().map(h=>{const p=seatNo((h.seat_no??h.spin_no)-1);return `<div class="history-row"><span><b>#${h.spin_no}</b> &nbsp; ${esc(h.student_name||"Siswa")}</span><span class="muted">M${p.table}-${p.seat}</span></div>`}).join("")||'<div class="empty">Hasil undian akan tampil di sini.</div>'}
 function renderSeats(){const byNo=[...history].sort((a,b)=>a.spin_no-b.spin_no);const last=byNo.at(-1)?.seat_no??byNo.at(-1)?.spin_no;$("seatGrid").innerHTML=Array.from({length:21},(_,i)=>{const a=byNo.find(h=>(h.seat_no??h.spin_no)===i*2+1),b=byNo.find(h=>(h.seat_no??h.spin_no)===i*2+2),filled=!!(a||b);return `<div class="seat ${filled?"filled":""} ${last&&Math.ceil(last/2)===i+1?"recent":""}"><div class="seat-head"><span>MEJA ${String(i+1).padStart(2,"0")}</span><span>${filled?(a&&b?"● FULL":"◐ PARTIAL"):"○ EMPTY"}</span></div><div class="seat-person"><em>A</em>${a?esc(a.student_name):'<span class="muted">Menunggu siswa…</span>'}</div><div class="seat-person"><em>B</em>${b?esc(b.student_name):'<span class="muted">Menunggu siswa…</span>'}</div></div>`}).join("")}
-function renderStudents(){const used=new Set(history.map(h=>h.student_id));$("studentList").innerHTML=students.map(s=>`<div class="student-row"><span>${esc(s.name)}</span><span class="${used.has(s.id)?"tag":"muted small"}">${used.has(s.id)?"TERPILIH":"MENUNGGU"}</span></div>`).join("")||'<div class="empty">Belum ada siswa.</div>'}
+function renderStudents(){const used=new Set(history.map(h=>h.student_id));const filtered=students.filter(s=>s.name.toLocaleLowerCase().includes(studentFilter.toLocaleLowerCase()));$("studentList").innerHTML=filtered.map(s=>`<div class="student-row"><span>${esc(s.name)}</span><span class="${used.has(s.id)?"tag":"muted small"}">${used.has(s.id)?"TERPILIH":"MENUNGGU"}</span></div>`).join("")||'<div class="empty">Tidak ada siswa yang cocok.</div>'}
 async function loadData(){const [s,h]=await Promise.all([sb.from("students").select("*").order("sort_order"),sb.from("spin_history").select("*").order("spin_no")]);if(s.error||h.error)throw(s.error||h.error);students=s.data;history=h.data}
 async function refresh(){try{await loadData();render();if(secretUnlocked)await loadSecretAssignments()}catch(e){toast(e.message,"error")}}
 function subscribe(){realtime.forEach(c=>sb.removeChannel(c));realtime=[sb.channel("seat-live").on("postgres_changes",{event:"*",schema:"public",table:"students"},refresh).on("postgres_changes",{event:"*",schema:"public",table:"spin_history"},refresh).subscribe()]}
-async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();render();subscribe();setPage("overview");if(isDev())await loadDeveloperSettings()}
-async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;await new Promise(r=>setTimeout(r,1250));$("wheel").classList.remove("spinning");const p=seatNo((data.seat_no??data.spin_no)-1);$("pickedName").textContent="🎉 "+data.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${data.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(data.student_name,p);return data}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
+async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;if(profile.is_disabled){profile=null;await sb.auth.signOut();throw new Error("Akun ini dinonaktifkan oleh Developer.")}const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();await loadGlobalSettings();render();subscribe();setPage("overview");if(isDev()){await loadDeveloperSettings();await loadGlobalSettings();await loadSnapshots()}}
+async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");playSpinTone();try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;await logActivity("SPIN_COMPLETED",{student_name:data.student_name,seat_no:data.seat_no??data.spin_no});await new Promise(r=>setTimeout(r,globalSpinDuration));$("wheel").classList.remove("spinning");const p=seatNo((data.seat_no??data.spin_no)-1);$("pickedName").textContent="🎉 "+data.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${data.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(data.student_name,p);return data}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
 function showWinner(name,p){modal("🎉 Nama terpilih!",`<div style="text-align:center;padding:12px"><div style="font-size:38px">🪑</div><div style="font:800 25px 'Plus Jakarta Sans';margin:12px 0">${esc(name)}</div><div class="tag">MEJA ${p.table} · KURSI ${p.seat}</div><p>Nama berhasil ditempatkan ke denah kelas.</p></div>`,`<button class="btn primary" id="winnerOk">MANTAP!</button>`);$("winnerOk").onclick=closeModal}
 function wait(ms){return new Promise(resolve=>autoTimer=setTimeout(resolve,ms))}
 async function startAuto(){if(autoState!=="idle")return;autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
@@ -344,10 +410,32 @@ async function unlockSecret(){
 }
 function lockSecret(){secretUnlocked=false;$("secretPanel").classList.add("hidden");$("secretLocked").classList.remove("hidden")}
 
+
+async function openNotifications(){const {data,error}=await sb.from("activity_logs").select("actor_name,action,created_at").order("created_at",{ascending:false}).limit(12);if(error)return toast(error.message,"error");const body=(data||[]).map(x=>`<div class="history-row"><span><b>${esc(x.action)}</b><br><span class="muted small">${esc(x.actor_name||"System")}</span></span><span class="muted small">${new Date(x.created_at).toLocaleString("id-ID")}</span></div>`).join("")||'<div class="empty">Belum ada notifikasi.</div>';modal("Notification Center",body,'<button class="btn primary" id="closeNotifications">TUTUP</button>');$("closeNotifications").onclick=closeModal}
+function playSpinTone(){if(!globalSpinSound)return;try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=new C(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(620,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(880,ctx.currentTime+.18);gain.gain.setValueAtTime(.0001,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.07,ctx.currentTime+.025);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.22);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.23);osc.onended=()=>ctx.close()}catch(e){console.warn(e)}}
+async function logActivity(action,details={}){try{await sb.rpc("write_activity",{p_action:action,p_details:details})}catch(e){console.warn("Activity log:",e)}}
+async function loadActivity(){if(!profile)return;const {data,error}=await sb.from("activity_logs").select("id,actor_name,action,details,created_at").order("created_at",{ascending:false}).limit(100);if(error){$("activityList").innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}$("activityList").innerHTML=(data||[]).map(x=>`<div class="history-row"><span><b>${esc(x.action)}</b><br><span class="muted small">${esc(x.actor_name||"System")} · ${new Date(x.created_at).toLocaleString("id-ID")}</span></span><span class="muted small">${esc(JSON.stringify(x.details||{}).slice(0,90))}</span></div>`).join("")||'<div class="empty">Belum ada aktivitas.</div>'}
+async function loadSnapshots(){if(!isAdmin())return;const {data,error}=await sb.from("seating_snapshots").select("id,name,created_at,created_by").order("created_at",{ascending:false}).limit(30);if(error){$("snapshotList").innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}$("snapshotList").innerHTML=(data||[]).map(x=>`<div class="history-row"><span><b>${esc(x.name)}</b><br><span class="muted small">${new Date(x.created_at).toLocaleString("id-ID")}</span></span><span>${isDev()?`<button class="btn danger" data-restore-snapshot="${x.id}" style="padding:6px 9px;min-height:32px">RESTORE</button>`:"TERSIMPAN"}</span></div>`).join("")||'<div class="empty">Belum ada versi tersimpan.</div>';document.querySelectorAll("[data-restore-snapshot]").forEach(b=>b.onclick=async()=>{const ok=await confirmBox("Restore versi seating?","Data siswa dan hasil spin saat ini akan diganti dengan versi yang dipilih.","RESTORE");if(!ok)return;const {error}=await sb.rpc("restore_seating_snapshot",{p_snapshot_id:b.dataset.restoreSnapshot});if(error)return toast(error.message,"error");await refresh();await loadSnapshots();toast("Versi seating berhasil dipulihkan.")})}
+async function saveSnapshot(){if(!isAdmin())return;const name=$("snapshotName").value.trim()||("Snapshot "+new Date().toLocaleString("id-ID"));const {data,error}=await sb.rpc("create_seating_snapshot",{p_name:name});if(error)return toast(error.message,"error");$("snapshotName").value="";await loadSnapshots();toast("Versi seating berhasil disimpan.")}
+async function exportPdf(){setPage("seating");await new Promise(r=>setTimeout(r,150));window.print()}
+async function runSystemHealth(){if(!isDev())return;const box=$("healthStatus");box.innerHTML='<span>Memeriksa database...</span><span class="muted">…</span>';const started=performance.now();const {error}=await sb.from("students").select("id",{head:true,count:"exact"});const ms=Math.round(performance.now()-started);if(error){box.innerHTML=`<span>Database</span><b style="color:#ff8296">OFFLINE · ${esc(error.message)}</b>`;return}box.innerHTML=`<span>Database</span><b style="color:#6fe0b0">ONLINE · ${ms} ms</b>`;const channel=sb.channel("health-check-"+Date.now());channel.subscribe(status=>{if(status==="SUBSCRIBED"){$("healthStatus").innerHTML=`<span>Database + Realtime</span><b style="color:#6fe0b0">ONLINE · ${ms} ms</b>`;sb.removeChannel(channel)}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){$("healthStatus").innerHTML=`<span>Database / Realtime</span><b style="color:#ffbd72">DB ONLINE · REALTIME CHECK FAILED</b>`;sb.removeChannel(channel)}})}
+async function downloadBackup(){if(!isDev())return;const [s,h,a]=await Promise.all([sb.from("students").select("*").order("sort_order"),sb.from("spin_history").select("*").order("spin_no"),sb.from("seat_assignments").select("*")]);const err=s.error||h.error||a.error;if(err)return toast(err.message,"error");const payload={format:"class-seat-spinner-backup-v2",created_at:new Date().toISOString(),students:s.data||[],spin_history:h.data||[],seat_assignments:a.data||[]};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="class-seat-spinner-backup-"+new Date().toISOString().slice(0,10)+".json";link.click();URL.revokeObjectURL(url);$("backupStatus").textContent="Backup berhasil dibuat: "+payload.students.length+" siswa, "+payload.spin_history.length+" hasil spin.";await logActivity("BACKUP_EXPORTED",{students:payload.students.length,history:payload.spin_history.length});toast("Backup berhasil diunduh.")}
+async function restoreBackupFile(file){if(!isDev()||!file)return;let payload;try{payload=JSON.parse(await file.text())}catch(e){return toast("File JSON tidak valid.","error")}if(payload.format!=="class-seat-spinner-backup-v2"||!Array.isArray(payload.students)||!Array.isArray(payload.spin_history))return toast("Format backup tidak dikenali.","error");const ok=await confirmBox("Pulihkan backup?","PERHATIAN: daftar siswa dan hasil spin saat ini akan diganti. Pastikan sudah mengunduh backup terbaru.","PULIHKAN");if(!ok)return;const {error}=await sb.rpc("restore_classroom_backup",{p_payload:payload});if(error)return toast(error.message,"error");await refresh();await loadSnapshots();toast("Backup berhasil dipulihkan.")}
+async function loadUsers(){if(!isDev())return;const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled,created_at").order("created_at",{ascending:false}).limit(100);if(error){$("userList").innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}$("userList").innerHTML=(data||[]).map(u=>`<div class="history-row" style="align-items:flex-start"><div style="min-width:0"><b>${esc(u.display_name||u.email||"User")}</b><div class="muted small">${esc(u.email||"")} · ${esc(u.role)} · ${u.is_disabled?"NONAKTIF":"AKTIF"}</div></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><select class="field" style="width:auto;min-height:32px;padding:4px" data-user-role="${u.id}"><option value="user" ${u.role==="user"?"selected":""}>User</option><option value="admin" ${u.role==="admin"?"selected":""}>Admin</option><option value="developer" ${u.role==="developer"?"selected":""}>Developer</option></select><button class="btn ${u.is_disabled?"primary":"danger"}" data-user-toggle="${u.id}" data-disabled="${u.is_disabled}" style="padding:5px 8px;min-height:32px">${u.is_disabled?"AKTIFKAN":"NONAKTIFKAN"}</button></div></div>`).join("")||'<div class="empty">Belum ada akun.</div>';document.querySelectorAll("[data-user-role]").forEach(sel=>sel.onchange=()=>manageUser(sel.dataset.userRole,"set_role",sel.value));document.querySelectorAll("[data-user-toggle]").forEach(btn=>btn.onclick=()=>manageUser(btn.dataset.userToggle,btn.dataset.disabled==="true"?"enable":"disable"))}
+async function manageUser(user_id,action,role){if(!isDev())return;const ok=await confirmBox("Konfirmasi pengelolaan akun","Lanjutkan tindakan "+action+" pada akun ini?","LANJUTKAN","primary");if(!ok)return;const {data,error}=await sb.functions.invoke("manage-user",{body:{user_id,action,role}});if(error)return toast(error.message,"error");if(data?.error)return toast(data.error,"error");await loadUsers();toast("Pengaturan akun berhasil diperbarui.")}
+async function loadGlobalSettings(){const {data,error}=await sb.rpc("get_app_settings");if(error){console.warn("Global settings unavailable",error);return}const v=Array.isArray(data)?data[0]:data;if(!v)return;globalSpinDuration=v.spin_duration_ms;globalSpinSound=v.spin_sound;document.documentElement.style.setProperty("--blue",v.accent_color);document.title=v.class_name;const brand=document.querySelector(".brand");if(brand)brand.textContent=v.class_name;if(isDev()){$("globalClassName").value=v.class_name;$("globalAccent").value=v.accent_color;$("globalSpinDuration").value=v.spin_duration_ms;$("globalSpinSound").checked=v.spin_sound}}
+async function saveGlobalSettings(){if(!isDev())return;const args={p_class_name:$("globalClassName").value,p_accent_color:$("globalAccent").value,p_spin_duration_ms:Number($("globalSpinDuration").value),p_spin_sound:$("globalSpinSound").checked};const {error}=await sb.rpc("save_app_settings",args);if(error)return toast(error.message,"error");globalSpinDuration=args.p_spin_duration_ms;globalSpinSound=args.p_spin_sound;document.title=args.p_class_name;document.querySelector(".brand").innerHTML=esc(args.p_class_name);document.documentElement.style.setProperty("--blue",args.p_accent_color);await logActivity("GLOBAL_SETTINGS_UPDATED",{class_name:args.p_class_name});toast("Pengaturan global berhasil disimpan.")}
+function applyPersonalTheme(){const color=localStorage.getItem("css-accent-color");if(color&&/^#[0-9a-f]{6}$/i.test(color))document.documentElement.style.setProperty("--blue",color)}
+
+const mobileMenuToggle=$("mobileMenuToggle");
+mobileMenuToggle.onclick=()=>{const opened=$("appView").querySelector(".sidebar").classList.toggle("menu-open");mobileMenuToggle.setAttribute("aria-expanded",String(opened));mobileMenuToggle.textContent=opened?"✕ TUTUP":"☰ MENU"};
+$("studentSearch").addEventListener("input",e=>{studentFilter=e.target.value;renderStudents()});
+$("notificationBtn").onclick=openNotifications;$("refreshActivity").onclick=loadActivity;$("saveSnapshot").onclick=saveSnapshot;$("refreshSnapshots").onclick=loadSnapshots;$("pdfPlan").onclick=exportPdf;
+$("runHealth").onclick=runSystemHealth;$("downloadBackup").onclick=downloadBackup;$("restoreBackupFile").onchange=e=>restoreBackupFile(e.target.files?.[0]);$("loadUsers").onclick=loadUsers;$("saveGlobalSettings").onclick=saveGlobalSettings;
 $("registerForm").addEventListener("submit",registerUser);$("authSwitch").onclick=toggleAuth;$("developerAccessBtn").onclick=()=>{$("maintenanceView").classList.add("hidden");$("loginView").classList.remove("hidden")};
 $("maintenanceEnable").onclick=()=>setMaintenance(true);$("maintenanceDisable").onclick=()=>setMaintenance(false);$("unlockSecretBtn").onclick=unlockSecret;$("lockSecretBtn").onclick=lockSecret;$("saveSecretSeat").onclick=saveSecretAssignment;
 $("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!sb){$("loginError").textContent="Konfigurasi Supabase belum diisi. Buka file README untuk langkah setup.";return}const {error,data}=await sb.auth.signInWithPassword({email:$("email").value,password:$("password").value});if(error){$("loginError").textContent=error.message;return}try{await enterApp(data.user)}catch(err){if(!maintenanceState.enabled){$("loginError").textContent=err.message;await sb.auth.signOut()}else{$("loginError").textContent=err.message}}});
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{setPage(b.dataset.page);if(b.dataset.page==="developer")await loadDeveloperSettings()});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{setPage(b.dataset.page);$("appView").querySelector(".sidebar").classList.remove("menu-open");mobileMenuToggle.setAttribute("aria-expanded","false");mobileMenuToggle.textContent="☰ MENU";if(b.dataset.page==="developer"){await loadDeveloperSettings();await loadGlobalSettings()}if(b.dataset.page==="activity")await loadActivity();if(b.dataset.page==="seating"&&isAdmin())await loadSnapshots()});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
 $("spinBtn").onclick=doSpin;$("autoBtn").onclick=startAuto;$("pauseBtn").onclick=pauseAuto;$("resumeBtn").onclick=resumeAuto;$("stopBtn").onclick=stopAuto;$("undoBtn").onclick=undo;$("resetBtn").onclick=resetAll;$("shuffleBtn").onclick=shuffleStudents;$("addBulk").onclick=addStudents;$("clearInput").onclick=()=>$("bulkNames").value="";$("copyPlan").onclick=copyPlan;$("downloadPlan").onclick=downloadPlan;$("accountForm").onsubmit=createAccount;$("logoutBtn").onclick=logout;$("mobileLogout").onclick=logout;$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
 if(sb){fetchMaintenance();sb.auth.getSession().then(async({data})=>{if(data.session){try{await enterApp(data.session.user)}catch(e){toast(e.message,"error")}}});sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}})}
 </script>
