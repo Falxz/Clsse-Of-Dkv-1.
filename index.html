@@ -13,9 +13,113 @@
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:none}}@keyframes toastIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}@keyframes shimmer{to{background-position:-200% 0}}@keyframes seatPulse{0%,100%{box-shadow:0 0 0 #6abaff00}35%{box-shadow:0 0 0 4px #6abaff66}} 
 @media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:sticky;top:0;z-index:8;flex-direction:row;align-items:center;padding:10px 14px;border-right:0;border-bottom:1px solid #26364e;gap:10px}.side-brand{padding:0}.role-pill,.side-bottom{display:none}.nav{display:flex;overflow:auto;flex:1}.nav button{white-space:nowrap;padding:10px}.main{padding:22px 16px}.grid-stats{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.mobile-menu{display:block}}
 @media(max-width:520px){.topbar{align-items:flex-start}.topbar h2{font-size:20px}.top-actions .btn{padding:9px}.seat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.seat{padding:10px}.wheel{width:min(280px,75vw)}.login-card{padding:25px}.grid-stats{gap:9px}.card{padding:15px}}
+
+/* PREMIUM RESPONSIVE LAYER */
+:root{--bg:#070b14;--panel:#101827;--panel2:#152238;--line:#26364d;--text:#f4f7fc;--muted:#94a3b8;--blue:#77aaff;--cyan:#73d9e8;--radius:22px}
+body{background:radial-gradient(900px 520px at 8% -12%,#1d3b68 0,transparent 62%),radial-gradient(800px 500px at 100% 0,#15374a 0,transparent 58%),#070b14;letter-spacing:-.01em}
+button,.btn{min-height:42px}
+.login-wrap{padding:clamp(16px,4vw,36px)}
+.login-card{width:min(430px,100%);padding:clamp(22px,5vw,36px);border-radius:28px;background:linear-gradient(150deg,#17263deF,#0c1423f7);border-color:#31445f;box-shadow:0 30px 90px #0008, inset 0 1px #ffffff0b}
+.login-logo{width:58px;height:58px;border-radius:19px}
+.app{grid-template-columns:248px minmax(0,1fr);max-width:1680px;margin:0 auto;min-height:100dvh}
+.sidebar{position:sticky;top:0;height:100dvh;padding:25px 17px;background:#0b1322d9;border-right:1px solid #26364c;backdrop-filter:blur(18px)}
+.brand{font-size:16px;letter-spacing:.02em}
+.nav{gap:5px}
+.nav button{border:1px solid transparent;padding:12px 13px;font-size:13px}
+.nav button.active{border-color:#35537a;background:linear-gradient(110deg,#274b7a88,#1c2c45aa);box-shadow:inset 3px 0 #80b7ff}
+.main{width:100%;max-width:1440px;margin:0 auto;padding:clamp(20px,3vw,42px) clamp(16px,3vw,42px)}
+.topbar{margin-bottom:24px}
+.topbar h2{font-size:clamp(21px,2vw,27px);letter-spacing:-.04em}
+.card{border-radius:21px;background:linear-gradient(145deg,#152239e8,#0e1829ed);border-color:#2a3d58;box-shadow:0 14px 42px #0003,inset 0 1px #ffffff08;padding:clamp(16px,1.8vw,22px)}
+.grid-stats{gap:13px}
+.stat-num{font-size:clamp(23px,2vw,29px);letter-spacing:-.04em}
+.content-grid{gap:16px}
+.wheel-card{min-height:0;padding:clamp(18px,2.2vw,28px)}
+.wheel{width:min(310px,68vw);border-width:7px;box-shadow:0 0 0 5px #101a2b,0 22px 65px #0009}
+.btn{border-radius:13px;transition:transform .2s,filter .2s,box-shadow .2s}
+.btn:hover{filter:brightness(1.12)}
+.btn.primary{background:linear-gradient(135deg,#5798ff,#356bd2);box-shadow:0 9px 26px #3774d744}
+.field{min-height:44px;border-radius:13px;background:#091321;border-color:#2b3d57}
+.seat-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.seat{border-radius:17px;padding:14px;background:linear-gradient(145deg,#142239,#101a2b)}
+.seat-person{min-width:0}
+.modal{border-radius:26px;background:linear-gradient(145deg,#1b2e4a,#0d1728);border-color:#3a5273}
+.toast-wrap{right:clamp(12px,2vw,24px);top:clamp(12px,2vw,24px);left:auto;max-width:min(390px,calc(100vw - 24px))}
+.toast{border-radius:15px;backdrop-filter:blur(16px)}
+.maintenance-screen{min-height:100dvh;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 0,#1e3c68 0,transparent 55%),#070b14}
+.maintenance-card{width:min(620px,100%);padding:clamp(25px,5vw,48px);border:1px solid #344966;border-radius:30px;background:linear-gradient(145deg,#172740ed,#0d1626f5);box-shadow:0 35px 100px #0009;text-align:center;position:relative;overflow:hidden}
+.maintenance-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,transparent,#79baff,#73d9e8,transparent)}
+.maintenance-icon{width:76px;height:76px;border-radius:25px;margin:0 auto 22px;display:grid;place-items:center;font-size:32px;background:linear-gradient(145deg,#31598a,#1a304e);border:1px solid #6385b2;box-shadow:0 15px 40px #3976bf35}
+.maintenance-card h1{font:800 clamp(25px,5vw,36px) "Plus Jakarta Sans";letter-spacing:-.05em;margin:8px 0 12px}
+.maintenance-card p{color:#aab9ce;line-height:1.75;font-size:14px;max-width:470px;margin:0 auto}
+.maintenance-countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:26px auto 18px;max-width:430px}
+.count-unit{padding:13px 7px;border:1px solid #344862;border-radius:15px;background:#0a1424}
+.count-unit b{display:block;font:800 24px "Plus Jakarta Sans";color:#eaf3ff}
+.count-unit span{font-size:10px;color:#90a4bf;letter-spacing:.12em;text-transform:uppercase}
+.maintenance-meta{margin-top:20px;padding:13px;border:1px solid #2b405c;border-radius:14px;background:#0b1627;color:#9fb1c9;font-size:12px}
+.dev-panel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.secret-lock{padding:15px;border:1px dashed #506987;border-radius:16px;background:#0c1728;text-align:center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.inline-note{font-size:12px;color:#96a8c0;line-height:1.6}
+#page-developer .section-title{margin-bottom:12px}
+@media(max-width:1000px){
+ .app{grid-template-columns:1fr}
+ .sidebar{position:sticky;top:0;height:auto;z-index:15;flex-direction:column;align-items:stretch;padding:10px 14px 9px;gap:8px;border-right:0;border-bottom:1px solid #26364e}
+ .side-brand{padding:3px 5px}
+ .role-pill{display:none}
+ .nav{display:flex;overflow-x:auto;scrollbar-width:none;gap:6px;padding-bottom:2px}
+ .nav::-webkit-scrollbar{display:none}
+ .nav button{white-space:nowrap;padding:10px 12px;font-size:12px}
+ .side-bottom{display:none}
+ .main{padding:20px 16px 34px}
+ .content-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:680px){
+ .topbar{align-items:center;gap:8px;margin-bottom:17px}
+ .topbar h2{font-size:20px}
+ .top-actions{gap:6px}
+ #fullBtn{display:none}
+ .grid-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .grid-stats .card{padding:14px}
+ .stat-label{font-size:10px}
+ .stat-num{font-size:23px}
+ .seat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .seat{padding:10px;min-height:104px}
+ .seat-head{font-size:9px;gap:5px}
+ .seat-person{font-size:11px;padding:7px 6px}
+ .wheel{width:min(265px,72vw)}
+ .wheel-actions .btn{flex:1 1 auto;font-size:12px;padding:10px 12px}
+ .dev-panel-grid{grid-template-columns:1fr}
+ .form-row{grid-template-columns:1fr}
+ .maintenance-countdown{gap:6px}
+ .count-unit{padding:11px 4px}
+ .count-unit b{font-size:21px}
+ .count-unit span{font-size:9px}
+ .toolbar .btn{flex:1 1 auto}
+ .history-row{gap:8px;font-size:12px}
+}
+@media(max-width:380px){
+ .seat-grid{grid-template-columns:1fr}
+ .topbar h2{font-size:18px}
+ .top-actions #mobileLogout{padding:8px 10px}
+ .grid-stats{gap:7px}
+}
+
 </style>
 </head>
 <body>
+<div id="maintenanceView" class="maintenance-screen hidden">
+ <div class="maintenance-card">
+  <div class="maintenance-icon">✦</div><div class="eyebrow">CLASS SEAT SPINNER · SYSTEM UPDATE</div>
+  <h1 id="maintenanceTitle">Kami sedang melakukan peningkatan</h1>
+  <p id="maintenanceMessage">Class Seat Spinner sedang dalam maintenance agar pengalaman penggunaan semakin baik. Silakan kembali sebentar lagi.</p>
+  <div class="maintenance-countdown" id="maintenanceCountdown">
+   <div class="count-unit"><b id="cdDays">00</b><span>Hari</span></div><div class="count-unit"><b id="cdHours">00</b><span>Jam</span></div><div class="count-unit"><b id="cdMinutes">00</b><span>Menit</span></div><div class="count-unit"><b id="cdSeconds">00</b><span>Detik</span></div>
+  </div>
+  <div class="maintenance-meta" id="maintenanceMeta">Status sistem · Maintenance berlangsung</div>
+  <button class="btn ghost" id="developerAccessBtn" style="margin-top:22px">Akses Developer</button>
+ </div>
+</div>
 <div id="loginView" class="login-wrap">
  <div class="login-card">
   <div class="login-logo">🎯</div><div class="eyebrow" style="margin-top:20px">CLASSROOM MANAGEMENT</div>
@@ -26,7 +130,13 @@
    <label>Password</label><input id="password" class="field" type="password" autocomplete="current-password" placeholder="Masukkan password" required>
    <button class="btn primary" style="width:100%;margin-top:5px" type="submit">MASUK KE DASHBOARD ↗</button>
   </form>
-  <p class="small" style="margin-top:18px">Akun dibuat oleh Admin atau Developer. Pendaftaran publik dinonaktifkan demi keamanan.</p>
+  <form id="registerForm" class="hidden">
+   <label>Nama lengkap</label><input id="registerName" class="field" autocomplete="name" placeholder="Nama kamu" required style="margin-bottom:12px">
+   <label>Email</label><input id="registerEmail" class="field" type="email" autocomplete="email" placeholder="nama@email.com" required style="margin-bottom:12px">
+   <label>Password (minimal 8 karakter)</label><input id="registerPassword" class="field" type="password" minlength="8" autocomplete="new-password" placeholder="Buat password" required style="margin-bottom:14px">
+   <button class="btn primary" style="width:100%" type="submit">BUAT AKUN USER ↗</button>
+  </form>
+  <p class="small" style="margin-top:16px;text-align:center"><span id="authSwitchText">Belum punya akun?</span> <button class="btn ghost" id="authSwitch" type="button" style="padding:4px 7px;min-height:30px;color:#8fc0ff">Daftar sekarang</button></p>
   <p id="loginError" class="small" style="color:#ff9bab"></p>
  </div>
 </div>
@@ -39,7 +149,7 @@
    <button data-page="seating">▦ &nbsp; Seating Plan</button>
    <button data-page="spin" class="admin-only">◉ &nbsp; Spin Wheel</button>
    <button data-page="students" class="admin-only">☷ &nbsp; Student List</button>
-   <button data-page="accounts" class="dev-only">♙ &nbsp; Accounts</button>
+   <button data-page="accounts" class="dev-only">♙ &nbsp; Accounts</button>\n   <button data-page="developer" class="dev-only">✦ &nbsp; Developer</button>
   </nav>
   <div class="side-bottom"><div class="profile"><div class="avatar" id="avatar">U</div><div><b id="sideName">User</b><div class="small muted" id="sideRole">USER</div></div></div><button id="logoutBtn" class="btn ghost">↪ &nbsp; Logout</button></div>
  </aside>
@@ -80,13 +190,45 @@
     <div class="card"><div class="section-title">🛡️ Role permissions</div><div class="history-row"><b>👁 User</b><span class="muted">View only</span></div><div class="history-row"><b>⚙️ Admin</b><span class="muted">Spin + User</span></div><div class="history-row"><b>💠 Developer</b><span class="muted">Full access</span></div><p class="muted small">Pembuatan akun dilakukan melalui Edge Function dengan service role yang tersimpan di server, bukan browser.</p></div>
    </div>
   </section>
+  <section id="page-developer" class="hidden">
+   <div class="dev-panel-grid">
+    <div class="card">
+     <div class="eyebrow">SYSTEM CONTROL</div><h3 class="section-title">Maintenance Mode</h3>
+     <p class="inline-note">Saat aktif, User dan Admin akan melihat halaman maintenance. Developer tetap dapat masuk untuk mengelola sistem.</p>
+     <label style="margin-top:16px">Judul / penjelasan maintenance</label><textarea id="maintenanceText" class="field" rows="3" placeholder="Kami sedang melakukan pembaruan sistem..."></textarea>
+     <div class="form-row" style="margin-top:12px">
+      <div><label>Mulai maintenance</label><input id="maintenanceStart" class="field" type="datetime-local"></div>
+      <div><label>Estimasi selesai</label><input id="maintenanceEnd" class="field" type="datetime-local"></div>
+     </div>
+     <div class="toolbar" style="margin-top:14px"><button class="btn primary" id="maintenanceEnable">AKTIFKAN MAINTENANCE</button><button class="btn" id="maintenanceDisable">NONAKTIFKAN</button></div>
+     <div id="maintenanceStatus" class="inline-note">Memuat status sistem...</div>
+    </div>
+    <div class="card">
+     <div class="eyebrow">PRIVATE DEVELOPER TOOL</div><h3 class="section-title">Secret Seating Control</h3>
+     <p class="inline-note">Atur siswa ke kursi tertentu. Panel hanya dapat dibuka setelah verifikasi ulang password Developer.</p>
+     <div id="secretLocked" class="secret-lock" style="margin-top:16px">
+      <div style="font-size:28px;margin-bottom:8px">⌑</div><b>Panel terkunci</b><p class="inline-note">Akses Developer harus diverifikasi ulang untuk membuka pengaturan rahasia.</p>
+      <button class="btn primary" id="unlockSecretBtn">VERIFIKASI & BUKA PANEL</button>
+     </div>
+     <div id="secretPanel" class="hidden" style="margin-top:16px">
+      <div class="form-row">
+       <div><label>Pilih siswa</label><select id="secretStudent" class="field"></select></div>
+       <div><label>Kursi tujuan</label><select id="secretSeat" class="field"></select></div>
+      </div>
+      <div class="toolbar" style="margin-top:12px"><button class="btn primary" id="saveSecretSeat">SIMPAN PENEMPATAN</button><button class="btn" id="lockSecretBtn">KUNCI LAGI</button></div>
+      <div id="secretAssignments" class="history" style="margin-top:14px"></div>
+      <p class="inline-note">Penempatan hanya berlaku untuk kursi yang belum terisi. Hasil undian lainnya tetap acak. Pengaturan ini disimpan dan divalidasi di database.</p>
+     </div>
+    </div>
+   </div>
+  </section>
  </main>
 </div>
 <div id="modalRoot"></div><div id="toastRoot" class="toast-wrap"></div>
 <script>
 /* Configure these two public values from your Supabase project. Never put service_role here. */
-const SUPABASE_URL = "https://ptslyxelqkaiwohfdeic.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_8Ew_ysuy6EYNusoutA0Obw_4DB02dK0";
+const SUPABASE_URL="https://ptslyxelqkaiwohfdeic.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_8Ew_ysuy6EYNusoutA0Obw_4DB02dK0";
 const supabaseReady=SUPABASE_URL.startsWith("https://")&&SUPABASE_ANON_KEY!=="YOUR_SUPABASE_ANON_KEY"&&window.supabase;
 const sb=supabaseReady?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
 let profile=null, students=[], history=[], autoState="idle", autoTimer=null, busy=false, realtime=[];
@@ -96,24 +238,24 @@ function modal(title,body,actions){$("modalRoot").innerHTML=`<div class="modal-b
 function closeModal(){$("modalRoot").innerHTML=""}
 function confirmBox(title,msg,yes,kind="danger"){return new Promise(resolve=>{modal(title,`<p>${msg}</p>`,`<button class="btn" id="cancelModal">Batal</button><button class="btn ${kind}" id="yesModal">${yes}</button>`);$("cancelModal").onclick=()=>{closeModal();resolve(false)};$("yesModal").onclick=()=>{closeModal();resolve(true)}})}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
+function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"],developer:["DEVELOPER CONSOLE","System & Secret Controls"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
 function setRoleUI(){document.querySelectorAll(".admin-only").forEach(e=>e.classList.toggle("hidden",!isAdmin()));document.querySelectorAll(".dev-only").forEach(e=>e.classList.toggle("hidden",!isDev()));$("rolePill").textContent=profile.role.toUpperCase()+" ACCESS";$("sideName").textContent=profile.display_name||profile.email;$("sideRole").textContent=profile.role.toUpperCase();$("avatar").textContent=(profile.display_name||profile.email||"U")[0].toUpperCase();$("newRole").value="user"}
 function seatNo(i){return {table:Math.floor(i/2)+1,seat:i%2===0?"A":"B"}}
 function remaining(){const used=new Set(history.map(x=>x.student_id));return students.filter(s=>!used.has(s.id))}
 function render(){const filled=history.length,total=students.length,rem=remaining().length,pct=total?Math.round(filled/total*100):0;$("statTotal").textContent=total;$("statFilled").textContent=filled+"/42";$("statRemaining").textContent=rem;$("statProgress").textContent=pct+"%";$("progressText").textContent=filled+" dari "+Math.min(total,42);$("progressBar").style.width=pct+"%";$("spinDone").textContent=filled;$("spinLeft").textContent=rem;$("spinSeats").textContent=filled+"/42";$("seatSummary").textContent=filled+" dari 42 kursi terisi";$("studentCount").textContent=total+" SISWA";$("spinBtn").disabled=!isAdmin()||busy||rem===0||filled>=42;$("autoBtn").disabled=!isAdmin()||autoState!=="idle"||rem===0||filled>=42;$("pauseBtn").disabled=autoState!=="running";$("resumeBtn").disabled=autoState!=="paused";$("stopBtn").disabled=autoState==="idle";$("undoBtn").disabled=!isAdmin()||!history.length||busy;$("shuffleBtn").disabled=!isAdmin()||!!history.length||busy;$("resetBtn").disabled=!isAdmin()||(!history.length&&!students.length)||busy;
- renderHistory();renderSeats();renderStudents();$("overviewHistory").innerHTML=history.slice(-4).reverse().map((h)=>`<div class="history-row"><span>🎯 ${esc(h.student_name||"Siswa")}</span><b>Meja ${seatNo(h.spin_no-1).table} · ${seatNo(h.spin_no-1).seat}</b></div>`).join("")||'<div class="empty">Belum ada hasil spin.</div>'}
-function renderHistory(){$("spinHistory").innerHTML=history.slice().reverse().map(h=>{const p=seatNo(h.spin_no-1);return `<div class="history-row"><span><b>#${h.spin_no}</b> &nbsp; ${esc(h.student_name||"Siswa")}</span><span class="muted">M${p.table}-${p.seat}</span></div>`}).join("")||'<div class="empty">Hasil undian akan tampil di sini.</div>'}
-function renderSeats(){const byNo=[...history].sort((a,b)=>a.spin_no-b.spin_no);const last=byNo.at(-1)?.spin_no;$("seatGrid").innerHTML=Array.from({length:21},(_,i)=>{const a=byNo[i*2],b=byNo[i*2+1],filled=!!(a||b);return `<div class="seat ${filled?"filled":""} ${last&&Math.ceil(last/2)===i+1?"recent":""}"><div class="seat-head"><span>MEJA ${String(i+1).padStart(2,"0")}</span><span>${filled?(a&&b?"● FULL":"◐ PARTIAL"):"○ EMPTY"}</span></div><div class="seat-person"><em>A</em>${a?esc(a.student_name):'<span class="muted">Menunggu siswa…</span>'}</div><div class="seat-person"><em>B</em>${b?esc(b.student_name):'<span class="muted">Menunggu siswa…</span>'}</div></div>`}).join("")}
+ renderHistory();renderSeats();renderStudents();$("overviewHistory").innerHTML=history.slice(-4).reverse().map((h)=>`<div class="history-row"><span>🎯 ${esc(h.student_name||"Siswa")}</span><b>Meja ${seatNo((h.seat_no??h.spin_no)-1).table} · ${seatNo((h.seat_no??h.spin_no)-1).seat}</b></div>`).join("")||'<div class="empty">Belum ada hasil spin.</div>'}
+function renderHistory(){$("spinHistory").innerHTML=history.slice().reverse().map(h=>{const p=seatNo((h.seat_no??h.spin_no)-1);return `<div class="history-row"><span><b>#${h.spin_no}</b> &nbsp; ${esc(h.student_name||"Siswa")}</span><span class="muted">M${p.table}-${p.seat}</span></div>`}).join("")||'<div class="empty">Hasil undian akan tampil di sini.</div>'}
+function renderSeats(){const byNo=[...history].sort((a,b)=>a.spin_no-b.spin_no);const last=byNo.at(-1)?.seat_no??byNo.at(-1)?.spin_no;$("seatGrid").innerHTML=Array.from({length:21},(_,i)=>{const a=byNo.find(h=>(h.seat_no??h.spin_no)===i*2+1),b=byNo.find(h=>(h.seat_no??h.spin_no)===i*2+2),filled=!!(a||b);return `<div class="seat ${filled?"filled":""} ${last&&Math.ceil(last/2)===i+1?"recent":""}"><div class="seat-head"><span>MEJA ${String(i+1).padStart(2,"0")}</span><span>${filled?(a&&b?"● FULL":"◐ PARTIAL"):"○ EMPTY"}</span></div><div class="seat-person"><em>A</em>${a?esc(a.student_name):'<span class="muted">Menunggu siswa…</span>'}</div><div class="seat-person"><em>B</em>${b?esc(b.student_name):'<span class="muted">Menunggu siswa…</span>'}</div></div>`}).join("")}
 function renderStudents(){const used=new Set(history.map(h=>h.student_id));$("studentList").innerHTML=students.map(s=>`<div class="student-row"><span>${esc(s.name)}</span><span class="${used.has(s.id)?"tag":"muted small"}">${used.has(s.id)?"TERPILIH":"MENUNGGU"}</span></div>`).join("")||'<div class="empty">Belum ada siswa.</div>'}
 async function loadData(){const [s,h]=await Promise.all([sb.from("students").select("*").order("sort_order"),sb.from("spin_history").select("*").order("spin_no")]);if(s.error||h.error)throw(s.error||h.error);students=s.data;history=h.data}
-async function refresh(){try{await loadData();render()}catch(e){toast(e.message,"error")}}
+async function refresh(){try{await loadData();render();if(secretUnlocked)await loadSecretAssignments()}catch(e){toast(e.message,"error")}}
 function subscribe(){realtime.forEach(c=>sb.removeChannel(c));realtime=[sb.channel("seat-live").on("postgres_changes",{event:"*",schema:"public",table:"students"},refresh).on("postgres_changes",{event:"*",schema:"public",table:"spin_history"},refresh).subscribe()]}
-async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();render();subscribe();setPage("overview")}
-async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;await new Promise(r=>setTimeout(r,1250));$("wheel").classList.remove("spinning");const p=seatNo(data.spin_no-1);$("pickedName").textContent="🎉 "+data.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${data.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(data.student_name,p);return data}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
+async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();render();subscribe();setPage("overview");if(isDev())await loadDeveloperSettings()}
+async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;await new Promise(r=>setTimeout(r,1250));$("wheel").classList.remove("spinning");const p=seatNo((data.seat_no??data.spin_no)-1);$("pickedName").textContent="🎉 "+data.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${data.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(data.student_name,p);return data}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
 function showWinner(name,p){modal("🎉 Nama terpilih!",`<div style="text-align:center;padding:12px"><div style="font-size:38px">🪑</div><div style="font:800 25px 'Plus Jakarta Sans';margin:12px 0">${esc(name)}</div><div class="tag">MEJA ${p.table} · KURSI ${p.seat}</div><p>Nama berhasil ditempatkan ke denah kelas.</p></div>`,`<button class="btn primary" id="winnerOk">MANTAP!</button>`);$("winnerOk").onclick=closeModal}
 function wait(ms){return new Promise(resolve=>autoTimer=setTimeout(resolve,ms))}
 async function startAuto(){if(autoState!=="idle")return;autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
-function pauseAuto(){if(autoState==="running"){autoState="paused";clearTimeout(autoTimer);toast("Auto Spin dijeda","success");render()}}
+function pauseAuto(){if(autoState==="running"){autoState="paused";toast("Auto Spin dijeda","success");render()}}
 async function resumeAuto(){if(autoState!=="paused")return;autoState="running";render();await startAutoLoop()}
 async function startAutoLoop(){while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua kursi berhasil terisi!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")}}else if(autoState!=="paused")autoState="idle";render()}
 function stopAuto(){autoState="idle";clearTimeout(autoTimer);toast("Auto Spin dihentikan");render()}
@@ -121,14 +263,92 @@ async function addStudents(){if(!isAdmin())return;if(history.length){toast("Undo
 async function undo(){if(!history.length)return;const ok=await confirmBox("Undo hasil terakhir?","Nama terakhir akan dikembalikan ke daftar undian dan kursinya dikosongkan.","UNDO","primary");if(!ok)return;const {data,error}=await sb.rpc("undo_last_spin");if(error)return toast(error.message,"error");await refresh();toast("Hasil spin terakhir berhasil dibatalkan.")}
 async function resetAll(){const ok=await confirmBox("Reset seluruh hasil?","Semua hasil spin akan dihapus. Daftar siswa tetap tersimpan dan seluruh siswa kembali ke daftar undian.","RESET");if(!ok)return;const {error}=await sb.rpc("reset_spins");if(error)return toast(error.message,"error");$("pickedName").textContent="Siap untuk spin?";$("pickedSeat").textContent="Nama terpilih akan muncul di sini";await refresh();toast("Hasil pengundian berhasil di-reset.")}
 async function shuffleStudents(){if(history.length)return toast("Shuffle hanya tersedia sebelum spin dimulai.","error");const arr=[...students];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}for(let i=0;i<arr.length;i++){const {error}=await sb.from("students").update({sort_order:i}).eq("id",arr[i].id);if(error)return toast(error.message,"error")}await refresh();toast("Urutan daftar siswa berhasil diacak.")}
-function planText(){const by=[...history].sort((a,b)=>a.spin_no-b.spin_no);return ["🪑 CLASS SEAT SPINNER","📋 HASIL DENAH TEMPAT DUDUK","",...Array.from({length:21},(_,i)=>{const a=by[i*2],b=by[i*2+1];return `Meja ${i+1} : ${a?.student_name||"—"} & ${b?.student_name||"—"}`}),"",`Terisi: ${history.length}/42 kursi`].join("\n")}
+function planText(){const by=[...history].sort((a,b)=>a.spin_no-b.spin_no);return ["🪑 CLASS SEAT SPINNER","📋 HASIL DENAH TEMPAT DUDUK","",...Array.from({length:21},(_,i)=>{const a=by.find(h=>(h.seat_no??h.spin_no)===i*2+1),b=by.find(h=>(h.seat_no??h.spin_no)===i*2+2);return `Meja ${i+1} : ${a?.student_name||"—"} & ${b?.student_name||"—"}`}),"",`Terisi: ${history.length}/42 kursi`].join("\n")}
 async function copyPlan(){try{await navigator.clipboard.writeText(planText());toast("Rekap denah berhasil disalin! 📋")}catch(e){const t=document.createElement("textarea");t.value=planText();document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Rekap denah berhasil disalin! 📋")}}
 async function downloadPlan(){try{const canvas=await html2canvas($("seatCapture"),{backgroundColor:"#0a1220",scale:2,useCORS:true});const a=document.createElement("a");a.download="class-seat-plan.png";a.href=canvas.toDataURL("image/png");a.click();toast("Gambar denah berhasil diunduh.")}catch(e){toast("Gagal membuat gambar denah.","error")}}
 async function createAccount(e){e.preventDefault();const role=$("newRole").value;if(role==="admin"&&!isDev())return toast("Hanya Developer yang dapat membuat Admin.","error");const {data:{session}}=await sb.auth.getSession();const {data,error}=await sb.functions.invoke("create-account",{body:{email:$("newEmail").value,password:$("newPassword").value,display_name:$("newName").value,role},headers:{Authorization:`Bearer ${session.access_token}`}});if(error)return toast(error.message,"error");if(data?.error)return toast(data.error,"error");$("accountForm").reset();toast("Akun berhasil dibuat: "+role.toUpperCase())}
-async function logout(){stopAuto();realtime.forEach(c=>sb.removeChannel(c));await sb.auth.signOut();profile=null;$("appView").classList.add("hidden");$("loginView").classList.remove("hidden")}
-$("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!sb){$("loginError").textContent="Konfigurasi Supabase belum diisi. Buka file README untuk langkah setup.";return}const {error,data}=await sb.auth.signInWithPassword({email:$("email").value,password:$("password").value});if(error){$("loginError").textContent=error.message;return}try{await enterApp(data.user)}catch(err){$("loginError").textContent=err.message;await sb.auth.signOut()}});
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>setPage(b.dataset.page));document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
+async function logout(){stopAuto();realtime.forEach(c=>sb.removeChannel(c));await sb.auth.signOut();profile=null;$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}
+
+let maintenanceState={enabled:false,message:"",start_at:null,end_at:null},maintenanceTicker=null,secretUnlocked=false,maintenanceRefreshPending=false;
+function showMaintenance(state){
+ maintenanceState=state||maintenanceState;
+ $("maintenanceMessage").textContent=maintenanceState.message||"Class Seat Spinner sedang melakukan pembaruan agar layanan semakin baik.";
+ $("maintenanceView").classList.remove("hidden");$("loginView").classList.add("hidden");$("appView").classList.add("hidden");
+ $("maintenanceMeta").textContent=maintenanceState.end_at?"Estimasi selesai · "+new Date(maintenanceState.end_at).toLocaleString("id-ID"):"Status sistem · Maintenance berlangsung";
+ if(maintenanceTicker)clearInterval(maintenanceTicker);
+ const tick=()=>{const end=maintenanceState.end_at?new Date(maintenanceState.end_at).getTime():0;let diff=end?Math.max(0,end-Date.now()):0;
+  $("cdDays").textContent=String(Math.floor(diff/86400000)).padStart(2,"0");$("cdHours").textContent=String(Math.floor(diff%86400000/3600000)).padStart(2,"0");$("cdMinutes").textContent=String(Math.floor(diff%3600000/60000)).padStart(2,"0");$("cdSeconds").textContent=String(Math.floor(diff%60000/1000)).padStart(2,"0");
+  $("maintenanceCountdown").classList.toggle("hidden",!end);
+  if(end&&diff===0&&!maintenanceRefreshPending){maintenanceRefreshPending=true;fetchMaintenance().finally(()=>maintenanceRefreshPending=false)}
+ };tick();maintenanceTicker=setInterval(tick,1000);
+}
+async function fetchMaintenance(){if(!sb)return;const {data,error}=await sb.rpc("get_public_maintenance");if(error){console.warn("Maintenance status unavailable",error);return}
+ const state=Array.isArray(data)?data[0]:data;if(state){maintenanceState=state;if(state.enabled)showMaintenance(state);else{$("maintenanceView").classList.add("hidden");if(!profile)$("loginView").classList.remove("hidden")}}
+}
+async function registerUser(e){e.preventDefault();if(!sb)return;const name=$("registerName").value.trim(),email=$("registerEmail").value.trim(),password=$("registerPassword").value;
+ if(password.length<8)return toast("Password minimal 8 karakter.","error");
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name}}});
+ if(error){$("loginError").textContent=error.message;return}
+ $("registerForm").reset();$("loginError").textContent=data.session?"Akun berhasil dibuat. Silakan masuk.":"Akun berhasil dibuat. Cek email untuk konfirmasi sebelum login.";
+ $("registerForm").classList.add("hidden");$("loginForm").classList.remove("hidden");$("authSwitchText").textContent="Belum punya akun?";$("authSwitch").textContent="Daftar sekarang";
+}
+function toggleAuth(){const reg=$("registerForm"),login=$("loginForm"),isReg=reg.classList.contains("hidden");reg.classList.toggle("hidden",!isReg);login.classList.toggle("hidden",isReg);$("loginError").textContent="";$("authSwitchText").textContent=isReg?"Sudah punya akun?":"Belum punya akun?";$("authSwitch").textContent=isReg?"Masuk":"Daftar sekarang"}
+async function loadDeveloperSettings(){
+ if(!isDev())return;
+ $("maintenanceText").value=maintenanceState.message||"";
+ $("maintenanceStart").value=maintenanceState.start_at?new Date(maintenanceState.start_at).toISOString().slice(0,16):"";
+ $("maintenanceEnd").value=maintenanceState.end_at?new Date(maintenanceState.end_at).toISOString().slice(0,16):"";
+ $("maintenanceStatus").textContent=maintenanceState.enabled?"● Maintenance sedang AKTIF":(maintenanceState.start_at&&new Date(maintenanceState.start_at)>new Date()?"◷ Maintenance terjadwal":"● Maintenance sedang NONAKTIF");
+ if(secretUnlocked)await loadSecretAssignments();
+}
+async function setMaintenance(enabled){
+ if(!isDev())return toast("Akses ditolak.","error");
+ const msg=$("maintenanceText").value.trim()||"Class Seat Spinner sedang melakukan pembaruan.";
+ const start=$("maintenanceStart").value?new Date($("maintenanceStart").value).toISOString():null;
+ const end=$("maintenanceEnd").value?new Date($("maintenanceEnd").value).toISOString():null;
+ if(start&&end&&new Date(end)<=new Date(start))return toast("Waktu selesai harus setelah waktu mulai.","error");
+ const {error}=await sb.rpc("set_maintenance",{p_enabled:enabled,p_message:msg,p_start_at:start,p_end_at:end});
+ if(error)return toast(error.message,"error");
+ maintenanceState={enabled,message:msg,start_at:start,end_at:end};await fetchMaintenance();
+ const scheduled=start&&new Date(start)>new Date();
+ $("maintenanceStatus").textContent=maintenanceState.enabled?"● Maintenance sedang AKTIF":(enabled&&scheduled?"◷ Maintenance terjadwal":"● Maintenance sedang NONAKTIF");
+ toast(enabled?(scheduled?"Jadwal maintenance berhasil disimpan.":"Maintenance berhasil diaktifkan."):"Maintenance dinonaktifkan.");
+ if(maintenanceState.enabled)showMaintenance(maintenanceState);else{$("maintenanceView").classList.add("hidden");$("appView").classList.remove("hidden")}
+}
+function fillSecretOptions(){
+ const picked=new Set(history.map(h=>h.student_id));
+ $("secretStudent").innerHTML=students.filter(s=>!picked.has(s.id)).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+ const occupied=new Set(history.map(h=>h.seat_no??h.spin_no));
+ $("secretSeat").innerHTML=Array.from({length:42},(_,i)=>i+1).filter(n=>!occupied.has(n)).map(n=>`<option value="${n}">Meja ${Math.ceil(n/2)} · Kursi ${n%2?"A":"B"}</option>`).join("");
+}
+async function loadSecretAssignments(){
+ const {data,error}=await sb.rpc("get_developer_assignments");if(error)return toast(error.message,"error");
+ fillSecretOptions();
+ $("secretAssignments").innerHTML=(data||[]).map(a=>`<div class="history-row"><span><b>${esc(a.student_name)}</b></span><span>Meja ${Math.ceil(a.seat_no/2)} · ${a.seat_no%2?"A":"B"} <button class="btn danger" data-remove-assignment="${a.student_id}" style="min-height:30px;padding:4px 8px;margin-left:6px">Hapus</button></span></div>`).join("")||'<div class="empty">Belum ada penempatan khusus.</div>';
+ document.querySelectorAll("[data-remove-assignment]").forEach(b=>b.onclick=()=>removeSecretAssignment(b.dataset.removeAssignment));
+}
+async function saveSecretAssignment(){
+ if(!secretUnlocked||!isDev())return toast("Panel belum dibuka.","error");
+ const student_id=$("secretStudent").value,seat_no=Number($("secretSeat").value);if(!student_id||!seat_no)return toast("Pilih siswa dan kursi.","error");
+ const {error}=await sb.rpc("set_seat_assignment",{p_student_id:student_id,p_seat_no:seat_no});if(error)return toast(error.message,"error");
+ await loadSecretAssignments();toast("Penempatan rahasia berhasil disimpan.");
+}
+async function removeSecretAssignment(student_id){
+ const {error}=await sb.rpc("clear_seat_assignment",{p_student_id:student_id});if(error)return toast(error.message,"error");await loadSecretAssignments();toast("Penempatan dihapus.");
+}
+async function unlockSecret(){
+ if(!isDev())return;
+ modal("Verifikasi Developer",'<p>Masukkan ulang password akun Developer untuk membuka Secret Seating Control.</p><label>Password Developer</label><input id="secretPassword" class="field" type="password" autocomplete="current-password" placeholder="Password akun">','<button class="btn" id="secretCancel">Batal</button><button class="btn primary" id="secretVerify">Verifikasi</button>');
+ $("secretCancel").onclick=closeModal;
+ $("secretVerify").onclick=async()=>{const password=$("secretPassword").value;const {error}=await sb.auth.signInWithPassword({email:profile.email,password});if(error)return toast("Verifikasi gagal. Periksa password.","error");closeModal();secretUnlocked=true;$("secretLocked").classList.add("hidden");$("secretPanel").classList.remove("hidden");await loadSecretAssignments();toast("Secret Seating Control terbuka.")};
+}
+function lockSecret(){secretUnlocked=false;$("secretPanel").classList.add("hidden");$("secretLocked").classList.remove("hidden")}
+
+$("registerForm").addEventListener("submit",registerUser);$("authSwitch").onclick=toggleAuth;$("developerAccessBtn").onclick=()=>{$("maintenanceView").classList.add("hidden");$("loginView").classList.remove("hidden")};
+$("maintenanceEnable").onclick=()=>setMaintenance(true);$("maintenanceDisable").onclick=()=>setMaintenance(false);$("unlockSecretBtn").onclick=unlockSecret;$("lockSecretBtn").onclick=lockSecret;$("saveSecretSeat").onclick=saveSecretAssignment;
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!sb){$("loginError").textContent="Konfigurasi Supabase belum diisi. Buka file README untuk langkah setup.";return}const {error,data}=await sb.auth.signInWithPassword({email:$("email").value,password:$("password").value});if(error){$("loginError").textContent=error.message;return}try{await enterApp(data.user)}catch(err){if(!maintenanceState.enabled){$("loginError").textContent=err.message;await sb.auth.signOut()}else{$("loginError").textContent=err.message}}});
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{setPage(b.dataset.page);if(b.dataset.page==="developer")await loadDeveloperSettings()});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
 $("spinBtn").onclick=doSpin;$("autoBtn").onclick=startAuto;$("pauseBtn").onclick=pauseAuto;$("resumeBtn").onclick=resumeAuto;$("stopBtn").onclick=stopAuto;$("undoBtn").onclick=undo;$("resetBtn").onclick=resetAll;$("shuffleBtn").onclick=shuffleStudents;$("addBulk").onclick=addStudents;$("clearInput").onclick=()=>$("bulkNames").value="";$("copyPlan").onclick=copyPlan;$("downloadPlan").onclick=downloadPlan;$("accountForm").onsubmit=createAccount;$("logoutBtn").onclick=logout;$("mobileLogout").onclick=logout;$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
-if(sb){sb.auth.getSession().then(async({data})=>{if(data.session){try{await enterApp(data.session.user)}catch(e){toast(e.message,"error")}}});sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");$("loginView").classList.remove("hidden")}})}
+if(sb){fetchMaintenance();sb.auth.getSession().then(async({data})=>{if(data.session){try{await enterApp(data.session.user)}catch(e){toast(e.message,"error")}}});sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}})}
 </script>
 </body></html>

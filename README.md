@@ -1,66 +1,61 @@
-# CLASS SEAT SPINNER — HTML + Supabase
+# CLASS SEAT SPINNER — Premium Responsive Upgrade
 
 ## Isi paket
-- `index.html` — aplikasi single-page, UI responsif, login, role UI, spin manual/otomatis, undo/reset, copy dan download PNG.
-- `supabase/schema.sql` — tabel, RLS, trigger profil, dan RPC transaksi spin.
-- `supabase/functions/create-account/index.ts` — Edge Function untuk membuat akun dengan aman.
+- `index.html` — UI premium responsif untuk HP/tablet/laptop/PC, login, register user, role UI, manual/auto spin, undo/reset, denah, copy/download, maintenance, Developer Console, dan Secret Seating Control.
+- `supabase/schema.sql` — schema awal + migrasi upgrade. Jalankan seluruh file ini di SQL Editor (aman untuk project yang sebelumnya sudah menjalankan versi awal; memakai IF NOT EXISTS/ALTER IF NOT EXISTS).
+- `supabase/functions/create-account/index.ts` — Edge Function pembuatan akun oleh Admin/Developer.
 
-## 1. Buat project Supabase
-1. Buat project di https://supabase.com.
-2. Buka **SQL Editor**, jalankan seluruh isi `supabase/schema.sql`.
-3. Jika akun hanya boleh dibuat oleh staff, buka Authentication → Settings dan nonaktifkan public sign-ups. Pembuatan akun staf tetap berjalan melalui Edge Function.\n4. Buka **Project Settings → API** dan salin Project URL serta anon/public key.
-5. Buka `index.html`, ganti:
-   - `YOUR_SUPABASE_URL`
-   - `YOUR_SUPABASE_ANON_KEY`
-   Jangan pernah memasukkan `service_role` key ke HTML.
+## 1. Hubungkan Supabase
+Project URL dan publishable key yang sebelumnya diberikan sudah dimasukkan ke `index.html`.
+Publishable key memang boleh berada di browser. Jangan pernah memasukkan service_role key atau database password ke file HTML/GitHub.
 
-## 2. Buat akun Developer pertama
-1. Supabase → Authentication → Users → Add user.
-2. Buat user dengan email dan password Developer, lalu konfirmasi email.
-3. Jalankan SQL berikut di SQL Editor dengan UUID user tersebut:
-   ```sql
-   update public.profiles
-   set role='developer', display_name='Developer'
-   where id='UUID_USER_DARI_AUTH_USERS';
-   ```
-4. Login melalui aplikasi. Developer dapat membuat Admin dan User.
+## 2. Jalankan SQL upgrade
+1. Supabase Dashboard → SQL Editor → New query.
+2. Salin seluruh isi `supabase/schema.sql` dari file ini.
+3. Klik Run.
+4. Pastikan hasilnya `Success`.
+SQL upgrade menambahkan `seat_no`, `seat_assignments`, maintenance settings, serta RPC yang memeriksa role Developer di database.
 
-## 3. Deploy fungsi pembuatan akun
-Install Supabase CLI dan login, lalu dari folder project:
+## 3. Aktifkan pendaftaran User
+1. Supabase Dashboard → Authentication → Providers → Email.
+2. Pastikan Email provider aktif.
+3. Di Authentication → Settings, aktifkan sign-ups / allow new users.
+4. Jika Confirm email aktif, user harus membuka email konfirmasi sebelum login.
+Akun yang mendaftar sendiri selalu dibuat dengan role `user` oleh trigger database. User tidak dapat memilih role Admin/Developer dari form.
+
+## 4. Deploy Edge Function create-account
+Deploy folder `supabase/functions/create-account` sebagai function bernama `create-account`.
+Dengan Supabase CLI:
 ```bash
 supabase link --project-ref PROJECT_REF
 supabase functions deploy create-account
 ```
-Atur secrets (jangan taruh service key di HTML):
-```bash
-supabase secrets set SUPABASE_URL=https://PROJECT_REF.supabase.co
-supabase secrets set SUPABASE_ANON_KEY=YOUR_ANON_KEY
-supabase secrets set SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
+Pastikan runtime Edge Function memiliki `SUPABASE_URL`, `SUPABASE_ANON_KEY`, dan `SUPABASE_SERVICE_ROLE_KEY`. Service role hanya disimpan sebagai secret server-side, jangan pernah di HTML atau GitHub.
+
+## 5. Developer pertama
+Jika Developer sudah dibuat sebelumnya, tidak perlu mengulang. Jika belum:
+1. Authentication → Users → Add user.
+2. Salin UID akun.
+3. Jalankan:
+```sql
+update public.profiles
+set role='developer', display_name='Developer'
+where id='UUID_USER';
 ```
-Jika project CLI Anda sudah menyediakan `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY` otomatis, cukup pastikan `SUPABASE_ANON_KEY` tersedia sebagai secret.
 
-## 4. Aktifkan Realtime
-Supabase Dashboard → Database → Replication / Publications → `supabase_realtime`.
-Aktifkan tabel `students` dan `spin_history`. Aplikasi juga dapat dimuat ulang manual jika realtime belum diaktifkan.
+## 6. Fitur baru
+- Register: user daftar sendiri, role selalu `user`.
+- Maintenance: Developer mengatur pesan dan jadwal mulai/selesai. Maintenance otomatis aktif pada waktu mulai dan berakhir pada estimasi selesai; Developer tetap dapat masuk.
+- Secret Seating Control: menu Developer tersembunyi dari role lain dan meminta verifikasi ulang password. Database RPC juga memeriksa role Developer. Penempatan kursi hanya bisa dibuat untuk siswa yang belum spin dan kursi yang belum terisi.
+- Kursi khusus: `spin_no` menyimpan urutan spin, `seat_no` menyimpan kursi fisik. Ini memungkinkan siswa tertentu mendapat kursi yang ditentukan sementara siswa lain tetap acak.
+- Auto spin: interval 2,4 detik; pause/resume/stop.
+- Layout: CSS responsive; navigasi dan kartu menyesuaikan layar.
 
-## 5. Jalankan
-Karena memakai Supabase CDN, buka `index.html` melalui web server lokal atau hosting statis (misalnya Netlify, Vercel static, GitHub Pages). Jangan mengandalkan `file://` untuk semua browser.
-Contoh server lokal:
-```bash
-python -m http.server 8000
-```
-Lalu buka `http://localhost:8000`.
+## 7. Deploy website
+Upload isi folder project ke GitHub dengan `index.html` di root. GitHub Pages → Settings → Pages → Deploy from branch → main → /(root).
 
-## Hak akses
-- User: hanya SELECT data siswa dan hasil spin; dapat copy dan download denah.
-- Admin: spin, auto spin, pause/resume/stop, kelola daftar siswa, undo/reset, membuat User.
-- Developer: semua akses Admin + membuat akun Admin.
-- RLS dan RPC memeriksa role di database. Edge Function memeriksa role lagi di server sebelum membuat akun.
-
-## Catatan penting
-- Spin dipilih secara acak di PostgreSQL (`ORDER BY random()`), dengan row lock agar dua permintaan bersamaan tidak mengambil urutan spin yang sama.
-- Auto spin menunggu sekitar 2,4 detik antar hasil.
-- Undo menghapus hasil terakhir, sehingga nama tersebut otomatis kembali tersedia.
-- Reset hanya menghapus hasil spin, daftar nama tetap ada.
-- Maksimal 42 siswa/kursi. Sistem ini memakai satu kelas bersama dalam satu project Supabase.
-- Untuk produksi publik, batasi CORS Edge Function ke domain website Anda, aktifkan proteksi akun (MFA/rate limit), dan jangan bagikan kredensial.
+## Catatan
+- Kapasitas maksimal 42 siswa/kursi.
+- Secret Seating dapat menempatkan siswa di kursi mana pun yang masih kosong. Jika jumlah siswa lebih sedikit dari nomor kursi tujuan, denah akan memiliki beberapa kursi kosong sebelum kursi khusus tersebut; sistem tetap menyelesaikan undian tanpa memindahkan siswa dari kursi yang ditentukan.
+- Jalankan SQL upgrade sebelum memakai fitur baru.
+- Aktifkan Realtime untuk `students` dan `spin_history` jika publication belum aktif.
