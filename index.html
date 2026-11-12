@@ -414,7 +414,58 @@ async function shuffleStudents(){if(history.length)return toast("Shuffle hanya t
 function planText(){const by=[...history].sort((a,b)=>a.spin_no-b.spin_no);return ["🪑 CLASS SEAT SPINNER","📋 HASIL DENAH TEMPAT DUDUK","",...Array.from({length:21},(_,i)=>{const a=by.find(h=>(h.seat_no??h.spin_no)===i*2+1),b=by.find(h=>(h.seat_no??h.spin_no)===i*2+2);return `Meja ${i+1} : ${a?.student_name||"—"} & ${b?.student_name||"—"}`}),"",`Terisi: ${history.length}/42 kursi`].join("\n")}
 async function copyPlan(){try{await navigator.clipboard.writeText(planText());toast("Rekap denah berhasil disalin! 📋")}catch(e){const t=document.createElement("textarea");t.value=planText();document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Rekap denah berhasil disalin! 📋")}}
 async function downloadPlan(){try{const canvas=await html2canvas($("seatCapture"),{backgroundColor:"#0a1220",scale:2,useCORS:true});const a=document.createElement("a");a.download="class-seat-plan.png";a.href=canvas.toDataURL("image/png");a.click();toast("Gambar denah berhasil diunduh.")}catch(e){toast("Gagal membuat gambar denah.","error")}}
-async function createAccount(e){e.preventDefault();const role=$("newRole").value;if(role==="admin"&&!isDev())return toast("Hanya Developer yang dapat membuat Admin.","error");const {data:{session}}=await sb.auth.getSession();const {data,error}=await sb.functions.invoke("create-account",{body:{email:$("newEmail").value,password:$("newPassword").value,display_name:$("newName").value,role},headers:{Authorization:`Bearer ${session.access_token}`}});if(error)return toast(error.message,"error");if(data?.error)return toast(data.error,"error");$("accountForm").reset();toast("Akun berhasil dibuat: "+role.toUpperCase())}
+
+async function createAccount(e) {
+  e.preventDefault();
+
+  if (!sb) return toast("Koneksi database belum tersedia.", "error");
+
+  const role = $("newRole").value;
+
+  if (role === "admin" && !isDev()) {
+    return toast("Hanya Developer yang dapat membuat Admin.", "error");
+  }
+
+  const { data: { session }, error: sessionError } = await sb.auth.getSession();
+
+  if (sessionError || !session) {
+    return toast("Sesi login tidak valid. Silakan login ulang.", "error");
+  }
+
+  const { data, error } = await sb.functions.invoke("create-account", {
+    body: {
+      email: $("newEmail").value.trim(),
+      password: $("newPassword").value,
+      display_name: $("newName").value.trim(),
+      role
+    },
+    headers: {
+      Authorization: `Bearer ${session.access_token}`
+    }
+  });
+
+  if (error) {
+    let message = error.message;
+
+    try {
+      const response = error.context;
+      if (response && typeof response.json === "function") {
+        const details = await response.json();
+        message = details.error || details.message || message;
+      }
+    } catch (_) {}
+
+    return toast("Create Account gagal: " + message, "error");
+  }
+
+  if (data?.error) {
+    return toast(data.error, "error");
+  }
+
+  $("accountForm").reset();
+  toast("Akun berhasil dibuat: " + role.toUpperCase());
+}
+ 
 async function logout(){stopAuto();realtime.forEach(c=>sb.removeChannel(c));await sb.auth.signOut();profile=null;$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}
 
 let maintenanceState={enabled:false,message:"",start_at:null,end_at:null},maintenanceTicker=null,secretUnlocked=false,maintenanceRefreshPending=false;
