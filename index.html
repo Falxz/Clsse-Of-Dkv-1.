@@ -435,7 +435,7 @@ async function fetchMaintenance(){if(!sb)return;const {data,error}=await sb.rpc(
 }
 async function registerUser(e){e.preventDefault();if(!sb)return;const name=$("registerName").value.trim(),email=$("registerEmail").value.trim(),password=$("registerPassword").value;
  if(password.length<8)return toast("Password minimal 8 karakter.","error");
- const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name}}});
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name},emailRedirectTo:"https://dkvone.vercel.app/"}});
  if(error){$("loginError").textContent=error.message;return}
  $("registerForm").reset();$("loginError").textContent=data.session?"Akun berhasil dibuat. Silakan masuk.":"Akun berhasil dibuat. Cek email untuk konfirmasi sebelum login.";
  $("registerForm").classList.add("hidden");$("loginForm").classList.remove("hidden");$("authSwitchText").textContent="Belum punya akun?";$("authSwitch").textContent="Daftar sekarang";
