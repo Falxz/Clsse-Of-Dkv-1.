@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
 :root{--bg:#080d19;--panel:#101a2c;--panel2:#142139;--line:#24334c;--text:#f2f6ff;--muted:#8e9bb2;--blue:#69a7ff;--cyan:#70d8e8;--green:#55d6a0;--red:#ff7188;--shadow:0 22px 70px #0007}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#1b3760 0,transparent 38%),radial-gradient(ellipse at 90% 20%,#102b42 0,transparent 32%),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer;border:0;color:inherit}.hidden{display:none!important}.muted{color:var(--muted)}.eyebrow{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--cyan);font-weight:800}.brand{font:800 17px "Plus Jakarta Sans";letter-spacing:.04em}.brand span{color:var(--blue)}.btn{padding:11px 16px;border-radius:13px;background:#1b2b45;border:1px solid #30425e;font-weight:700;transition:.22s transform,.22s background,.22s box-shadow}.btn:hover{transform:translateY(-2px);background:#253b5d;box-shadow:0 9px 24px #0004}.btn:active{transform:scale(.97)}.btn.primary{background:linear-gradient(135deg,#4e8df2,#3774d7);border-color:#79aaff;box-shadow:0 8px 24px #3774d733}.btn.danger{background:#3a2030;border-color:#744052;color:#ffb2c0}.btn.ghost{background:transparent}.btn:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none}.field{width:100%;background:#0b1424;border:1px solid #2b3b55;border-radius:12px;padding:13px 14px;color:var(--text);outline:none}.field:focus{border-color:#6aa7ff;box-shadow:0 0 0 3px #6aa7ff20}label{display:block;font-size:12px;color:#aab8ce;margin:0 0 7px;font-weight:700}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}.login-card{width:min(440px,100%);padding:34px;border:1px solid #30415e;background:linear-gradient(145deg,#142139eF,#0d1728f5);border-radius:26px;box-shadow:var(--shadow);animation:rise .55s both}.login-card h1{font:800 27px "Plus Jakarta Sans";margin:10px 0}.login-card p{color:var(--muted);line-height:1.6;font-size:13px}.login-card .field{margin-bottom:15px}.login-logo{width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,#6daaff,#335cc3);display:grid;place-items:center;font-size:25px;box-shadow:0 10px 30px #4c83ef44}.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{border-right:1px solid #1e2c42;background:#0b1322cc;padding:25px 17px;display:flex;flex-direction:column;gap:25px}.side-brand{padding:0 12px 12px}.role-pill{display:inline-flex;gap:7px;align-items:center;padding:6px 10px;border:1px solid #344760;border-radius:30px;color:#b9c9e1;font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin:0 10px}.nav{display:grid;gap:7px}.nav button{background:transparent;text-align:left;padding:13px 14px;border-radius:12px;color:#9eacc2;font-weight:700;transition:.2s}.nav button:hover,.nav button.active{background:linear-gradient(90deg,#24416b88,#1b2d49aa);color:white}.nav button.active{box-shadow:inset 3px 0 #72adff}.side-bottom{margin-top:auto;display:grid;gap:12px}.profile{display:flex;gap:10px;align-items:center;padding:13px;background:#111e32;border:1px solid #263751;border-radius:15px}.avatar{width:35px;height:35px;border-radius:12px;background:linear-gradient(135deg,#6bafff,#4660b5);display:grid;place-items:center;font-weight:800}.main{padding:30px clamp(18px,4vw,48px);min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}.topbar h2{font:800 24px "Plus Jakarta Sans";margin:5px 0}.top-actions{display:flex;gap:9px;align-items:center}.grid-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.card{background:linear-gradient(145deg,#142139d9,#101a2bdc);border:1px solid #263751;border-radius:19px;padding:19px;box-shadow:0 10px 35px #0002;transition:transform .22s,border-color .22s,box-shadow .22s}.card.hover:hover{transform:translateY(-4px);border-color:#49658b;box-shadow:0 18px 40px #0004}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-num{font:800 27px "Plus Jakarta Sans";margin-top:9px}.stat-icon{float:right;font-size:20px}.section-title{font:800 17px "Plus Jakarta Sans";margin:0 0 15px}.content-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:17px}.wheel-card{display:flex;flex-direction:column;align-items:center;text-align:center;min-height:470px}.wheel{width:min(330px,75vw);aspect-ratio:1;border-radius:50%;position:relative;margin:10px auto 20px;border:8px solid #263b5b;box-shadow:0 0 0 5px #101a2b,0 20px 55px #0008;overflow:hidden;background:conic-gradient(#2d5489 0 45deg,#172a47 45deg 90deg,#37689c 90deg 135deg,#1c365b 135deg 180deg,#477ab0 180deg 225deg,#1d3150 225deg 270deg,#315f94 270deg 315deg,#172943 315deg)}.wheel:before{content:"";position:absolute;inset:20%;border-radius:50%;background:#0b1526;border:5px solid #8bbaff;box-shadow:0 0 0 5px #1a2c48;z-index:2}.wheel-center{position:absolute;z-index:3;inset:0;display:grid;place-items:center;font:800 15px "Plus Jakarta Sans";letter-spacing:.1em}.pointer{position:absolute;top:-3px;left:calc(50% - 15px);z-index:4;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:35px solid #8ed9f0;filter:drop-shadow(0 3px 5px #0008)}.wheel.spinning{animation:spin 1s cubic-bezier(.12,.72,.15,1) infinite}.wheel-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.result-name{font:800 24px "Plus Jakarta Sans";margin:10px 0 4px}.progress{height:9px;border-radius:10px;background:#25334a;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,#5c9df8,#69d3d9);border-radius:10px;transition:width .4s}.history{display:grid;gap:9px;max-height:300px;overflow:auto}.history-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0c1728;border:1px solid #24344c;border-radius:12px;font-size:13px}.seat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.seat{background:#111e32;border:1px solid #2b3c56;border-radius:15px;padding:13px;min-height:110px;transition:.25s}.seat.filled{background:linear-gradient(145deg,#17334a,#13273b);border-color:#367a8b}.seat.recent{animation:seatPulse 1.4s ease}.seat-head{display:flex;justify-content:space-between;font-size:11px;color:#9eafc6;font-weight:800;margin-bottom:12px}.seat-person{font-size:12px;padding:7px 8px;border-radius:9px;background:#0a1423;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seat-person em{font-style:normal;color:#77b9ff;margin-right:5px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.student-list{display:grid;gap:8px;max-height:460px;overflow:auto}.student-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:#0d1829;border:1px solid #26364e;border-radius:12px;font-size:13px}.tag{font-size:10px;padding:5px 8px;border-radius:20px;background:#183b3b;color:#84e1c4}.modal-backdrop{position:fixed;inset:0;z-index:20;background:#020611b9;backdrop-filter:blur(9px);display:grid;place-items:center;padding:20px;animation:fade .18s}.modal{width:min(460px,100%);background:linear-gradient(145deg,#1a2b46,#0e192b);border:1px solid #3b5273;border-radius:24px;padding:26px;box-shadow:0 30px 100px #000b;animation:pop .28s cubic-bezier(.2,.9,.2,1)}.modal h3{font:800 21px "Plus Jakarta Sans";margin:8px 0}.modal p{color:#a8b6cb;line-height:1.6;font-size:13px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.toast-wrap{position:fixed;right:20px;top:20px;z-index:40;display:grid;gap:9px}.toast{padding:13px 17px;background:#172941;border:1px solid #42617f;border-radius:14px;box-shadow:var(--shadow);animation:toastIn .3s}.toast.error{border-color:#8e4559}.toast.success{border-color:#387d6c}.skeleton{background:linear-gradient(90deg,#142238 25%,#223550 45%,#142238 65%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:10px;height:70px}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #34445e;border-radius:15px}.small{font-size:11px}.mobile-menu{display:none}
@@ -152,6 +154,10 @@ button,.btn{min-height:42px}
 }
 
 @media print{body{background:#fff!important;color:#111!important}.sidebar,.topbar,.toolbar,.toast-wrap,#modalRoot,.maintenance-screen,.login-wrap{display:none!important}#appView{display:block!important;background:#fff!important}.main{padding:0!important}.main>section{display:none!important}#page-seating{display:block!important}.card,#seatCapture,.seat{background:#fff!important;color:#111!important;box-shadow:none!important;border:1px solid #bbb!important}.seat-person{background:#f4f4f4!important;color:#111!important}.muted,.seat-head{color:#333!important}}
+
+.classroom-form{display:grid;gap:10px}.qr-stage{display:grid;place-items:center;min-height:220px;padding:18px;background:#f8fafc;border-radius:16px;color:#111}.qr-stage img,.qr-stage canvas{max-width:100%;height:auto}.module-list{display:grid;gap:9px}.module-item{padding:13px;border:1px solid #2a3d58;border-radius:14px;background:#0b1627}.module-item p{margin:6px 0;color:#a8b6cb;font-size:13px;line-height:1.5}.module-meta{font-size:11px;color:#8fa3bd}.status-pill{display:inline-block;border-radius:20px;padding:4px 9px;font-size:10px;font-weight:800;background:#173c37;color:#8ce2c2}.status-pill.important{background:#49351c;color:#ffd38c}.status-pill.closed{background:#3a2631;color:#ffafbd}
+@media(max-width:680px){.qr-stage{min-height:190px}.qr-stage canvas,.qr-stage img{max-width:210px}}
+
 </style>
 </head>
 <body>
@@ -197,6 +203,12 @@ button,.btn{min-height:42px}
    <button data-page="activity">◷ &nbsp; Activity Log</button>
    <button data-page="seating">▦ &nbsp; Seating Plan</button>
    <button data-page="spin" class="admin-only">◉ &nbsp; Spin Wheel</button>
+   <button data-page="attendance">▣ &nbsp; Absensi QR</button>
+   <button data-page="student-home">⌂ &nbsp; Student Dashboard</button>
+   <button data-page="student-profile">♙ &nbsp; Profil Saya</button>
+   <button data-page="calendar">▦ &nbsp; Class Calendar</button>
+   <button data-page="announcements">⚑ &nbsp; Pengumuman</button>
+   <button data-page="suggestions">✉ &nbsp; Kotak Saran</button>
    <button data-page="students" class="admin-only">☷ &nbsp; Student List</button>
    <button data-page="accounts" class="dev-only">♙ &nbsp; Accounts</button>
    <button data-page="developer" class="dev-only">✦ &nbsp; Developer</button>
@@ -237,6 +249,76 @@ button,.btn{min-height:42px}
     <div class="card"><div class="section-title">✍️ Input daftar siswa</div><label>Nama siswa (satu nama per baris)</label><textarea id="bulkNames" class="field" rows="10" placeholder="Ahmad&#10;Budi&#10;Candra&#10;Dimas"></textarea><div class="toolbar" style="margin-top:12px"><button id="addBulk" class="btn primary">＋ TAMBAHKAN NAMA</button><button id="clearInput" class="btn">BERSIHKAN</button></div><p class="muted small">Maksimal 42 siswa. Daftar hanya dapat diedit sebelum proses spin dimulai. Hapus hasil spin terlebih dahulu untuk mengubah daftar.</p></div>
     <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div class="section-title">👥 Student list</div><span class="tag" id="studentCount">0 SISWA</span></div><input id="studentSearch" class="field" type="search" placeholder="Cari nama siswa..." style="margin:10px 0" aria-label="Cari siswa"><div id="studentList" class="student-list"><div class="empty">Belum ada siswa.</div></div></div>
    </div>
+  </section>
+
+  <section id="page-attendance" class="hidden">
+   <div class="content-grid">
+    <div class="card admin-only">
+     <div class="section-title">▣ Buat sesi absensi QR</div>
+     <label>Nama sesi</label><input id="attendanceTitle" class="field" value="Absensi Kelas">
+     <label>Masa berlaku QR</label><select id="attendanceMinutes" class="field"><option value="5">5 menit</option><option value="10" selected>10 menit</option><option value="15">15 menit</option><option value="30">30 menit</option></select>
+     <button class="btn primary" id="createAttendance" style="margin-top:12px">BUAT QR ABSENSI</button>
+     <div id="attendanceQrWrap" class="hidden" style="margin-top:15px">
+      <div id="attendanceQr" class="qr-stage"></div>
+      <div id="attendanceQrExpiry" class="inline-note" style="margin:10px 0"></div>
+      <button class="btn danger" id="closeAttendance">TUTUP SESI</button>
+     </div>
+     <p class="inline-note">QR hanya berlaku sesuai waktu yang dipilih. Siswa harus login dan akun siswa harus sudah dihubungkan oleh Admin.</p>
+    </div>
+    <div class="card">
+     <div class="section-title">📱 Scan QR dari HP</div>
+     <p class="inline-note">Gunakan kamera HP untuk memindai QR yang ditampilkan Admin. Izinkan akses kamera saat diminta.</p>
+     <div id="qr-reader" style="width:100%;max-width:420px;margin:12px auto"></div>
+     <div class="toolbar"><button class="btn primary" id="startQrScan">BUKA KAMERA</button><button class="btn" id="stopQrScan">STOP KAMERA</button></div>
+     <label>Atau masukkan token QR</label><input id="attendanceTokenInput" class="field" placeholder="Tempel token QR di sini">
+     <button class="btn" id="submitAttendanceToken" style="margin-top:9px">KIRIM ABSENSI</button>
+     <div id="attendanceScanStatus" class="inline-note" style="margin-top:10px"></div>
+    </div>
+   </div>
+   <div class="card admin-only" style="margin-top:16px">
+    <div class="section-title">🧾 Rekap dan input manual</div>
+    <div class="toolbar"><select id="attendanceSessionSelect" class="field" style="max-width:360px"><option value="">Pilih sesi absensi</option></select><button class="btn" id="refreshAttendance">REFRESH</button><button class="btn" id="exportAttendanceCsv">EXPORT CSV</button><button class="btn danger" id="markMissingAlpa">TANDAI YANG BELUM ABSEN = ALPA</button></div>
+    <div id="attendanceRoster" class="module-list"><div class="empty">Pilih sesi untuk melihat rekap.</div></div>
+   </div>
+   <div class="card admin-only" style="margin-top:16px">
+    <div class="section-title">🔗 Hubungkan akun dengan siswa</div>
+    <p class="inline-note">Agar siswa bisa scan QR, hubungkan akun login dengan nama siswa yang sesuai.</p>
+    <div class="form-row"><select id="linkUserSelect" class="field"><option value="">Pilih akun</option></select><select id="linkStudentSelect" class="field"><option value="">Pilih siswa</option></select></div>
+    <button class="btn primary" id="saveStudentLink" style="margin-top:10px">SIMPAN HUBUNGAN</button>
+    <div id="studentLinkStatus" class="inline-note" style="margin-top:8px"></div>
+   </div>
+  </section>
+  <section id="page-student-home" class="hidden">
+   <div class="grid-stats"><div class="card"><div class="stat-label">STATUS AKUN</div><div class="stat-num" id="studentHomeName" style="font-size:19px">—</div></div><div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
+   <div class="content-grid"><div class="card"><div class="section-title">🪑 Tempat duduk saya</div><div id="studentHomeSeat" class="module-list"><div class="empty">Belum ada penempatan.</div></div></div><div class="card"><div class="section-title">📅 Kegiatan mendatang</div><div id="studentHomeEvents" class="module-list"></div></div></div>
+   <div class="card" style="margin-top:16px"><div class="section-title">📢 Pengumuman terbaru</div><div id="studentHomeAnnouncements" class="module-list"></div></div>
+  </section>
+  <section id="page-student-profile" class="hidden">
+   <div class="card"><div class="section-title">♙ Student Profile</div><div id="studentProfileCard" class="module-list"><div class="empty">Memuat profil...</div></div></div>
+   <div class="card admin-only" style="margin-top:16px"><div class="section-title">✎ Kelola profil siswa</div><div class="classroom-form"><select id="profileStudentSelect" class="field"><option value="">Pilih siswa</option></select><input id="profileStudentNo" class="field" placeholder="Nomor absen / NIS"><input id="profilePhotoUrl" class="field" placeholder="URL foto (opsional)"><textarea id="profileNote" class="field" rows="2" placeholder="Catatan profil (opsional)"></textarea><button id="saveStudentProfile" class="btn primary">SIMPAN PROFIL SISWA</button></div></div>
+  </section>
+  <section id="page-calendar" class="hidden">
+   <div class="card admin-only">
+    <div class="section-title">＋ Tambah kegiatan kalender</div>
+    <div class="classroom-form"><input id="eventTitle" class="field" placeholder="Nama kegiatan"><textarea id="eventDescription" class="field" rows="2" placeholder="Deskripsi kegiatan"></textarea><div class="form-row"><div><label>Mulai</label><input id="eventStart" type="datetime-local" class="field"></div><div><label>Selesai (opsional)</label><input id="eventEnd" type="datetime-local" class="field"></div></div><input id="eventLocation" class="field" placeholder="Lokasi (opsional)"><button id="saveEvent" class="btn primary">SIMPAN KE KALENDER</button></div>
+   </div>
+   <div class="card" style="margin-top:16px"><div class="section-title">📅 Kalender Kelas</div><div id="calendarList" class="module-list"><div class="empty">Memuat jadwal...</div></div></div>
+  </section>
+  <section id="page-announcements" class="hidden">
+   <div class="card admin-only">
+    <div class="section-title">⚑ Buat pengumuman</div>
+    <div class="classroom-form"><input id="announcementTitle" class="field" placeholder="Judul pengumuman"><textarea id="announcementBody" class="field" rows="4" placeholder="Isi pengumuman"></textarea><select id="announcementPriority" class="field"><option value="normal">Normal</option><option value="important">Penting</option></select><button id="saveAnnouncement" class="btn primary">TERBITKAN PENGUMUMAN</button></div>
+   </div>
+   <div class="card" style="margin-top:16px"><div class="section-title">📢 Pengumuman Kelas</div><div id="announcementList" class="module-list"></div></div>
+  </section>
+  <section id="page-suggestions" class="hidden">
+   <div class="card">
+    <div class="section-title">✉ Kotak Saran</div><p class="inline-note">Sampaikan masukan untuk kelas. Pilih anonim agar nama kamu tidak ditampilkan ke siswa lain.</p>
+    <textarea id="suggestionMessage" class="field" rows="4" maxlength="2000" placeholder="Tulis saran kamu..."></textarea>
+    <label style="margin-top:10px"><input type="checkbox" id="suggestionAnonymous" checked> Kirim secara anonim untuk siswa lain</label>
+    <button id="sendSuggestion" class="btn primary" style="margin-top:10px">KIRIM SARAN</button>
+   </div>
+   <div class="card" style="margin-top:16px"><div class="section-title">🗂 Saran masuk</div><div id="suggestionList" class="module-list"></div></div>
   </section>
   <section id="page-accounts" class="hidden">
    <div class="content-grid">
@@ -304,7 +386,7 @@ function modal(title,body,actions){$("modalRoot").innerHTML=`<div class="modal-b
 function closeModal(){$("modalRoot").innerHTML=""}
 function confirmBox(title,msg,yes,kind="danger"){return new Promise(resolve=>{modal(title,`<p>${msg}</p>`,`<button class="btn" id="cancelModal">Batal</button><button class="btn ${kind}" id="yesModal">${yes}</button>`);$("cancelModal").onclick=()=>{closeModal();resolve(false)};$("yesModal").onclick=()=>{closeModal();resolve(true)}})}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"],developer:["DEVELOPER CONSOLE","System & Secret Controls"],activity:["CLASS ACTIVITY","Activity Log"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
+function setPage(page){document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));$("page-"+page)?.classList.remove("hidden");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));const titles={overview:["CLASS OVERVIEW","Welcome back"],spin:["RANDOM PICKER","Spin Wheel"],seating:["CLASSROOM LAYOUT","Seating Plan"],students:["STUDENT MANAGEMENT","Student List"],accounts:["ACCESS CONTROL","Account Management"],developer:["DEVELOPER CONSOLE","System & Secret Controls"],activity:["CLASS ACTIVITY","Activity Log"],attendance:["CLASS ATTENDANCE","QR Attendance"],"student-home":["STUDENT SPACE","Student Dashboard"],"student-profile":["STUDENT SPACE","Student Profile"],calendar:["CLASS SCHEDULE","Class Calendar"],announcements:["CLASS INFORMATION","Pengumuman Kelas"],suggestions:["STUDENT VOICE","Kotak Saran"]};$("pageEyebrow").textContent=titles[page][0];$("pageTitle").textContent=titles[page][1]}
 function setRoleUI(){document.querySelectorAll(".admin-only").forEach(e=>e.classList.toggle("hidden",!isAdmin()));document.querySelectorAll(".dev-only").forEach(e=>e.classList.toggle("hidden",!isDev()));$("rolePill").textContent=profile.role.toUpperCase()+" ACCESS";$("sideName").textContent=profile.display_name||profile.email;$("sideRole").textContent=profile.role.toUpperCase();$("avatar").textContent=(profile.display_name||profile.email||"U")[0].toUpperCase();$("newRole").value="user"}
 function seatNo(i){return {table:Math.floor(i/2)+1,seat:i%2===0?"A":"B"}}
 function remaining(){const used=new Set(history.map(x=>x.student_id));return students.filter(s=>!used.has(s.id))}
@@ -315,9 +397,9 @@ function renderSeats(){const byNo=[...history].sort((a,b)=>a.spin_no-b.spin_no);
 function renderStudents(){const used=new Set(history.map(h=>h.student_id));const filtered=students.filter(s=>s.name.toLocaleLowerCase().includes(studentFilter.toLocaleLowerCase()));$("studentList").innerHTML=filtered.map(s=>`<div class="student-row"><span>${esc(s.name)}</span><span class="${used.has(s.id)?"tag":"muted small"}">${used.has(s.id)?"TERPILIH":"MENUNGGU"}</span></div>`).join("")||'<div class="empty">Tidak ada siswa yang cocok.</div>'}
 async function loadData(){const [s,h]=await Promise.all([sb.from("students").select("*").order("sort_order"),sb.from("spin_history").select("*").order("spin_no")]);if(s.error||h.error)throw(s.error||h.error);students=s.data;history=h.data}
 async function refresh(){try{await loadData();render();if(secretUnlocked)await loadSecretAssignments()}catch(e){toast(e.message,"error")}}
-function subscribe(){realtime.forEach(c=>sb.removeChannel(c));realtime=[sb.channel("seat-live").on("postgres_changes",{event:"*",schema:"public",table:"students"},refresh).on("postgres_changes",{event:"*",schema:"public",table:"spin_history"},refresh).subscribe()]}
-async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;if(profile.is_disabled){profile=null;await sb.auth.signOut();throw new Error("Akun ini dinonaktifkan oleh Developer.")}const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();await loadGlobalSettings();render();subscribe();setPage("overview");if(isDev()){await loadDeveloperSettings();await loadGlobalSettings();await loadSnapshots()}}
-async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");playSpinTone();try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;await logActivity("SPIN_COMPLETED",{student_name:data.student_name,seat_no:data.seat_no??data.spin_no});await new Promise(r=>setTimeout(r,globalSpinDuration));$("wheel").classList.remove("spinning");const p=seatNo((data.seat_no??data.spin_no)-1);$("pickedName").textContent="🎉 "+data.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${data.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(data.student_name,p);return data}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
+function subscribe(){realtime.forEach(c=>sb.removeChannel(c));realtime=[sb.channel("seat-live").on("postgres_changes",{event:"*",schema:"public",table:"students"},refresh).on("postgres_changes",{event:"*",schema:"public",table:"spin_history"},refresh).on("postgres_changes",{event:"*",schema:"public",table:"attendance_records"},()=>{if(isAdmin())loadAttendanceRoster();if(profile?.student_id)loadStudentHome()}).on("postgres_changes",{event:"*",schema:"public",table:"class_events"},()=>{loadCalendar();loadStudentHome()}).on("postgres_changes",{event:"*",schema:"public",table:"class_announcements"},()=>{loadAnnouncements();loadStudentHome()}).subscribe()]}
+async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled,student_id").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;if(profile.is_disabled){profile=null;await sb.auth.signOut();throw new Error("Akun ini dinonaktifkan oleh Developer.")}const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();await loadData();await loadGlobalSettings();render();subscribe();setPage("overview");if(isDev()){await loadDeveloperSettings();await loadGlobalSettings();await loadSnapshots()}}
+async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");playSpinTone();try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;const draw=rpcRow(data);if(!draw)throw new Error("Hasil spin tidak diterima.");await logActivity("SPIN_COMPLETED",{student_name:draw.student_name,seat_no:draw.seat_no??draw.spin_no});await new Promise(r=>setTimeout(r,globalSpinDuration));$("wheel").classList.remove("spinning");const p=seatNo((draw.seat_no??draw.spin_no)-1);$("pickedName").textContent="🎉 "+draw.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${draw.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(draw.student_name,p);return draw}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
 function showWinner(name,p){modal("🎉 Nama terpilih!",`<div style="text-align:center;padding:12px"><div style="font-size:38px">🪑</div><div style="font:800 25px 'Plus Jakarta Sans';margin:12px 0">${esc(name)}</div><div class="tag">MEJA ${p.table} · KURSI ${p.seat}</div><p>Nama berhasil ditempatkan ke denah kelas.</p></div>`,`<button class="btn primary" id="winnerOk">MANTAP!</button>`);$("winnerOk").onclick=closeModal}
 function wait(ms){return new Promise(resolve=>autoTimer=setTimeout(resolve,ms))}
 async function startAuto(){if(autoState!=="idle")return;autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
@@ -419,13 +501,220 @@ async function loadSnapshots(){if(!isAdmin())return;const {data,error}=await sb.
 async function saveSnapshot(){if(!isAdmin())return;const name=$("snapshotName").value.trim()||("Snapshot "+new Date().toLocaleString("id-ID"));const {data,error}=await sb.rpc("create_seating_snapshot",{p_name:name});if(error)return toast(error.message,"error");$("snapshotName").value="";await loadSnapshots();toast("Versi seating berhasil disimpan.")}
 async function exportPdf(){setPage("seating");await new Promise(r=>setTimeout(r,150));window.print()}
 async function runSystemHealth(){if(!isDev())return;const box=$("healthStatus");box.innerHTML='<span>Memeriksa database...</span><span class="muted">…</span>';const started=performance.now();const {error}=await sb.from("students").select("id",{head:true,count:"exact"});const ms=Math.round(performance.now()-started);if(error){box.innerHTML=`<span>Database</span><b style="color:#ff8296">OFFLINE · ${esc(error.message)}</b>`;return}box.innerHTML=`<span>Database</span><b style="color:#6fe0b0">ONLINE · ${ms} ms</b>`;const channel=sb.channel("health-check-"+Date.now());channel.subscribe(status=>{if(status==="SUBSCRIBED"){$("healthStatus").innerHTML=`<span>Database + Realtime</span><b style="color:#6fe0b0">ONLINE · ${ms} ms</b>`;sb.removeChannel(channel)}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){$("healthStatus").innerHTML=`<span>Database / Realtime</span><b style="color:#ffbd72">DB ONLINE · REALTIME CHECK FAILED</b>`;sb.removeChannel(channel)}})}
-async function downloadBackup(){if(!isDev())return;const [s,h,a]=await Promise.all([sb.from("students").select("*").order("sort_order"),sb.from("spin_history").select("*").order("spin_no"),sb.from("seat_assignments").select("*")]);const err=s.error||h.error||a.error;if(err)return toast(err.message,"error");const payload={format:"class-seat-spinner-backup-v2",created_at:new Date().toISOString(),students:s.data||[],spin_history:h.data||[],seat_assignments:a.data||[]};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const link=document.createElement("a");link.href=url;link.download="class-seat-spinner-backup-"+new Date().toISOString().slice(0,10)+".json";link.click();URL.revokeObjectURL(url);$("backupStatus").textContent="Backup berhasil dibuat: "+payload.students.length+" siswa, "+payload.spin_history.length+" hasil spin.";await logActivity("BACKUP_EXPORTED",{students:payload.students.length,history:payload.spin_history.length});toast("Backup berhasil diunduh.")}
-async function restoreBackupFile(file){if(!isDev()||!file)return;let payload;try{payload=JSON.parse(await file.text())}catch(e){return toast("File JSON tidak valid.","error")}if(payload.format!=="class-seat-spinner-backup-v2"||!Array.isArray(payload.students)||!Array.isArray(payload.spin_history))return toast("Format backup tidak dikenali.","error");const ok=await confirmBox("Pulihkan backup?","PERHATIAN: daftar siswa dan hasil spin saat ini akan diganti. Pastikan sudah mengunduh backup terbaru.","PULIHKAN");if(!ok)return;const {error}=await sb.rpc("restore_classroom_backup",{p_payload:payload});if(error)return toast(error.message,"error");await refresh();await loadSnapshots();toast("Backup berhasil dipulihkan.")}
+async function downloadBackup(){
+ if(!isDev())return;
+ const tables=["students","spin_history","seat_assignments","attendance_sessions","attendance_records","class_events","class_announcements","class_suggestions","profile_student_links"];
+ const queries=await Promise.all([
+  sb.from("students").select("*").order("sort_order"),
+  sb.from("spin_history").select("*").order("spin_no"),
+  sb.from("seat_assignments").select("*"),
+  sb.from("attendance_sessions").select("id,title,status,opens_at,expires_at,created_by,created_at,closed_at").order("created_at"),
+  sb.from("attendance_records").select("*").order("marked_at"),
+  sb.from("class_events").select("*").order("starts_at"),
+  sb.from("class_announcements").select("*").order("publish_at"),
+  sb.from("class_suggestions").select("*").order("created_at"),
+  sb.from("profiles").select("id,student_id")
+ ]);
+ const err=queries.find(x=>x.error)?.error;if(err)return toast(err.message,"error");
+ const payload={format:"class-seat-spinner-backup-v3",created_at:new Date().toISOString(),
+  students:queries[0].data||[],spin_history:queries[1].data||[],seat_assignments:queries[2].data||[],
+  attendance_sessions:queries[3].data||[],attendance_records:queries[4].data||[],class_events:queries[5].data||[],
+  class_announcements:queries[6].data||[],class_suggestions:queries[7].data||[],profile_student_links:queries[8].data||[]};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");
+ link.href=url;link.download="class-seat-spinner-v3-backup-"+new Date().toISOString().slice(0,10)+".json";link.click();URL.revokeObjectURL(url);
+ $("backupStatus").textContent=`Backup V3 berhasil: ${payload.students.length} siswa, ${payload.attendance_records.length} catatan absensi, ${payload.class_events.length} jadwal.`;
+ await logActivity("BACKUP_V3_EXPORTED",{students:payload.students.length,attendance_records:payload.attendance_records.length});toast("Backup V3 berhasil diunduh.");
+}
+async function restoreBackupFile(file){
+ if(!isDev()||!file)return;let payload;
+ try{payload=JSON.parse(await file.text())}catch(e){return toast("File JSON tidak valid.","error")}
+ const v3=payload.format==="class-seat-spinner-backup-v3";
+ const v2=payload.format==="class-seat-spinner-backup-v2";
+ if(!(v2||v3)||!Array.isArray(payload.students)||!Array.isArray(payload.spin_history))return toast("Format backup tidak dikenali.","error");
+ const warning=v3?"PERHATIAN: data siswa, seating, absensi, kalender, pengumuman, saran, dan hubungan akun-siswa saat ini akan diganti. Akun login dan pengaturan global tetap dipertahankan.":"Backup V2 tidak berisi modul absensi/kalender/pengumuman/saran V3. Pemulihan data siswa dapat menghapus catatan absensi terkait melalui relasi database. Buat backup V3 terbaru sebelum melanjutkan.";
+ const ok=await confirmBox("Pulihkan backup?",warning,"PULIHKAN");
+ if(!ok)return;
+ const {error}=v3?await sb.rpc("restore_classroom_backup_v3",{p_payload:payload}):await sb.rpc("restore_classroom_backup",{p_payload:payload});
+ if(error)return toast(error.message,"error");
+ await refresh();await loadSnapshots();toast("Backup berhasil dipulihkan.");
+}
 async function loadUsers(){if(!isDev())return;const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled,created_at").order("created_at",{ascending:false}).limit(100);if(error){$("userList").innerHTML=`<div class="empty">${esc(error.message)}</div>`;return}$("userList").innerHTML=(data||[]).map(u=>`<div class="history-row" style="align-items:flex-start"><div style="min-width:0"><b>${esc(u.display_name||u.email||"User")}</b><div class="muted small">${esc(u.email||"")} · ${esc(u.role)} · ${u.is_disabled?"NONAKTIF":"AKTIF"}</div></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end"><select class="field" style="width:auto;min-height:32px;padding:4px" data-user-role="${u.id}"><option value="user" ${u.role==="user"?"selected":""}>User</option><option value="admin" ${u.role==="admin"?"selected":""}>Admin</option><option value="developer" ${u.role==="developer"?"selected":""}>Developer</option></select><button class="btn ${u.is_disabled?"primary":"danger"}" data-user-toggle="${u.id}" data-disabled="${u.is_disabled}" style="padding:5px 8px;min-height:32px">${u.is_disabled?"AKTIFKAN":"NONAKTIFKAN"}</button></div></div>`).join("")||'<div class="empty">Belum ada akun.</div>';document.querySelectorAll("[data-user-role]").forEach(sel=>sel.onchange=()=>manageUser(sel.dataset.userRole,"set_role",sel.value));document.querySelectorAll("[data-user-toggle]").forEach(btn=>btn.onclick=()=>manageUser(btn.dataset.userToggle,btn.dataset.disabled==="true"?"enable":"disable"))}
 async function manageUser(user_id,action,role){if(!isDev())return;const ok=await confirmBox("Konfirmasi pengelolaan akun","Lanjutkan tindakan "+action+" pada akun ini?","LANJUTKAN","primary");if(!ok)return;const {data,error}=await sb.functions.invoke("manage-user",{body:{user_id,action,role}});if(error)return toast(error.message,"error");if(data?.error)return toast(data.error,"error");await loadUsers();toast("Pengaturan akun berhasil diperbarui.")}
 async function loadGlobalSettings(){const {data,error}=await sb.rpc("get_app_settings");if(error){console.warn("Global settings unavailable",error);return}const v=Array.isArray(data)?data[0]:data;if(!v)return;globalSpinDuration=v.spin_duration_ms;globalSpinSound=v.spin_sound;document.documentElement.style.setProperty("--blue",v.accent_color);document.title=v.class_name;const brand=document.querySelector(".brand");if(brand)brand.textContent=v.class_name;if(isDev()){$("globalClassName").value=v.class_name;$("globalAccent").value=v.accent_color;$("globalSpinDuration").value=v.spin_duration_ms;$("globalSpinSound").checked=v.spin_sound}}
 async function saveGlobalSettings(){if(!isDev())return;const args={p_class_name:$("globalClassName").value,p_accent_color:$("globalAccent").value,p_spin_duration_ms:Number($("globalSpinDuration").value),p_spin_sound:$("globalSpinSound").checked};const {error}=await sb.rpc("save_app_settings",args);if(error)return toast(error.message,"error");globalSpinDuration=args.p_spin_duration_ms;globalSpinSound=args.p_spin_sound;document.title=args.p_class_name;document.querySelector(".brand").innerHTML=esc(args.p_class_name);document.documentElement.style.setProperty("--blue",args.p_accent_color);await logActivity("GLOBAL_SETTINGS_UPDATED",{class_name:args.p_class_name});toast("Pengaturan global berhasil disimpan.")}
 function applyPersonalTheme(){const color=localStorage.getItem("css-accent-color");if(color&&/^#[0-9a-f]{6}$/i.test(color))document.documentElement.style.setProperty("--blue",color)}
+
+
+/* V3 CLASSROOM MODULES */
+let activeAttendanceSession=null, qrScanner=null, linkedProfiles=[];
+const asRows=d=>Array.isArray(d)?d:(d?[d]:[]);
+function rpcRow(d){return Array.isArray(d)?d[0]:d}
+function localDate(v){return v?new Date(v).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"}):"—"}
+async function createAttendance(){
+ if(!isAdmin())return;
+ const {data,error}=await sb.rpc("create_attendance_session",{p_title:$("attendanceTitle").value||"Absensi Kelas",p_valid_minutes:Number($("attendanceMinutes").value)});
+ if(error)return toast(error.message,"error");
+ const row=rpcRow(data); if(!row?.qr_token)return toast("QR berhasil dibuat tetapi token tidak diterima.","error");
+ activeAttendanceSession=row.session_id;
+ $("attendanceQr").innerHTML="";
+ if(window.QRCode)new QRCode($("attendanceQr"),{text:row.qr_token,width:230,height:230,correctLevel:QRCode.CorrectLevel.M});
+ $("attendanceQrWrap").classList.remove("hidden");
+ $("attendanceQrExpiry").textContent="QR berlaku sampai "+localDate(row.expires_at)+". Minta siswa scan dari HP masing-masing.";
+ await loadAttendanceSessions(); $("attendanceSessionSelect").value=activeAttendanceSession; await loadAttendanceRoster();
+ toast("Sesi absensi berhasil dibuat.");
+}
+async function loadAttendanceSessions(){
+ if(!isAdmin())return;
+ const {data,error}=await sb.from("attendance_sessions").select("id,title,status,expires_at,created_at").order("created_at",{ascending:false}).limit(30);
+ if(error)return toast(error.message,"error");
+ $("attendanceSessionSelect").innerHTML='<option value="">Pilih sesi absensi</option>'+(data||[]).map(s=>`<option value="${s.id}">${esc(s.title)} · ${localDate(s.created_at)} · ${s.status==="open"?"BUKA":"TUTUP"}</option>`).join("");
+ if(activeAttendanceSession)$("attendanceSessionSelect").value=activeAttendanceSession;
+}
+async function closeAttendance(){
+ const sid=activeAttendanceSession||$("attendanceSessionSelect").value;if(!sid)return toast("Pilih sesi absensi dulu.","error");
+ const {error}=await sb.rpc("close_attendance_session",{p_session_id:sid});
+ if(error)return toast(error.message,"error");
+ $("attendanceQrWrap").classList.add("hidden");activeAttendanceSession=null;
+ await loadAttendanceSessions();await loadAttendanceRoster();toast("Sesi absensi ditutup.");
+}
+async function loadAttendanceRoster(){
+ if(!isAdmin())return;
+ const sid=$("attendanceSessionSelect").value;
+ if(!sid){$("attendanceRoster").innerHTML='<div class="empty">Pilih sesi untuk melihat rekap.</div>';return}
+ const [r,s]=await Promise.all([sb.from("attendance_records").select("student_id,status,method,marked_at,note").eq("session_id",sid),sb.from("students").select("id,name,student_no").order("sort_order")]);
+ const err=r.error||s.error;if(err){$("attendanceRoster").innerHTML=`<div class="empty">${esc(err.message)}</div>`;return}
+ const map=new Map((r.data||[]).map(x=>[x.student_id,x]));
+ $("attendanceRoster").innerHTML=(s.data||[]).map(st=>{
+  const rec=map.get(st.id),status=rec?.status||"belum";
+  return `<div class="module-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${esc(st.name)}</b><div class="module-meta">${rec?`${rec.method==="qr"?"Scan QR":"Input Admin"} · ${localDate(rec.marked_at)}`:"Belum tercatat"}</div></div><select class="field" style="width:auto;min-width:125px;padding:8px" data-att-student="${st.id}" data-session="${sid}"><option value="belum" ${status==="belum"?"selected":""}>Belum absen</option><option value="hadir" ${status==="hadir"?"selected":""}>Hadir</option><option value="izin" ${status==="izin"?"selected":""}>Izin</option><option value="sakit" ${status==="sakit"?"selected":""}>Sakit</option><option value="alpa" ${status==="alpa"?"selected":""}>Alpa</option></select></div>`;
+ }).join("")||'<div class="empty">Belum ada data siswa.</div>';
+ document.querySelectorAll("[data-att-student]").forEach(sel=>sel.onchange=async()=>{
+  if(sel.value==="belum")return;
+  const {error}=await sb.rpc("mark_attendance_manual",{p_session_id:sel.dataset.session,p_student_id:sel.dataset.attStudent,p_status:sel.value,p_note:""});
+  if(error){toast(error.message,"error");return}
+  toast("Status absensi diperbarui.");await loadAttendanceRoster();
+ });
+}
+async function markMissingAlpa(){
+ const sid=$("attendanceSessionSelect").value;if(!sid)return toast("Pilih sesi absensi dulu.","error");
+ const {data:session,error:serr}=await sb.from("attendance_sessions").select("status,expires_at").eq("id",sid).single();
+ if(serr)return toast(serr.message,"error");if(session.status==="open"&&new Date(session.expires_at)>new Date())return toast("Tutup sesi QR terlebih dahulu sebelum menandai siswa yang belum hadir.","error");
+ const {data:records,error:rerr}=await sb.from("attendance_records").select("student_id").eq("session_id",sid);
+ if(rerr)return toast(rerr.message,"error");
+ const present=new Set((records||[]).map(x=>x.student_id));
+ const missing=students.filter(s=>!present.has(s.id));
+ if(!missing.length)return toast("Semua siswa sudah memiliki status.");
+ const ok=await confirmBox("Tandai siswa belum tercatat? ",`${missing.length} siswa yang belum memiliki catatan akan diberi status ALPA.`, "TANDAI ALPA");
+ if(!ok)return;
+ for(const st of missing){const {error}=await sb.rpc("mark_attendance_manual",{p_session_id:sid,p_student_id:st.id,p_status:"alpa",p_note:"Ditandai Admin setelah sesi absensi"});if(error)return toast(error.message,"error")}
+ await loadAttendanceRoster();toast(`${missing.length} siswa ditandai Alpa.`);
+}
+async function submitAttendanceToken(token){
+ token=(token||"").trim();if(!token)return toast("QR/token belum terbaca.","error");
+ $("attendanceScanStatus").textContent="Memvalidasi absensi...";
+ const {data,error}=await sb.rpc("scan_attendance_qr",{p_token:token});
+ if(error){$("attendanceScanStatus").textContent=error.message;return toast(error.message,"error")}
+ const row=rpcRow(data);$("attendanceScanStatus").textContent=`Berhasil! ${row?.student_name||"Kehadiran"} tercatat pada ${localDate(row?.marked_at)}.`;
+ $("attendanceTokenInput").value="";toast("Absensi berhasil dicatat.");
+}
+async function startQrScan(){
+ if(!window.Html5Qrcode)return toast("Library scanner belum termuat. Gunakan input token.","error");
+ if(qrScanner)return;
+ try{
+  qrScanner=new Html5Qrcode("qr-reader");
+  await qrScanner.start({facingMode:"environment"},{fps:10,qrbox:{width:230,height:230}},async decoded=>{
+   await stopQrScan();await submitAttendanceToken(decoded);
+  },()=>{});
+ }catch(e){qrScanner=null;toast("Kamera tidak bisa dibuka. Pastikan izin kamera aktif dan website memakai HTTPS.","error")}
+}
+async function stopQrScan(){if(!qrScanner)return;try{await qrScanner.stop();await qrScanner.clear()}catch(e){}qrScanner=null}
+async function loadAccountStudentLinks(){
+ if(!isAdmin())return;
+ const [p,s]=await Promise.all([sb.from("profiles").select("id,email,display_name,role,student_id").order("display_name"),sb.from("students").select("id,name").order("sort_order")]);
+ const err=p.error||s.error;if(err){$("studentLinkStatus").textContent=err.message;return}
+ linkedProfiles=p.data||[];
+ $("linkUserSelect").innerHTML='<option value="">Pilih akun</option>'+linkedProfiles.map(u=>`<option value="${u.id}">${esc(u.display_name||u.email)} · ${esc(u.role)}</option>`).join("");
+ $("linkStudentSelect").innerHTML='<option value="">Pilih siswa</option><option value="">Lepas hubungan</option>'+(s.data||[]).map(st=>`<option value="${st.id}">${esc(st.name)}</option>`).join("");
+ $("linkUserSelect").onchange=()=>{const u=linkedProfiles.find(x=>x.id===$("linkUserSelect").value);$("linkStudentSelect").value=u?.student_id||"";$("studentLinkStatus").textContent=u?.student_id?"Akun ini sudah terhubung.":""};
+}
+async function saveStudentLink(){
+ const uid=$("linkUserSelect").value;if(!uid)return toast("Pilih akun dulu.","error");
+ const sid=$("linkStudentSelect").value||null;
+ const {error}=await sb.rpc("link_student_account",{p_user_id:uid,p_student_id:sid});
+ if(error)return toast(error.message,"error");
+ $("studentLinkStatus").textContent="Hubungan akun dan siswa berhasil disimpan.";
+ await loadAccountStudentLinks();toast("Akun siswa berhasil dihubungkan.");
+}
+async function loadStudentProfile(){
+ const target=$("studentProfileCard");
+ if(!profile?.student_id){target.innerHTML='<div class="empty">Akun kamu belum dihubungkan ke data siswa. Minta Admin menghubungkan akun melalui menu Absensi QR.</div>';return}
+ const [s,h,a]=await Promise.all([sb.from("students").select("id,name,student_no,photo_url,profile_note").eq("id",profile.student_id).maybeSingle(),sb.from("spin_history").select("seat_no,spin_no,student_name").eq("student_id",profile.student_id).maybeSingle(),sb.from("attendance_records").select("status,marked_at").eq("student_id",profile.student_id).order("marked_at",{ascending:false}).limit(8)]);
+ if(s.error)return target.innerHTML=`<div class="empty">${esc(s.error.message)}</div>`;
+ const st=s.data;if(!st){target.innerHTML='<div class="empty">Data siswa tidak ditemukan.</div>';return}
+ const seat=h.data?.seat_no||h.data?.spin_no;const pos=seat?`Meja ${Math.ceil(seat/2)} · Kursi ${seat%2?"A":"B"}`:"Belum mendapat tempat duduk";
+ target.innerHTML=`<div class="module-item"><div style="font-size:24px">👤 <b>${esc(st.name)}</b></div><p>Nomor siswa: ${esc(st.student_no||"Belum diatur")}<br>Tempat duduk: ${esc(pos)}<br>Email akun: ${esc(profile.email||"")}</p><p>${esc(st.profile_note||"Belum ada catatan profil.")}</p></div><div class="module-item"><b>Riwayat kehadiran terbaru</b>${(a.data||[]).map(x=>`<p>${esc(x.status.toUpperCase())} · ${localDate(x.marked_at)}</p>`).join("")||"<p>Belum ada riwayat.</p>"}</div>`;
+}
+async function loadStudentHome(){
+ const [h,e,a]=await Promise.all([profile?.student_id?sb.from("attendance_records").select("status").eq("student_id",profile.student_id):Promise.resolve({data:[],error:null}),sb.from("class_events").select("title,starts_at,location").gte("starts_at",new Date().toISOString()).order("starts_at").limit(5),sb.from("class_announcements").select("title,body,priority,publish_at").order("publish_at",{ascending:false}).limit(5)]);
+ const rec=h.data||[];$("studentHomeName").textContent=profile?.display_name||"Siswa";$("studentHomePresent").textContent=rec.filter(x=>x.status==="hadir").length;$("studentHomeExcused").textContent=rec.filter(x=>["izin","sakit"].includes(x.status)).length;$("studentHomeAbsent").textContent=rec.filter(x=>x.status==="alpa").length;
+ if(profile?.student_id){const {data}=await sb.from("spin_history").select("seat_no,spin_no").eq("student_id",profile.student_id).maybeSingle();const seat=data?.seat_no||data?.spin_no;$("studentHomeSeat").innerHTML=seat?`<div class="module-item"><b>Meja ${Math.ceil(seat/2)} · Kursi ${seat%2?"A":"B"}</b><p>Tempat duduk saat ini.</p></div>`:'<div class="empty">Belum mendapatkan tempat duduk.</div>'}else $("studentHomeSeat").innerHTML='<div class="empty">Akun belum dihubungkan dengan data siswa.</div>';
+ $("studentHomeEvents").innerHTML=(e.data||[]).map(x=>`<div class="module-item"><b>${esc(x.title)}</b><p>${localDate(x.starts_at)} · ${esc(x.location||"")}</p></div>`).join("")||'<div class="empty">Belum ada jadwal mendatang.</div>';
+ $("studentHomeAnnouncements").innerHTML=(a.data||[]).map(x=>`<div class="module-item"><b>${esc(x.title)}</b><p>${esc(x.body)}</p><span class="status-pill ${x.priority==="important"?"important":""}">${x.priority==="important"?"PENTING":"INFO"}</span></div>`).join("")||'<div class="empty">Belum ada pengumuman.</div>';
+}
+async function loadCalendar(){
+ const {data,error}=await sb.from("class_events").select("*").order("starts_at",{ascending:true}).limit(100);
+ $("calendarList").innerHTML=error?`<div class="empty">${esc(error.message)}</div>`:(data||[]).map(x=>`<div class="module-item"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(x.title)}</b>${isAdmin()?`<button class="btn danger" data-delete-event="${x.id}" style="min-height:30px;padding:5px 9px">HAPUS</button>`:""}</div><p>${esc(x.description||"")}</p><div class="module-meta">${localDate(x.starts_at)}${x.ends_at?" – "+localDate(x.ends_at):""} · ${esc(x.location||"Tanpa lokasi")}</div></div>`).join("")||'<div class="empty">Belum ada kegiatan kelas.</div>';
+ document.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=async()=>{if(!await confirmBox("Hapus kegiatan?","Kegiatan ini akan dihapus dari kalender.","HAPUS"))return;const {error}=await sb.from("class_events").delete().eq("id",b.dataset.deleteEvent);if(error)return toast(error.message,"error");loadCalendar()});
+}
+async function saveClassEvent(){
+ if(!isAdmin())return;const title=$("eventTitle").value.trim(),start=$("eventStart").value;if(!title||!start)return toast("Nama dan waktu mulai wajib diisi.","error");
+ const {error}=await sb.from("class_events").insert({title,description:$("eventDescription").value,starts_at:new Date(start).toISOString(),ends_at:$("eventEnd").value?new Date($("eventEnd").value).toISOString():null,location:$("eventLocation").value,created_by:profile.id});
+ if(error)return toast(error.message,"error");["eventTitle","eventDescription","eventStart","eventEnd","eventLocation"].forEach(id=>$(id).value="");await loadCalendar();toast("Kegiatan ditambahkan ke kalender.");
+}
+async function loadAnnouncements(){
+ const {data,error}=await sb.from("class_announcements").select("*").order("publish_at",{ascending:false}).limit(50);
+ $("announcementList").innerHTML=error?`<div class="empty">${esc(error.message)}</div>`:(data||[]).map(x=>`<div class="module-item"><div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(x.title)}</b><span class="status-pill ${x.priority==="important"?"important":""}">${x.priority==="important"?"PENTING":"INFO"}</span></div><p>${esc(x.body)}</p><div class="module-meta">${localDate(x.publish_at)}${isAdmin()?` · <button class="btn danger" data-delete-announcement="${x.id}" style="min-height:28px;padding:3px 8px">HAPUS</button>`:""}</div></div>`).join("")||'<div class="empty">Belum ada pengumuman.</div>';
+ document.querySelectorAll("[data-delete-announcement]").forEach(b=>b.onclick=async()=>{if(!await confirmBox("Hapus pengumuman?","Pengumuman ini akan dihapus.","HAPUS"))return;const {error}=await sb.from("class_announcements").delete().eq("id",b.dataset.deleteAnnouncement);if(error)return toast(error.message,"error");loadAnnouncements()});
+}
+async function saveClassAnnouncement(){
+ if(!isAdmin())return;const title=$("announcementTitle").value.trim(),body=$("announcementBody").value.trim();if(!title||!body)return toast("Judul dan isi pengumuman wajib diisi.","error");
+ const {error}=await sb.from("class_announcements").insert({title,body,priority:$("announcementPriority").value,created_by:profile.id});
+ if(error)return toast(error.message,"error");$("announcementTitle").value="";$("announcementBody").value="";await loadAnnouncements();toast("Pengumuman berhasil diterbitkan.");
+}
+async function loadSuggestions(){
+ const {data,error}=await sb.from("class_suggestions").select("id,user_id,student_id,message,anonymous_to_students,status,admin_reply,created_at").order("created_at",{ascending:false}).limit(100);
+ $("suggestionList").innerHTML=error?`<div class="empty">${esc(error.message)}</div>`:(data||[]).map(x=>`<div class="module-item"><div style="display:flex;justify-content:space-between;gap:10px"><b>Saran ${isAdmin()?"· "+(x.anonymous_to_students?"Anonim":"Akun "+x.user_id.slice(0,8)):""}</b><span class="status-pill">${esc(x.status.toUpperCase())}</span></div><p>${esc(x.message)}</p>${x.admin_reply?`<p><b>Balasan Admin:</b> ${esc(x.admin_reply)}</p>`:""}${isAdmin()?`<div class="form-row"><select class="field" data-suggestion-status="${x.id}"><option value="baru" ${x.status==="baru"?"selected":""}>Baru</option><option value="diproses" ${x.status==="diproses"?"selected":""}>Diproses</option><option value="selesai" ${x.status==="selesai"?"selected":""}>Selesai</option></select><input class="field" data-suggestion-reply="${x.id}" placeholder="Balasan Admin" value="${esc(x.admin_reply||"")}"></div><button class="btn" data-save-suggestion="${x.id}" style="margin-top:8px">SIMPAN TANGGAPAN</button>`:""}</div>`).join("")||'<div class="empty">Belum ada saran.</div>';
+ document.querySelectorAll("[data-save-suggestion]").forEach(b=>b.onclick=async()=>{const id=b.dataset.saveSuggestion,st=document.querySelector(`[data-suggestion-status="${id}"]`).value,reply=document.querySelector(`[data-suggestion-reply="${id}"]`).value;const {error}=await sb.from("class_suggestions").update({status:st,admin_reply:reply,updated_at:new Date().toISOString()}).eq("id",id);if(error)return toast(error.message,"error");await loadSuggestions();toast("Tanggapan disimpan.")});
+}
+async function sendClassSuggestion(){
+ const msg=$("suggestionMessage").value.trim();if(msg.length<3)return toast("Tulis saran minimal 3 karakter.","error");
+ const {error}=await sb.rpc("submit_class_suggestion",{p_message:msg,p_anonymous:$("suggestionAnonymous").checked});
+ if(error)return toast(error.message,"error");$("suggestionMessage").value="";await loadSuggestions();toast("Saran berhasil dikirim.");
+}
+
+
+async function loadProfileEditor(){
+ if(!isAdmin())return;
+ const {data,error}=await sb.from("students").select("id,name,student_no,photo_url,profile_note").order("sort_order");
+ if(error)return toast(error.message,"error");
+ $("profileStudentSelect").innerHTML='<option value="">Pilih siswa</option>'+(data||[]).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");
+ $("profileStudentSelect").onchange=()=>{const s=(data||[]).find(x=>x.id===$("profileStudentSelect").value);$("profileStudentNo").value=s?.student_no||"";$("profilePhotoUrl").value=s?.photo_url||"";$("profileNote").value=s?.profile_note||""};
+}
+async function saveStudentProfile(){
+ if(!isAdmin())return;const id=$("profileStudentSelect").value;if(!id)return toast("Pilih siswa dulu.","error");
+ const url=$("profilePhotoUrl").value.trim();if(url&&!/^https:\/\/.+/i.test(url))return toast("URL foto harus diawali https://","error");
+ const {error}=await sb.from("students").update({student_no:$("profileStudentNo").value.trim()||null,photo_url:url||null,profile_note:$("profileNote").value.trim()||null}).eq("id",id);
+ if(error)return toast(error.message,"error");await refresh();toast("Profil siswa berhasil diperbarui.");
+}
+async function exportAttendanceCsv(){
+ const sid=$("attendanceSessionSelect").value;if(!sid)return toast("Pilih sesi absensi dulu.","error");
+ const [r,s]=await Promise.all([sb.from("attendance_records").select("student_id,status,method,marked_at,note").eq("session_id",sid),sb.from("students").select("id,name,student_no").order("sort_order")]);
+ const err=r.error||s.error;if(err)return toast(err.message,"error");
+ const map=new Map((r.data||[]).map(x=>[x.student_id,x]));
+ const rows=[["Nomor","Nama Siswa","Status","Metode","Waktu","Catatan"],...(s.data||[]).map((st,i)=>{const x=map.get(st.id);return [st.student_no||i+1,st.name,x?.status||"belum",x?.method||"",x?.marked_at||"",x?.note||""]})];
+ const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="rekap-absensi-"+new Date().toISOString().slice(0,10)+".csv";a.click();URL.revokeObjectURL(url);toast("Rekap absensi CSV berhasil diunduh.");
+}
 
 const mobileMenuToggle=$("mobileMenuToggle");
 mobileMenuToggle.onclick=()=>{const opened=$("appView").querySelector(".sidebar").classList.toggle("menu-open");mobileMenuToggle.setAttribute("aria-expanded",String(opened));mobileMenuToggle.textContent=opened?"✕ TUTUP":"☰ MENU"};
@@ -435,7 +724,8 @@ $("runHealth").onclick=runSystemHealth;$("downloadBackup").onclick=downloadBacku
 $("registerForm").addEventListener("submit",registerUser);$("authSwitch").onclick=toggleAuth;$("developerAccessBtn").onclick=()=>{$("maintenanceView").classList.add("hidden");$("loginView").classList.remove("hidden")};
 $("maintenanceEnable").onclick=()=>setMaintenance(true);$("maintenanceDisable").onclick=()=>setMaintenance(false);$("unlockSecretBtn").onclick=unlockSecret;$("lockSecretBtn").onclick=lockSecret;$("saveSecretSeat").onclick=saveSecretAssignment;
 $("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!sb){$("loginError").textContent="Konfigurasi Supabase belum diisi. Buka file README untuk langkah setup.";return}const {error,data}=await sb.auth.signInWithPassword({email:$("email").value,password:$("password").value});if(error){$("loginError").textContent=error.message;return}try{await enterApp(data.user)}catch(err){if(!maintenanceState.enabled){$("loginError").textContent=err.message;await sb.auth.signOut()}else{$("loginError").textContent=err.message}}});
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{setPage(b.dataset.page);$("appView").querySelector(".sidebar").classList.remove("menu-open");mobileMenuToggle.setAttribute("aria-expanded","false");mobileMenuToggle.textContent="☰ MENU";if(b.dataset.page==="developer"){await loadDeveloperSettings();await loadGlobalSettings()}if(b.dataset.page==="activity")await loadActivity();if(b.dataset.page==="seating"&&isAdmin())await loadSnapshots()});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=async()=>{setPage(b.dataset.page);$("appView").querySelector(".sidebar").classList.remove("menu-open");mobileMenuToggle.setAttribute("aria-expanded","false");mobileMenuToggle.textContent="☰ MENU";if(b.dataset.page==="developer"){await loadDeveloperSettings();await loadGlobalSettings()}if(b.dataset.page==="activity")await loadActivity();if(b.dataset.page==="seating"&&isAdmin())await loadSnapshots();if(b.dataset.page==="attendance"){if(isAdmin()){await loadAttendanceSessions();await loadAccountStudentLinks();if(activeAttendanceSession)await loadAttendanceRoster()}}if(b.dataset.page==="student-home")await loadStudentHome();if(b.dataset.page==="student-profile"){await loadStudentProfile();if(isAdmin())await loadProfileEditor();}if(b.dataset.page==="calendar")await loadCalendar();if(b.dataset.page==="announcements")await loadAnnouncements();if(b.dataset.page==="suggestions")await loadSuggestions()});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
+$("createAttendance").onclick=createAttendance;$("closeAttendance").onclick=closeAttendance;$("attendanceSessionSelect").onchange=loadAttendanceRoster;$("refreshAttendance").onclick=loadAttendanceRoster;$("markMissingAlpa").onclick=markMissingAlpa;$("startQrScan").onclick=startQrScan;$("stopQrScan").onclick=stopQrScan;$("submitAttendanceToken").onclick=()=>submitAttendanceToken($("attendanceTokenInput").value);$("saveStudentLink").onclick=saveStudentLink;$("saveStudentProfile").onclick=saveStudentProfile;$("exportAttendanceCsv").onclick=exportAttendanceCsv;$("saveEvent").onclick=saveClassEvent;$("saveAnnouncement").onclick=saveClassAnnouncement;$("sendSuggestion").onclick=sendClassSuggestion;
 $("spinBtn").onclick=doSpin;$("autoBtn").onclick=startAuto;$("pauseBtn").onclick=pauseAuto;$("resumeBtn").onclick=resumeAuto;$("stopBtn").onclick=stopAuto;$("undoBtn").onclick=undo;$("resetBtn").onclick=resetAll;$("shuffleBtn").onclick=shuffleStudents;$("addBulk").onclick=addStudents;$("clearInput").onclick=()=>$("bulkNames").value="";$("copyPlan").onclick=copyPlan;$("downloadPlan").onclick=downloadPlan;$("accountForm").onsubmit=createAccount;$("logoutBtn").onclick=logout;$("mobileLogout").onclick=logout;$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
 if(sb){fetchMaintenance();sb.auth.getSession().then(async({data})=>{if(data.session){try{await enterApp(data.session.user)}catch(e){toast(e.message,"error")}}});sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}})}
 </script>
