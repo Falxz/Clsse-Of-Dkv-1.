@@ -51,8 +51,20 @@ alter table public.students enable row level security;
 alter table public.spin_history enable row level security;
 alter table public.classroom_state enable row level security;
 
+
 drop policy if exists "authenticated can read profiles" on public.profiles;
-create policy "users read own profile; staff read profiles" on public.profiles for select to authenticated using (id = auth.uid() or public.current_app_role() in ('admin','developer'));
+
+drop policy if exists "users read own profile; staff read profiles" on public.profiles;
+
+create policy "users read own profile; staff read profiles"
+on public.profiles
+for select
+to authenticated
+using (
+  id = auth.uid()
+  or public.current_app_role() in ('admin','developer')
+);
+
 drop policy if exists "users read students" on public.students;
 create policy "users read students" on public.students for select to authenticated using (true);
 drop policy if exists "admins manage students" on public.students;
