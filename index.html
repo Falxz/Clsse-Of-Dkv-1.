@@ -109,11 +109,11 @@ button,.btn{min-height:42px}
 
 
 
-/* TOP-RIGHT SETTINGS MENU: keep feature controls off the dashboard and main nav */
+/* TOP-RIGHT THREE-DOT POPOVER: compact anchored menu, no backdrop or dashboard takeover */
 .top-settings-wrap{position:relative;display:inline-flex;align-items:center}
-.top-settings-menu{position:absolute;z-index:1000;right:0;top:calc(100% + 10px);width:min(290px,calc(100vw - 28px));padding:9px;background:var(--panel, #111d30);border:1px solid var(--line, #2a3b55);border-radius:14px;box-shadow:0 16px 42px #0005}
-.top-settings-label{padding:7px 10px 9px;color:var(--muted,#91a0b7);font-size:10px;font-weight:800;letter-spacing:.12em}
-.top-settings-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 10px;border:0;border-radius:10px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.top-settings-menu{position:absolute;z-index:1000;right:0;top:calc(100% + 6px);width:min(240px,calc(100vw - 28px));max-height:min(65vh,360px);overflow:auto;padding:7px;background:var(--panel, #111d30);border:1px solid var(--line, #2a3b55);border-radius:14px;box-shadow:0 16px 42px #0005}
+.top-settings-label{padding:6px 9px 7px;color:var(--muted,#91a0b7);font-size:10px;font-weight:800;letter-spacing:.12em}
+.top-settings-item{display:flex;align-items:center;gap:9px;width:100%;padding:10px 9px;border:0;border-radius:10px;background:transparent;color:inherit;text-align:left;cursor:pointer}
 .top-settings-item:hover{background:#ffffff10}
 .top-settings-item>span:first-child{font-size:18px;color:#8fc0ff}
 .top-settings-item b,.top-settings-item small{display:block}
@@ -249,7 +249,7 @@ body{background:radial-gradient(900px 500px at 8% -8%,#344c9a55,transparent 65%)
   <div class="side-bottom"><div class="profile"><div class="avatar" id="avatar">U</div><div><b id="sideName">User</b><div class="small muted" id="sideRole">USER</div></div></div><button id="logoutBtn" class="btn ghost">↪ &nbsp; Logout</button></div>
  </aside>
  <main class="main">
-  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><div class="top-settings-wrap staff-only" id="topSettingsWrap"><button class="btn" id="topSettingsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="topSettingsMenu" title="Menu pengaturan">☰</button><div class="top-settings-menu hidden" id="topSettingsMenu" role="menu"><div class="top-settings-label">PENGATURAN</div><button type="button" class="top-settings-item" id="openFeatureManagement" role="menuitem"><span>◉</span><span><b>Manajemen Fitur</b><small>Aktifkan atau nonaktifkan fitur</small></span><span class="top-settings-arrow">›</span></button></div></div><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
+  <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><div class="top-settings-wrap staff-only" id="topSettingsWrap"><button class="btn" id="topSettingsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="topSettingsMenu" title="Menu pengaturan" aria-label="Buka menu pengaturan">⋮</button><div class="top-settings-menu hidden" id="topSettingsMenu" role="menu"><div class="top-settings-label">PENGATURAN</div><button type="button" class="top-settings-item" id="openFeatureManagement" role="menuitem"><span>◉</span><span><b>Manajemen Fitur</b><small>Aktifkan atau nonaktifkan fitur</small></span><span class="top-settings-arrow">›</span></button></div></div><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout">↪</button></div></header>
   <section id="page-overview">
    <div class="premium-banner"><div class="eyebrow">YOUR CLASSROOM · ONE SPACE</div><h3>Semua aktivitas kelas, lebih rapi dan terhubung.</h3><p>Kelola tempat duduk, kehadiran, informasi, dan aktivitas siswa dari satu dashboard.</p></div>
    <div class="grid-stats">
