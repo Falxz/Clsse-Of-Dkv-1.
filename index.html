@@ -223,6 +223,35 @@ body{background:radial-gradient(900px 500px at 8% -8%,#344c9a55,transparent 65%)
   .top-settings-menu{right:0;max-width:calc(100vw - 26px)}
 }
 
+
+/* HYBRID NAV SCROLL + TOUCH TARGET FIX (Nov 2026) */
+@media (max-width:1000px){
+  .sidebar.menu-open{align-items:stretch}
+  .sidebar.menu-open .nav{
+    display:flex!important;
+    position:absolute!important;
+    top:calc(100% + 7px)!important;left:10px!important;right:10px!important;
+    width:auto!important;
+    height:auto!important;
+    max-height:calc(100dvh - 105px)!important;
+    min-height:0!important;
+    overflow-y:scroll!important;overflow-x:hidden!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+    flex:0 1 auto!important;
+    padding:10px 9px 18px!important;
+    box-sizing:border-box!important;
+  }
+  .nav-group{flex:0 0 auto;min-width:0}
+  .nav-group-title{min-height:46px!important;white-space:normal!important;line-height:1.35!important}
+  .nav-group-items button{min-height:44px!important;white-space:normal!important;line-height:1.35!important;overflow-wrap:anywhere!important;padding:11px 12px!important}
+  .nav-search-wrap{position:sticky;top:-10px;z-index:2;flex:0 0 auto;background:#081222}
+}
+@media (min-width:1001px){
+  .nav{min-height:0;overflow-y:auto!important;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+}
+
 </style>
 </head>
 <body>
