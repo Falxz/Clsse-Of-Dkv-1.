@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js'"></script>
 <style>
 :root{--bg:#080d19;--panel:#101a2c;--panel2:#142139;--line:#24334c;--text:#f2f6ff;--muted:#8e9bb2;--blue:#69a7ff;--cyan:#70d8e8;--green:#55d6a0;--red:#ff7188;--shadow:0 22px 70px #0007}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#1b3760 0,transparent 38%),radial-gradient(ellipse at 90% 20%,#102b42 0,transparent 32%),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}button,input,textarea{font:inherit}button{cursor:pointer;border:0;color:inherit}.hidden{display:none!important}.muted{color:var(--muted)}.eyebrow{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--cyan);font-weight:800}.brand{font:800 17px "Plus Jakarta Sans";letter-spacing:.04em}.brand span{color:var(--blue)}.btn{padding:11px 16px;border-radius:13px;background:#1b2b45;border:1px solid #30425e;font-weight:700;transition:.22s transform,.22s background,.22s box-shadow}.btn:hover{transform:translateY(-2px);background:#253b5d;box-shadow:0 9px 24px #0004}.btn:active{transform:scale(.97)}.btn.primary{background:linear-gradient(135deg,#4e8df2,#3774d7);border-color:#79aaff;box-shadow:0 8px 24px #3774d733}.btn.danger{background:#3a2030;border-color:#744052;color:#ffb2c0}.btn.ghost{background:transparent}.btn:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none}.field{width:100%;background:#0b1424;border:1px solid #2b3b55;border-radius:12px;padding:13px 14px;color:var(--text);outline:none}.field:focus{border-color:#6aa7ff;box-shadow:0 0 0 3px #6aa7ff20}label{display:block;font-size:12px;color:#aab8ce;margin:0 0 7px;font-weight:700}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}.login-card{width:min(440px,100%);padding:34px;border:1px solid #30415e;background:linear-gradient(145deg,#142139eF,#0d1728f5);border-radius:26px;box-shadow:var(--shadow);animation:rise .55s both}.login-card h1{font:800 27px "Plus Jakarta Sans";margin:10px 0}.login-card p{color:var(--muted);line-height:1.6;font-size:13px}.login-card .field{margin-bottom:15px}.login-logo{width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,#6daaff,#335cc3);display:grid;place-items:center;font-size:25px;box-shadow:0 10px 30px #4c83ef44}.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{border-right:1px solid #1e2c42;background:#0b1322cc;padding:25px 17px;display:flex;flex-direction:column;gap:25px}.side-brand{padding:0 12px 12px}.role-pill{display:inline-flex;gap:7px;align-items:center;padding:6px 10px;border:1px solid #344760;border-radius:30px;color:#b9c9e1;font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin:0 10px}.nav{display:grid;gap:7px}.nav button{background:transparent;text-align:left;padding:13px 14px;border-radius:12px;color:#9eacc2;font-weight:700;transition:.2s}.nav button:hover,.nav button.active{background:linear-gradient(90deg,#24416b88,#1b2d49aa);color:white}.nav button.active{box-shadow:inset 3px 0 #72adff}.side-bottom{margin-top:auto;display:grid;gap:12px}.profile{display:flex;gap:10px;align-items:center;padding:13px;background:#111e32;border:1px solid #263751;border-radius:15px}.avatar{width:35px;height:35px;border-radius:12px;background:linear-gradient(135deg,#6bafff,#4660b5);display:grid;place-items:center;font-weight:800}.main{padding:30px clamp(18px,4vw,48px);min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:28px}.topbar h2{font:800 24px "Plus Jakarta Sans";margin:5px 0}.top-actions{display:flex;gap:9px;align-items:center}.grid-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.card{background:linear-gradient(145deg,#142139d9,#101a2bdc);border:1px solid #263751;border-radius:19px;padding:19px;box-shadow:0 10px 35px #0002;transition:transform .22s,border-color .22s,box-shadow .22s}.card.hover:hover{transform:translateY(-4px);border-color:#49658b;box-shadow:0 18px 40px #0004}.stat-label{font-size:12px;color:var(--muted);font-weight:700}.stat-num{font:800 27px "Plus Jakarta Sans";margin-top:9px}.stat-icon{float:right;font-size:20px}.section-title{font:800 17px "Plus Jakarta Sans";margin:0 0 15px}.content-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:17px}.wheel-card{display:flex;flex-direction:column;align-items:center;text-align:center;min-height:470px}.wheel{width:min(330px,75vw);aspect-ratio:1;border-radius:50%;position:relative;margin:10px auto 20px;border:8px solid #263b5b;box-shadow:0 0 0 5px #101a2b,0 20px 55px #0008;overflow:hidden;background:conic-gradient(#2d5489 0 45deg,#172a47 45deg 90deg,#37689c 90deg 135deg,#1c365b 135deg 180deg,#477ab0 180deg 225deg,#1d3150 225deg 270deg,#315f94 270deg 315deg,#172943 315deg)}.wheel:before{content:"";position:absolute;inset:20%;border-radius:50%;background:#0b1526;border:5px solid #8bbaff;box-shadow:0 0 0 5px #1a2c48;z-index:2}.wheel-center{position:absolute;z-index:3;inset:0;display:grid;place-items:center;font:800 15px "Plus Jakarta Sans";letter-spacing:.1em}.pointer{position:absolute;top:-3px;left:calc(50% - 15px);z-index:4;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:35px solid #8ed9f0;filter:drop-shadow(0 3px 5px #0008)}.wheel.spinning{animation:spin 1s cubic-bezier(.12,.72,.15,1) infinite}.wheel-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.result-name{font:800 24px "Plus Jakarta Sans";margin:10px 0 4px}.progress{height:9px;border-radius:10px;background:#25334a;overflow:hidden}.progress>span{display:block;height:100%;background:linear-gradient(90deg,#5c9df8,#69d3d9);border-radius:10px;transition:width .4s}.history{display:grid;gap:9px;max-height:300px;overflow:auto}.history-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0c1728;border:1px solid #24344c;border-radius:12px;font-size:13px}.seat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.seat{background:#111e32;border:1px solid #2b3c56;border-radius:15px;padding:13px;min-height:110px;transition:.25s}.seat.filled{background:linear-gradient(145deg,#17334a,#13273b);border-color:#367a8b}.seat.recent{animation:seatPulse 1.4s ease}.seat-head{display:flex;justify-content:space-between;font-size:11px;color:#9eafc6;font-weight:800;margin-bottom:12px}.seat-person{font-size:12px;padding:7px 8px;border-radius:9px;background:#0a1423;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.seat-person em{font-style:normal;color:#77b9ff;margin-right:5px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.student-list{display:grid;gap:8px;max-height:460px;overflow:auto}.student-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:#0d1829;border:1px solid #26364e;border-radius:12px;font-size:13px}.tag{font-size:10px;padding:5px 8px;border-radius:20px;background:#183b3b;color:#84e1c4}.modal-backdrop{position:fixed;inset:0;z-index:20;background:#020611b9;backdrop-filter:blur(9px);display:grid;place-items:center;padding:20px;animation:fade .18s}.modal{width:min(460px,100%);background:linear-gradient(145deg,#1a2b46,#0e192b);border:1px solid #3b5273;border-radius:24px;padding:26px;box-shadow:0 30px 100px #000b;animation:pop .28s cubic-bezier(.2,.9,.2,1)}.modal h3{font:800 21px "Plus Jakarta Sans";margin:8px 0}.modal p{color:#a8b6cb;line-height:1.6;font-size:13px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.toast-wrap{position:fixed;right:20px;top:20px;z-index:40;display:grid;gap:9px}.toast{padding:13px 17px;background:#172941;border:1px solid #42617f;border-radius:14px;box-shadow:var(--shadow);animation:toastIn .3s}.toast.error{border-color:#8e4559}.toast.success{border-color:#387d6c}.skeleton{background:linear-gradient(90deg,#142238 25%,#223550 45%,#142238 65%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:10px;height:70px}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #34445e;border-radius:15px}.small{font-size:11px}.mobile-menu{display:none}
@@ -964,47 +964,53 @@ async function submitAttendanceToken(token){
 }
 function cameraErrorMessage(e){
  const name=e?.name||"",msg=String(e?.message||e||"");
- if(!window.isSecureContext)return "Kamera diblokir karena halaman bukan HTTPS. Buka Spinner Seating lewat alamat https:// di Chrome.";
- if(!navigator.mediaDevices?.getUserMedia)return "Browser tidak menyediakan akses kamera. Buka website langsung di Chrome, bukan browser dalam aplikasi.";
- if(name==="NotAllowedError"||name==="SecurityError"||/permission|denied|not allowed/i.test(msg))return "Izin kamera ditolak atau diblokir. Di Android: Setelan → Aplikasi → Chrome → Izin → Kamera → Izinkan. Lalu buka ulang website dan tekan Izinkan saat diminta.";
- if(name==="NotFoundError"||/no camera|device not found/i.test(msg))return "Kamera tidak terdeteksi oleh browser. Tutup aplikasi lain yang memakai kamera lalu coba lagi.";
- if(name==="NotReadableError"||/could not start video source|track start/i.test(msg))return "Kamera sedang digunakan aplikasi lain atau gagal diakses. Tutup Kamera/Meet/WhatsApp, lalu coba lagi.";
- if(name==="OverconstrainedError")return "Kamera belakang tidak cocok. Coba ulangi; pemindai akan memilih kamera yang tersedia.";
- if(name==="AbortError")return "Browser menghentikan proses kamera. Muat ulang halaman lalu coba lagi.";
- return "Kamera gagal dibuka ("+(name||"UnknownError")+"). "+(msg||"Periksa izin kamera, koneksi, dan gunakan Chrome HTTPS.");
+ if(!window.isSecureContext)return "Kamera butuh HTTPS. Buka Spinner Seating lewat alamat https:// di Chrome.";
+ if(!navigator.mediaDevices?.getUserMedia)return "Browser ini tidak menyediakan akses kamera. Buka website langsung di Chrome.";
+ if(name==="NotAllowedError"||name==="SecurityError"||/permission|denied|not allowed/i.test(msg))return "Akses kamera ditolak browser. Periksa izin kamera untuk situs dan izin kamera aplikasi Chrome.";
+ if(name==="NotFoundError"||/no camera|device not found/i.test(msg))return "Kamera tidak ditemukan oleh browser.";
+ if(name==="NotReadableError"||/could not start video source|track start/i.test(msg))return "Kamera sedang dipakai aplikasi lain atau gagal diinisialisasi. Tutup aplikasi kamera/Meet/WhatsApp lalu coba lagi.";
+ if(name==="OverconstrainedError")return "Kamera tidak cocok dengan pengaturan yang diminta. Coba kamera lain.";
+ if(name==="AbortError")return "Browser membatalkan pembukaan kamera. Muat ulang halaman dan coba lagi.";
+ return "Kamera gagal dibuka"+(name?" ("+name+")":"")+ (msg?": "+msg: ". Coba tutup aplikasi lain yang memakai kamera.");
 }
 async function startQrScan(){
- const status=$("attendanceScanStatus"),btn=$("startQrScan");
- if(!status||!btn)return;
- if(!window.Html5Qrcode){status.textContent="Pemindai QR belum termuat. Periksa koneksi lalu muat ulang halaman.";toast("Library scanner belum termuat.","error");return}
+ const status=$("attendanceScanStatus"),btn=$("startQrScan"),reader=$("qr-reader");
+ if(!status||!btn||!reader)return;
  if(qrScanner?.isScanning)return;
- if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){status.textContent=cameraErrorMessage();toast("Browser belum mengizinkan akses kamera.","error");return}
- btn.disabled=true;btn.textContent="MEMBUKA KAMERA…";status.textContent="Menghubungkan ke kamera belakang…";
- const config={fps:8,qrbox:(vw,vh)=>{const side=Math.max(160,Math.min(230,vw-28,vh-28));return {width:side,height:side}},aspectRatio:1,disableFlip:true,videoConstraints:{facingMode:{ideal:"environment"}}};
- const onDecoded=async decoded=>{await stopQrScan();await submitAttendanceToken(decoded)};
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){status.textContent=cameraErrorMessage();toast("Browser belum menyediakan akses kamera.","error");return}
+ if(!window.Html5Qrcode){status.textContent="Library pemindai QR belum termuat. Periksa koneksi internet lalu muat ulang halaman.";toast("Library pemindai QR tidak termuat.","error");return}
+ btn.disabled=true;btn.textContent="MEMBUKA KAMERA…";status.textContent="Meminta akses kamera…";
+ const config={fps:10,qrbox:(vw,vh)=>{const side=Math.max(160,Math.min(250,vw-32,vh-32));return {width:side,height:side}},aspectRatio:1,disableFlip:true};
+ const onDecoded=async decoded=>{if(!decoded)return;await stopQrScan();await submitAttendanceToken(decoded)};
  const cleanScanner=async()=>{if(qrScanner){try{if(qrScanner.isScanning)await qrScanner.stop()}catch(_){}try{await qrScanner.clear()}catch(_){}qrScanner=null}};
  try{
-  // Start directly with the rear-camera preference. Avoid opening and immediately
-  // stopping a temporary stream, which can race with Android camera hand-off.
+  // html5-qrcode menerima MediaTrackConstraints dengan facingMode berupa string,
+  // bukan { facingMode: { ideal: "environment" } }.
   qrScanner=new Html5Qrcode("qr-reader",{verbose:false});
   try{
-   await qrScanner.start({facingMode:{ideal:"environment"}},config,onDecoded,()=>{});
+   await qrScanner.start({facingMode:"environment"},config,onDecoded,()=>{});
   }catch(firstError){
    await cleanScanner();
+   status.textContent="Kamera belakang tidak tersedia; mencari kamera lain…";
    const cameras=await Html5Qrcode.getCameras();
    if(!cameras?.length)throw firstError;
    const rear=cameras.find(c=>/back|rear|environment|belakang/i.test(c.label||""));
    const candidates=[rear,...cameras.filter(c=>c.id!==rear?.id)].filter(Boolean);
    let lastError=firstError,started=false;
    for(const camera of candidates){
-    try{qrScanner=new Html5Qrcode("qr-reader",{verbose:false});await qrScanner.start(camera.id,config,onDecoded,()=>{});started=true;break}
-    catch(err){lastError=err;await cleanScanner()}
+    try{
+     qrScanner=new Html5Qrcode("qr-reader",{verbose:false});
+     await qrScanner.start(camera.id,config,onDecoded,()=>{});
+     started=true;break;
+    }catch(err){lastError=err;await cleanScanner()}
    }
    if(!started)throw lastError;
   }
   status.textContent="Kamera aktif. Arahkan QR ke dalam kotak pemindai.";toast("Kamera berhasil dibuka.");
  }catch(e){
-  await cleanScanner();status.textContent=cameraErrorMessage(e);toast("Kamera belum bisa dibuka. Periksa pesan di bawah pemindai.","error");
+  await cleanScanner();
+  const detail=cameraErrorMessage(e);status.textContent=detail;toast(detail,"error");
+  console.error("Spinner Seating QR camera error:",e);
  }finally{btn.disabled=false;btn.textContent="◉ BUKA KAMERA"}
 }
 async function stopQrScan(){
