@@ -327,6 +327,27 @@ button:focus-visible,.btn:focus-visible,a:focus-visible,input:focus-visible,sele
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.login-logo{animation:none!important}}
 
 </style>
+
+<style id="ss-performance-refresh">
+/* Performance-first refresh: keep the visual hierarchy, remove expensive continuous effects. */
+:root{--ss-motion-fast:140ms;--ss-motion:190ms;--ss-ease:cubic-bezier(.2,.7,.25,1)}
+html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
+.btn,.nav button,.theme-toggle,.card,.module-item,.shortcut-card,.premium-banner,.field,.login-card,.modal-card{transition:transform var(--ss-motion-fast) var(--ss-ease),background-color var(--ss-motion-fast) var(--ss-ease),border-color var(--ss-motion-fast) var(--ss-ease),box-shadow var(--ss-motion-fast) var(--ss-ease),color var(--ss-motion-fast) var(--ss-ease)!important}
+.btn:hover,.nav button:hover,.shortcut-card:hover{transform:translateY(-1px)}
+.btn:active,.nav button:active{transform:scale(.985)}
+.card,.module-item,.login-card,.modal-card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body::before,body::after,.ss-float,.shimmer,.loading-shimmer{animation:none!important;filter:none!important}
+/* Keep functional wheel/seat animations intact; only decorative looping effects are stopped. */
+[class*='shimmer'],.ss-float{animation:none!important}
+.ripple-wave{display:none!important}
+@media(max-width:760px){
+ body{background:var(--bg)!important}
+ .card,.module-item,.login-card,.modal-card{box-shadow:0 8px 24px #0002!important}
+ .btn:hover,.nav button:hover,.shortcut-card:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
 <div id="maintenanceView" class="maintenance-screen hidden">
@@ -886,43 +907,54 @@ async function submitAttendanceToken(token){
 }
 function cameraErrorMessage(e){
  const name=e?.name||"",msg=String(e?.message||e||"");
- if(!window.isSecureContext)return "Kamera diblokir browser karena halaman bukan HTTPS. Buka website melalui alamat https:// di Chrome.";
- if(!navigator.mediaDevices?.getUserMedia)return "Browser ini tidak menyediakan akses kamera. Buka Spinner Seating langsung di Google Chrome, bukan browser dalam aplikasi.";
- if(name==="NotAllowedError"||/permission|denied|not allowed/i.test(msg))return "Izin kamera ditolak. Buka Setelan HP → Aplikasi → Chrome → Izin → Kamera → Izinkan, lalu muat ulang website.";
- if(name==="NotFoundError"||/no camera|device not found/i.test(msg))return "Kamera tidak ditemukan. Pastikan kamera HP tersedia dan tidak sedang dipakai aplikasi lain.";
- if(name==="NotReadableError"||/could not start video source|track start/i.test(msg))return "Kamera sedang dipakai aplikasi lain atau gagal dimulai. Tutup aplikasi kamera/meeting, lalu coba lagi.";
- if(name==="OverconstrainedError")return "Kamera belakang tidak cocok dengan pengaturan browser. Coba izinkan akses semua kamera lalu ulangi.";
- return "Kamera gagal dibuka ("+(name||"UnknownError")+"). "+(msg||"Periksa izin kamera dan coba lewat Chrome HTTPS.");
+ if(!window.isSecureContext)return "Kamera diblokir karena halaman bukan HTTPS. Buka Spinner Seating lewat alamat https:// di Chrome.";
+ if(!navigator.mediaDevices?.getUserMedia)return "Browser tidak menyediakan akses kamera. Buka website langsung di Chrome, bukan browser dalam aplikasi.";
+ if(name==="NotAllowedError"||name==="SecurityError"||/permission|denied|not allowed/i.test(msg))return "Izin kamera ditolak atau diblokir. Di Android: Setelan → Aplikasi → Chrome → Izin → Kamera → Izinkan. Lalu buka ulang website dan tekan Izinkan saat diminta.";
+ if(name==="NotFoundError"||/no camera|device not found/i.test(msg))return "Kamera tidak terdeteksi oleh browser. Tutup aplikasi lain yang memakai kamera lalu coba lagi.";
+ if(name==="NotReadableError"||/could not start video source|track start/i.test(msg))return "Kamera sedang digunakan aplikasi lain atau gagal diakses. Tutup Kamera/Meet/WhatsApp, lalu coba lagi.";
+ if(name==="OverconstrainedError")return "Kamera belakang tidak cocok. Coba ulangi; pemindai akan memilih kamera yang tersedia.";
+ if(name==="AbortError")return "Browser menghentikan proses kamera. Muat ulang halaman lalu coba lagi.";
+ return "Kamera gagal dibuka ("+(name||"UnknownError")+"). "+(msg||"Periksa izin kamera, koneksi, dan gunakan Chrome HTTPS.");
 }
 async function startQrScan(){
  const status=$("attendanceScanStatus"),btn=$("startQrScan");
- if(!window.Html5Qrcode){status.textContent="Library pemindai QR belum termuat. Periksa koneksi internet lalu muat ulang.";return toast("Library scanner belum termuat.","error")}
+ if(!status||!btn)return;
+ if(!window.Html5Qrcode){status.textContent="Library pemindai QR belum termuat. Periksa koneksi internet lalu muat ulang.";toast("Library scanner belum termuat.","error");return}
  if(qrScanner)return;
- if(!window.isSecureContext){status.textContent=cameraErrorMessage();return toast("Kamera membutuhkan website HTTPS.","error")}
- if(!navigator.mediaDevices?.getUserMedia){status.textContent=cameraErrorMessage();return toast("Akses kamera tidak tersedia di browser ini.","error")}
- btn.disabled=true;btn.textContent="MEMBUKA KAMERA…";status.textContent="Meminta izin kamera. Pilih Izinkan jika muncul permintaan dari browser.";
- const config={fps:10,qrbox:(vw,vh)=>{const side=Math.max(180,Math.min(260,vw-36,vh-36));return {width:side,height:side}},aspectRatio:1};
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){status.textContent=cameraErrorMessage();toast("Browser belum mengizinkan akses kamera.","error");return}
+ btn.disabled=true;btn.textContent="MEMBUKA KAMERA…";status.textContent="Meminta izin kamera. Pilih Izinkan pada pop-up browser.";
+ const config={fps:7,qrbox:(vw,vh)=>{const side=Math.max(170,Math.min(220,vw-32,vh-32));return {width:side,height:side}},aspectRatio:1,disableFlip:true,videoConstraints:{facingMode:{ideal:"environment"}}};
  const onDecoded=async decoded=>{await stopQrScan();await submitAttendanceToken(decoded)};
+ const cleanScanner=async()=>{if(qrScanner){try{if(qrScanner.isScanning)await qrScanner.stop()}catch(_){}try{await qrScanner.clear()}catch(_){}qrScanner=null}};
  try{
+  // Ask the browser for permission first; this also unlocks camera labels on Android.
+  const permissionStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+  permissionStream.getTracks().forEach(track=>track.stop());
+  let cameras=[];
+  try{cameras=await Html5Qrcode.getCameras()}catch(_){cameras=[]}
+  const back=cameras.find(c=>/back|rear|environment|belakang/i.test(c.label||""))||cameras[cameras.length-1];
   qrScanner=new Html5Qrcode("qr-reader",{verbose:false});
   try{
-   await qrScanner.start({facingMode:{ideal:"environment"}},config,onDecoded,()=>{});
+   if(back?.id)await qrScanner.start(back.id,config,onDecoded,()=>{});
+   else await qrScanner.start({facingMode:"environment"},config,onDecoded,()=>{});
   }catch(firstError){
-   try{await qrScanner.clear()}catch(_){}
+   await cleanScanner();
+   // Retry with a browser-selected camera when the rear-camera constraint fails.
    qrScanner=new Html5Qrcode("qr-reader",{verbose:false});
-   const cameras=await Html5Qrcode.getCameras();
-   if(!cameras?.length)throw firstError;
-   const back=cameras.find(c=>/back|rear|environment|belakang/i.test(c.label||""))||cameras[cameras.length-1];
-   await qrScanner.start(back.id,config,onDecoded,()=>{});
+   await qrScanner.start({facingMode:{ideal:"environment"}},config,onDecoded,()=>{});
   }
-  status.textContent="Kamera aktif. Arahkan QR ke dalam kotak pemindai.";
-  toast("Kamera berhasil dibuka.");
+  status.textContent="Kamera aktif. Arahkan QR ke dalam kotak pemindai.";toast("Kamera berhasil dibuka.");
  }catch(e){
-  try{if(qrScanner){await qrScanner.stop().catch(()=>{});await qrScanner.clear().catch(()=>{})}}catch(_){}
-  qrScanner=null;status.textContent=cameraErrorMessage(e);toast("Kamera belum bisa dibuka. Lihat petunjuk di bawah pemindai.","error");
+  await cleanScanner();status.textContent=cameraErrorMessage(e);toast("Kamera belum bisa dibuka. Ikuti petunjuk di bawah pemindai.","error");
  }finally{btn.disabled=false;btn.textContent="◉ BUKA KAMERA"}
 }
-async function stopQrScan(){if(!qrScanner)return;try{await qrScanner.stop();await qrScanner.clear()}catch(e){}qrScanner=null;$("attendanceScanStatus").textContent="Kamera dihentikan."}
+async function stopQrScan(){
+ if(!qrScanner)return;
+ try{if(qrScanner.isScanning)await qrScanner.stop()}catch(e){}
+ try{await qrScanner.clear()}catch(e){}
+ qrScanner=null;
+ const status=$("attendanceScanStatus");if(status)status.textContent="Kamera dihentikan.";
+}
 function showStudentLinkSelection(){
  const u=linkedProfiles.find(x=>x.id===$("linkUserSelect").value);
  const current=u?.student_id?studentLinkRows.find(st=>st.id===u.student_id):null;
@@ -1120,7 +1152,7 @@ if(sb){fetchMaintenance();sb.auth.getSession().then(async({data})=>{if(data.sess
     wave.style.left=(event.clientX-rect.left-size/2)+'px';wave.style.top=(event.clientY-rect.top-size/2)+'px';
     target.appendChild(wave);wave.addEventListener('animationend',()=>wave.remove(),{once:true});
   };
-  document.addEventListener('pointerdown',addRipple,{passive:true});
+  // Ripple effects are intentionally disabled on mobile to avoid extra layout work.
   // Theme changes made by the operating system are reflected only in Auto mode.
   const media=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
   if(media){
@@ -1136,12 +1168,7 @@ if(sb){fetchMaintenance();sb.auth.getSession().then(async({data})=>{if(data.sess
     const items=section.querySelectorAll('.card,.shortcut-card,.premium-banner');
     items.forEach((el,i)=>{el.animate([{opacity:.72,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,delay:Math.min(i*24,144),easing:'cubic-bezier(.22,.8,.22,1)'});});
   };
-  const pageObserver=new MutationObserver(()=>{
-    const visible=[...document.querySelectorAll('main section')].find(el=>!el.classList.contains('hidden'));
-    if(visible&&visible!==window.__ssLastAnimatedPage){window.__ssLastAnimatedPage=visible;animatePage(visible);}
-  });
   const start=()=>{
-    const main=document.querySelector('main');if(main)pageObserver.observe(main,{subtree:true,attributes:true,attributeFilter:['class']});
     document.querySelectorAll('.nav-group-title').forEach(btn=>btn.setAttribute('aria-label','Buka atau tutup kategori menu'));
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
