@@ -1425,6 +1425,40 @@ if(sb){
  sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){$("appView").classList.add("hidden");if(maintenanceState.enabled)showMaintenance(maintenanceState);else $("loginView").classList.remove("hidden")}})
 }else{setTimeout(hideStartupScreen,1000)}
 </script>
+<script id="account-link-click-guard">
+/* Independent binding for the account-link action. This remains active even if
+   an unrelated initializer in the main app script stops before its old binding. */
+(()=>{
+ const button=document.getElementById("saveStudentLink");
+ const status=document.getElementById("studentLinkStatus");
+ if(!button||!status)return;
+ button.onclick=null;
+ button.addEventListener("click",async event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  if(button.dataset.busy==="1")return;
+  button.dataset.busy="1";
+  button.disabled=true;
+  const original=button.textContent;
+  button.textContent="MEMPROSES…";
+  status.textContent="KLIK DITERIMA — memulai proses penghubungan…";
+  status.style.display="block";
+  status.style.color="var(--cyan,#71dce5)";
+  try{
+   if(typeof saveStudentLink!=="function")throw new Error("Fungsi simpan belum siap. Muat ulang halaman.");
+   await saveStudentLink();
+  }catch(error){
+   status.textContent="GAGAL: "+(error?.message||String(error));
+   status.style.color="var(--red,#ff8095)";
+   console.error("Account link independent click handler:",error);
+  }finally{
+   button.disabled=false;
+   button.textContent=original;
+   delete button.dataset.busy;
+  }
+ },{capture:true});
+})();
+</script>
 <script id="spinner-music-app">
 (()=>{
  const $m=id=>document.getElementById(id);let musicRows=[],musicApiRows=[],musicPlaylists=[],musicQueue=[],musicCurrent=null,musicTab='home',musicChannel=null,playOrder=[],playIndex=-1,shuffleOn=false,repeatOn=false;
