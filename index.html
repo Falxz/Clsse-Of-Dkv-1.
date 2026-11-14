@@ -1411,7 +1411,7 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();if(!sb){$(
 document.querySelectorAll(".nav button[data-page]").forEach(b=>b.onclick=async e=>{e.preventDefault();e.stopPropagation();const targetPage=b.dataset.page;const closeHybridMenu=()=>{$("appView").querySelector(".sidebar").classList.remove("menu-open");mobileMenuToggle.setAttribute("aria-expanded","false");mobileMenuToggle.textContent="⋮ MENU"};const currentSection=document.querySelector("main section:not(.hidden)");const currentPage=currentSection?.id.replace(/^page-/,"");closeHybridMenu();if(targetPage===currentPage)return;setPage(targetPage);if(targetPage==="developer"){await loadDeveloperSettings();await loadGlobalSettings()}if(targetPage==="activity")await loadActivity();if(targetPage==="live-classroom")await loadLiveClassroom();if(targetPage==="seating"&&isAdmin())await loadSnapshots();if(targetPage==="student-home")await loadStudentHome();if(targetPage==="student-profile"){await loadStudentProfile();if(isAdmin())await loadProfileEditor();}if(targetPage==="calendar")await loadCalendar();if(targetPage==="announcements")await loadAnnouncements();if(targetPage==="suggestions")await loadSuggestions();if(targetPage==="chat")await loadChat();if(targetPage==="duty"){if(isAdmin()&&hasPermissionLocal("manage_duty")){if(!$ ("dutyWeek").value)$ ("dutyWeek").value=mondayOf(jakartaToday());await buildDutyEditor()}await loadDuty()}if(targetPage==="organization"){await loadStudentOptions();await loadOrganization()}if(targetPage==="cleaning"){renderCleaningItems();await loadCleaning()}if(targetPage==="student-card")await loadStudentCard();if(targetPage==="gallery")await loadGallery();if(targetPage==="audit")await loadAudit();if(targetPage==="permissions")await loadPermissions();if(targetPage==="feature-management"){await loadFeatureSettings();renderFeatureSettings()}if(targetPage==="class-rules"){await loadGovernance("rule");$("rulesEditor").classList.toggle("hidden",!canManageGovernance())}if(targetPage==="class-sop"){await loadGovernance("sop");$("sopEditor").classList.toggle("hidden",!canManageGovernance())}});document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>setPage(b.dataset.goto));
 $("createAttendance").onclick=createAttendance;$("printAttendanceQr").onclick=printAttendanceQr;$("closeAttendanceQr").onclick=closeAttendanceQr;$("attendanceDate").value=jakartaToday();$("attendanceDate").onchange=loadAttendanceRoster;$("refreshAttendance").onclick=loadAttendanceRoster;$("markMissingAlpa").onclick=markMissingAlpa;$("startQrScan").onclick=startQrScan;$("stopQrScan").onclick=stopQrScan;$("submitAttendanceToken").onclick=()=>submitAttendanceToken($("attendanceTokenInput").value);$("saveStudentLink").type="button";$("unlinkStudentAccount").type="button";
 /* Bind directly to the actual controls; do not depend on delegated document events. */
-$("saveStudentLink").onclick=async e=>{e.preventDefault();const b=$("saveStudentLink"),st=$("studentLinkStatus");if(st)st.textContent="KLIK DITERIMA — memulai proses…";b.disabled=true;try{await saveStudentLink()}catch(err){if(st)st.textContent="GAGAL: "+(err?.message||String(err));console.error("Klik simpan Hubungkan Akun:",err)}finally{b.disabled=false}};
+$("saveStudentLink").onclick=null; /* handled once by the document-level capture listener below */
 $("unlinkStudentAccount").onclick=async e=>{e.preventDefault();const st=$("studentLinkStatus");if(st)st.textContent="Memproses pemutusan hubungan…";try{await unlinkStudentAccount()}catch(err){if(st)st.textContent="GAGAL MEMUTUSKAN: "+(err?.message||String(err));console.error("Klik putuskan Hubungkan Akun:",err)}};$("saveStudentProfile").onclick=saveStudentProfile;$("exportAttendanceCsv").onclick=exportAttendanceCsv;$("saveEvent").onclick=saveClassEvent;$("saveAnnouncement").onclick=saveClassAnnouncement;$("sendSuggestion").onclick=sendClassSuggestion;$("sendChat").onclick=sendChat;$("saveDuty").onclick=saveDuty;$("saveOrg").onclick=saveOrganization;$("submitCleaning").onclick=submitCleaning;$("printStudentCard").onclick=printCard;$("uploadGallery").onclick=uploadGallery;$("refreshAudit").onclick=loadAudit;$("saveRule").onclick=()=>saveGovernance("rule");$("saveSop").onclick=()=>saveGovernance("sop");$("refreshRules").onclick=()=>loadGovernance("rule");$("refreshSops").onclick=()=>loadGovernance("sop");$("ruleSearch").oninput=()=>loadGovernance("rule");$("sopSearch").oninput=()=>loadGovernance("sop");$("savePermissions").onclick=savePermissions;$("refreshFeatureFlags").onclick=async()=>{await loadFeatureSettings();renderFeatureSettings()};
 $("spinBtn").onclick=doSpin;$("autoBtn").onclick=startAuto;$("pauseBtn").onclick=pauseAuto;$("resumeBtn").onclick=resumeAuto;$("stopBtn").onclick=stopAuto;$("undoBtn").onclick=undo;$("resetBtn").onclick=resetAll;$("shuffleBtn").onclick=shuffleStudents;$("addBulk").onclick=addStudents;$("clearInput").onclick=()=>$("bulkNames").value="";$("copyPlan").onclick=copyPlan;$("downloadPlan").onclick=downloadPlan;$("accountForm").onsubmit=createAccount;$("logoutBtn").onclick=logout;$("mobileLogout").onclick=logout;$("fullBtn").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
 if(sb){
@@ -1426,37 +1426,36 @@ if(sb){
 }else{setTimeout(hideStartupScreen,1000)}
 </script>
 <script id="account-link-click-guard">
-/* Independent binding for the account-link action. This remains active even if
-   an unrelated initializer in the main app script stops before its old binding. */
+/* Single document-level capture handler: survives replaced buttons and prevents
+   duplicate click handlers from submitting the same account link twice. */
 (()=>{
- const button=document.getElementById("saveStudentLink");
- const status=document.getElementById("studentLinkStatus");
- if(!button||!status)return;
- button.onclick=null;
- button.addEventListener("click",async event=>{
+ if(window.__accountLinkClickGuardInstalled)return;
+ window.__accountLinkClickGuardInstalled=true;
+ document.addEventListener("click",async event=>{
+  const button=event.target?.closest?.("#saveStudentLink");
+  if(!button)return;
   event.preventDefault();
   event.stopPropagation();
+  event.stopImmediatePropagation();
+  const status=document.getElementById("studentLinkStatus");
   if(button.dataset.busy==="1")return;
   button.dataset.busy="1";
-  button.disabled=true;
   const original=button.textContent;
+  button.disabled=true;
   button.textContent="MEMPROSES…";
-  status.textContent="KLIK DITERIMA — memulai proses penghubungan…";
-  status.style.display="block";
-  status.style.color="var(--cyan,#71dce5)";
+  if(status){status.textContent="KLIK DITERIMA — memulai proses penghubungan…";status.style.display="block";status.style.color="var(--cyan,#71dce5)";}
   try{
-   if(typeof saveStudentLink!=="function")throw new Error("Fungsi simpan belum siap. Muat ulang halaman.");
+   if(typeof saveStudentLink!=="function")throw new Error("Fungsi simpan belum dimuat. Muat ulang halaman.");
    await saveStudentLink();
   }catch(error){
-   status.textContent="GAGAL: "+(error?.message||String(error));
-   status.style.color="var(--red,#ff8095)";
-   console.error("Account link independent click handler:",error);
+   if(status){status.textContent="GAGAL: "+(error?.message||String(error));status.style.color="var(--red,#ff8095)";}
+   console.error("Account link click handler:",error);
   }finally{
    button.disabled=false;
    button.textContent=original;
    delete button.dataset.busy;
   }
- },{capture:true});
+ },true);
 })();
 </script>
 <script id="spinner-music-app">
