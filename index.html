@@ -1523,3 +1523,67 @@ async function loadLiveClassroom(){
 })();
 </script>
 </body></html>
+
+<script id="spinner-qr-camera-hotfix">
+(function(){
+ const $=id=>document.getElementById(id);
+ let stream=null,video=null,scanner=null,raf=0,detector=null,busy=false,decoded=false;
+ const status=(s)=>{const el=$('attendanceScanStatus');if(el)el.textContent=s};
+ async function stop(){
+  if(raf)cancelAnimationFrame(raf);raf=0;
+  if(scanner){try{if(scanner.isScanning)await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
+  if(video){try{video.pause();video.srcObject=null}catch(e){}video=null}
+  if(stream){stream.getTracks().forEach(t=>{try{t.stop()}catch(e){}});stream=null}
+  detector=null;busy=false;decoded=false;
+  const reader=$('qr-reader');if(reader)reader.innerHTML='';
+ }
+ function explain(e){
+  if(!window.isSecureContext)return 'Kamera butuh HTTPS. Buka https://dkvone.vercel.app melalui Chrome.';
+  if(!navigator.mediaDevices?.getUserMedia)return 'Browser tidak menyediakan akses kamera. Gunakan Chrome terbaru.';
+  const n=e?.name||'Error',m=e?.message||String(e||'');
+  if(n==='NotAllowedError'||n==='SecurityError')return 'Izin kamera ditolak. Aktifkan izin Kamera untuk Chrome dan situs dkvone.vercel.app.';
+  if(n==='NotFoundError')return 'Kamera tidak ditemukan.';
+  if(n==='NotReadableError')return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi yang memakai kamera lalu coba lagi.';
+  return 'Kamera gagal dibuka ('+n+'): '+m;
+ }
+ async function open(){
+  const btn=$('startQrScan'),reader=$('qr-reader');
+  if(!btn||!reader){status('Elemen kamera tidak ditemukan. Muat ulang halaman.');return}
+  btn.disabled=true;btn.textContent='MEMBUKA KAMERA…';status('Meminta izin kamera dari Chrome…');
+  try{
+   await stop();
+   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error(explain());
+   // Request camera directly from the user gesture; this reliably triggers Android's permission prompt.
+   try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}})}
+   catch(first){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true})}
+   reader.innerHTML='';
+   video=document.createElement('video');video.autoplay=true;video.muted=true;video.playsInline=true;
+   video.setAttribute('playsinline','');video.style.cssText='display:block;width:100%;max-width:420px;max-height:360px;min-height:220px;object-fit:cover;margin:0 auto;border-radius:14px;background:#050b15';
+   reader.appendChild(video);video.srcObject=stream;await video.play();
+   status('Kamera berhasil dibuka. Menyiapkan pemindai QR…');
+   if(window.Html5Qrcode){
+    // Stop raw preview before html5-qrcode claims the camera to avoid Android camera contention.
+    stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;video=null;reader.innerHTML='';
+    scanner=new Html5Qrcode('qr-reader',{verbose:false});
+    await scanner.start({facingMode:{ideal:'environment'}},{fps:10,qrbox:(w,h)=>{const z=Math.max(160,Math.min(250,Math.floor(Math.min(w,h)*.72)));return{width:z,height:z}},aspectRatio:1},async token=>{
+      if(decoded)return;decoded=true;await stop();status('QR terbaca. Mengirim absensi…');
+      if(typeof window.submitAttendanceToken==='function')await window.submitAttendanceToken(token);
+      else if(typeof submitAttendanceToken==='function')await submitAttendanceToken(token);
+    },()=>{});
+    status('Kamera aktif. Arahkan QR ke kotak pemindai.');
+   }else if('BarcodeDetector' in window){
+    const formats=await BarcodeDetector.getSupportedFormats();if(formats.includes('qr_code'))detector=new BarcodeDetector({formats:['qr_code']});
+    if(detector){const scan=async()=>{if(!video||!stream)return;if(!busy&&video.readyState>=2){busy=true;try{const codes=await detector.detect(video);if(codes?.[0]?.rawValue){decoded=true;const token=codes[0].rawValue;await stop();status('QR terbaca. Mengirim absensi…');await submitAttendanceToken(token);return}}catch(e){}finally{busy=false}}raf=requestAnimationFrame(scan)};raf=requestAnimationFrame(scan);status('Kamera aktif. Arahkan QR ke kamera.')}
+    else status('Kamera aktif, tetapi pemindai QR belum termuat. Muat ulang halaman untuk memuat library scanner.');
+   }else status('Kamera aktif, tetapi library pemindai QR belum termuat. Periksa koneksi internet lalu muat ulang.');
+  }catch(e){await stop();status(explain(e));console.error('Spinner camera fix:',e)}
+  finally{btn.disabled=false;btn.textContent='◉ BUKA KAMERA'}
+ }
+ document.addEventListener('DOMContentLoaded',()=>{
+  const b=$('startQrScan'),s=$('stopQrScan');if(b)b.onclick=open;if(s)s.onclick=async()=>{await stop();status('Kamera dihentikan.')};
+ });
+ const b=$('startQrScan'),s=$('stopQrScan');if(b)b.onclick=open;if(s)s.onclick=async()=>{await stop();status('Kamera dihentikan.')};
+ window.addEventListener('pagehide',()=>{stop()});
+})();
+
+</script>
