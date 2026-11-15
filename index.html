@@ -1645,3 +1645,53 @@ async function loadLiveClassroom(){
 })();
 
 </script>
+
+<script id="governance-save-buttons-fix">
+/* Independent capture-phase handlers for Class Rules and SOP save buttons.
+   They do not rely on the main initialization block reaching its final bindings. */
+(()=>{
+ if(window.__governanceSaveFixInstalled)return;
+ window.__governanceSaveFixInstalled=true;
+ const statusFor=(button)=>{
+  const id=button.id==='saveRule'?'rule':'sop';
+  let node=document.getElementById(id+'SaveStatus');
+  if(!node){node=document.createElement('div');node.id=id+'SaveStatus';node.setAttribute('role','status');node.setAttribute('aria-live','polite');node.style.cssText='flex:1 0 100%;width:100%;margin-top:9px;padding:9px 11px;border-radius:10px;background:rgba(120,150,190,.10);font-size:13px;line-height:1.45;display:none;';button.insertAdjacentElement('afterend',node)}
+  return node;
+ };
+ const show=(node,message,kind)=>{node.textContent=message;node.style.display='block';node.style.color=kind==='error'?'#ff8999':kind==='success'?'#72e0b0':'#8fd8f2'};
+ document.addEventListener('click',async event=>{
+  const button=event.target?.closest?.('#saveRule, #saveSop');
+  if(!button)return;
+  event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+  if(button.dataset.saving==='1')return;
+  const isRule=button.id==='saveRule',type=isRule?'rule':'sop';
+  const titleEl=document.getElementById(isRule?'ruleTitle':'sopTitle');
+  const bodyEl=document.getElementById(isRule?'ruleBody':'sopBody');
+  const categoryEl=document.getElementById(isRule?'ruleCategory':'sopCategory');
+  const statusEl=document.getElementById(isRule?'ruleStatus':'sopStatus');
+  const status=statusFor(button),oldText=button.textContent;
+  const setError=msg=>show(status,msg,'error');
+  button.dataset.saving='1';button.disabled=true;button.textContent='MENYIMPAN…';
+  show(status,'KLIK DITERIMA — memeriksa data dan koneksi…','info');
+  try{
+   if(typeof sb==='undefined'||!sb)throw new Error('Koneksi Supabase belum siap. Muat ulang halaman dan coba lagi.');
+   if(typeof profile==='undefined'||!profile?.id)throw new Error('Sesi akun belum terbaca. Keluar lalu masuk kembali.');
+   if(typeof isAdmin!=='function'||!isAdmin())throw new Error('Akses Admin/Developer diperlukan untuk menyimpan.');
+   if(!titleEl||!bodyEl||!categoryEl||!statusEl)throw new Error('Kolom formulir tidak lengkap. Muat ulang halaman.');
+   const title=titleEl.value.trim(),body=bodyEl.value.trim();
+   if(!title||!body)throw new Error('Judul dan isi wajib diisi.');
+   const table=isRule?'class_rules':'class_sops';
+   const payload={title,body,category:categoryEl.value,status:statusEl.value,updated_by:profile.id};
+   if(!isRule){const owner=document.getElementById('sopOwner');if(owner)payload.owner=owner.value.trim()||null;}
+   show(status,'Mengirim data ke Supabase…','info');
+   const result=await sb.from(table).insert(payload);
+   if(result.error)throw result.error;
+   titleEl.value='';bodyEl.value='';if(!isRule){const owner=document.getElementById('sopOwner');if(owner)owner.value='';}
+   show(status,isRule?'BERHASIL — peraturan tersimpan.':'BERHASIL — SOP tersimpan.','success');
+   if(typeof toast==='function')toast(isRule?'Peraturan berhasil disimpan.':'SOP berhasil disimpan.','success');
+   try{if(typeof loadGovernance==='function')await loadGovernance(type);}catch(refreshError){show(status,'Data tersimpan, tetapi daftar gagal dimuat ulang: '+(refreshError?.message||String(refreshError)),'error');}
+  }catch(error){const message=error?.message||String(error);setError('GAGAL MENYIMPAN: '+message);console.error('Simpan '+(isRule?'peraturan':'SOP')+':',error);if(typeof toast==='function')toast(message,'error');}
+  finally{button.disabled=false;button.textContent=oldText;delete button.dataset.saving;}
+ },true);
+})();
+</script>
