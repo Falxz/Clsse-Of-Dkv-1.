@@ -653,7 +653,20 @@ setTimeout(()=>{const splash=document.getElementById("startupScreen");if(splash)
    </div>
   </section>
   <section id="page-student-home" class="hidden">
-   <div class="grid-stats"><div class="card"><div class="stat-label">STATUS AKUN</div><div class="stat-num" id="studentHomeName" style="font-size:19px">—</div></div><div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
+   <div class="grid-stats"><div class="card"><div class="stat-label">STATUS AKUN</div><div class="stat-num" id="studentHomeName" style="font-size:19px">—</div></div>
+   <div class="card" id="studentPermanentQrCard" style="margin:16px 0">
+    <div class="section-title">🪪 QR ID Siswa</div>
+    <p class="module-meta" style="margin:7px 0 12px">QR pribadi permanen untuk identitas siswa. Unduh sebagai PNG lalu unggah ke Canva untuk membuat ID Card.</p>
+    <div class="content-grid" style="grid-template-columns:minmax(180px,240px) 1fr;align-items:center;gap:16px">
+     <div class="qr-stage" id="studentPermanentQr" style="min-height:230px;min-width:230px"><span style="color:#64748b">Memuat QR pribadi…</span></div>
+     <div>
+      <div id="studentPermanentQrStatus" class="module-meta" style="margin-bottom:12px">Memuat QR aman dari database…</div>
+      <button class="btn primary" id="downloadStudentQr" type="button" disabled>⬇ DOWNLOAD QR PNG</button>
+      <p class="module-meta" style="margin-top:10px">Jangan ubah pola QR, jangan menutup bagian putih di sekelilingnya, dan jangan membagikan QR kepada orang lain.</p>
+     </div>
+    </div>
+   </div>
+<div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
    <div class="content-grid"><div class="card"><div class="section-title">🪑 Tempat duduk saya</div><div id="studentHomeSeat" class="module-list"><div class="empty">Belum ada penempatan.</div></div></div><div class="card"><div class="section-title">📅 Kegiatan mendatang</div><div id="studentHomeEvents" class="module-list"></div></div></div>
    <div class="card" style="margin-top:16px"><div class="section-title">📢 Pengumuman terbaru</div><div id="studentHomeAnnouncements" class="module-list"></div></div>
   </section>
@@ -1150,7 +1163,7 @@ async function markMissingAlpa(){
 async function submitAttendanceToken(token){
  token=(token||"").trim();if(!token)return toast("QR/token belum terbaca.","error");
  $("attendanceScanStatus").textContent="Memvalidasi absensi...";
- const {data,error}=await sb.rpc("scan_attendance_qr",{p_token:token});
+ const {data,error}=await sb.rpc("scan_student_permanent_qr",{p_token:token});
  if(error){$("attendanceScanStatus").textContent=error.message;return toast(error.message,"error")}
  const row=rpcRow(data);$("attendanceScanStatus").textContent=`Berhasil! ${row?.student_name||"Kehadiran"} tercatat pada ${localDate(row?.marked_at)}.`;
  $("attendanceTokenInput").value="";toast("Absensi berhasil dicatat.");
@@ -1330,6 +1343,42 @@ async function unlinkStudentAccount(){
   if(btn){btn.disabled=false;btn.textContent="PUTUSKAN HUBUNGAN";delete btn.dataset.busy}
  }
 }
+
+let studentPermanentQrToken = null;
+async function loadStudentPermanentQr(){
+ const stage=$("studentPermanentQr"),status=$("studentPermanentQrStatus"),btn=$("downloadStudentQr");
+ if(!stage||!status||!btn)return;
+ stage.innerHTML='<span style="color:#64748b">Memuat QR pribadi…</span>';btn.disabled=true;studentPermanentQrToken=null;
+ if(!profile?.student_id){stage.innerHTML='<span style="color:#64748b;text-align:center">Akun belum terhubung<br>ke data siswa.</span>';status.textContent="Hubungkan akun ke data siswa terlebih dahulu.";return}
+ if(!window.QRCode){stage.textContent="Library QR belum termuat.";status.textContent="Muat ulang halaman untuk mencoba lagi.";return}
+ try{
+  const {data,error}=await sb.rpc("get_my_permanent_student_qr");
+  if(error)throw error;
+  const row=rpcRow(data),token=row?.qr_token;
+  if(!token)throw new Error("Token QR tidak diterima dari server.");
+  studentPermanentQrToken=token;stage.innerHTML="";
+  new QRCode(stage,{text:token,width:640,height:640,correctLevel:QRCode.CorrectLevel.H});
+  status.textContent="QR permanen aktif · Siap diunduh sebagai PNG resolusi tinggi.";
+  btn.disabled=false;
+ }catch(e){
+  stage.innerHTML='<span style="color:#b45309;text-align:center">QR belum tersedia</span>';
+  status.textContent="Gagal memuat QR: "+(e?.message||String(e));
+ }
+}
+async function downloadStudentPermanentQr(){
+ if(!studentPermanentQrToken)return toast("QR pribadi belum tersedia.","error");
+ const stage=$("studentPermanentQr"),canvas=stage?.querySelector("canvas");
+ if(!canvas)return toast("Gambar QR belum siap. Coba muat ulang.","error");
+ try{
+  const out=document.createElement("canvas"),size=1600,pad=120;
+  out.width=size;out.height=size;
+  const ctx=out.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,size,size);
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(canvas,pad,pad,size-pad*2,size-pad*2);
+  const link=document.createElement("a");link.download="QR-ID-Siswa.png";link.href=out.toDataURL("image/png");link.click();
+  toast("QR ID berhasil diunduh. Bisa langsung diunggah ke Canva.");
+ }catch(e){toast("Gagal membuat PNG: "+(e?.message||String(e)),"error")}
+}
+
 async function loadStudentProfile(){
  const target=$("studentProfileCard");
  if(!profile?.student_id){target.innerHTML='<div class="empty">Akun kamu belum dihubungkan ke data siswa. Minta Admin menghubungkan akun melalui menu Absensi QR.</div>';return}
@@ -1340,6 +1389,7 @@ async function loadStudentProfile(){
  target.innerHTML=`<div class="module-item"><div style="font-size:24px">👤 <b>${esc(st.name)}</b></div><p>Nomor siswa: ${esc(st.student_no||"Belum diatur")}<br>Tempat duduk: ${esc(pos)}<br>Email akun: ${esc(profile.email||"")}</p><p>${esc(st.profile_note||"Belum ada catatan profil.")}</p></div><div class="module-item"><b>Riwayat kehadiran terbaru</b>${(a.data||[]).map(x=>`<p>${esc(x.status.toUpperCase())} · ${localDate(x.marked_at)}</p>`).join("")||"<p>Belum ada riwayat.</p>"}</div>`;
 }
 async function loadStudentHome(){
+ await loadStudentPermanentQr();
  const [h,e,a]=await Promise.all([profile?.student_id?sb.from("attendance_daily_records").select("status").eq("student_id",profile.student_id):Promise.resolve({data:[],error:null}),sb.from("class_events").select("title,starts_at,location").gte("starts_at",new Date().toISOString()).order("starts_at").limit(5),sb.from("class_announcements").select("title,body,priority,publish_at").order("publish_at",{ascending:false}).limit(5)]);
  const rec=h.data||[];$("studentHomeName").textContent=profile?.display_name||"Siswa";$("studentHomePresent").textContent=rec.filter(x=>x.status==="hadir").length;$("studentHomeExcused").textContent=rec.filter(x=>["izin","sakit"].includes(x.status)).length;$("studentHomeAbsent").textContent=rec.filter(x=>x.status==="alpa").length;
  if(profile?.student_id){const {data}=await sb.from("spin_history").select("seat_no,spin_no").eq("student_id",profile.student_id).maybeSingle();const seat=data?.seat_no||data?.spin_no;$("studentHomeSeat").innerHTML=seat?`<div class="module-item"><b>Meja ${Math.ceil(seat/2)} · Kursi ${seat%2?"A":"B"}</b><p>Tempat duduk saat ini.</p></div>`:'<div class="empty">Belum mendapatkan tempat duduk.</div>'}else $("studentHomeSeat").innerHTML='<div class="empty">Akun belum dihubungkan dengan data siswa.</div>';
@@ -1796,4 +1846,10 @@ async function loadLiveClassroom(){
   finally{button.disabled=false;button.textContent=oldText;delete button.dataset.saving;}
  },true);
 })();
+
+document.addEventListener("click",function(e){
+ const b=e.target?.closest?.("#downloadStudentQr");
+ if(b){e.preventDefault();downloadStudentPermanentQr()}
+},true);
+
 </script>
