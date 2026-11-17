@@ -576,6 +576,19 @@ setTimeout(()=>{const splash=document.getElementById("startupScreen");if(splash)
   <header class="topbar"><div><div class="eyebrow" id="pageEyebrow">CLASS OVERVIEW</div><h2 id="pageTitle">Welcome back</h2></div><div class="top-actions"><span class="muted small" id="syncStatus">● Live sync</span><button class="btn theme-toggle" id="themeToggleApp" type="button" aria-label="Ganti tema" title="Tema otomatis">◐</button><button class="btn" id="notificationBtn" title="Notifikasi">♧</button><div class="top-settings-wrap staff-only" id="topSettingsWrap"><button class="btn" id="topSettingsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="topSettingsMenu" title="Menu pengaturan">⋮</button><div class="top-settings-menu hidden" id="topSettingsMenu" role="menu"><div class="top-settings-label">PENGATURAN</div><button type="button" class="top-settings-item" id="openFeatureManagement" role="menuitem"><span>◉</span><span><b>Manajemen Fitur</b><small>Aktifkan atau nonaktifkan fitur</small></span><span class="top-settings-arrow">›</span></button></div></div><button class="btn" id="fullBtn" title="Fullscreen">⛶</button><button class="btn" id="mobileLogout" type="button" aria-label="Keluar dari akun" title="Keluar dari akun">↪</button></div></header>
   <section id="page-overview">
    <div class="premium-banner"><div class="eyebrow">YOUR CLASSROOM · ONE SPACE</div><h3>Semua aktivitas kelas, lebih rapi dan terhubung.</h3><p>Kelola tempat duduk, kehadiran, informasi, dan aktivitas siswa dari satu dashboard.</p></div>
+   <div class="card" id="studentPermanentQrCard" style="margin:16px 0">
+    <div class="section-title">🪪 QR ID Siswa</div>
+    <p class="module-meta" style="margin:7px 0 12px">QR pribadi permanen untuk identitas siswa. Unduh sebagai PNG lalu unggah ke Canva untuk membuat ID Card.</p>
+    <div class="content-grid" style="grid-template-columns:minmax(180px,240px) 1fr;align-items:center;gap:16px">
+     <div class="qr-stage" id="studentPermanentQr" style="min-height:230px;min-width:230px"><span style="color:#64748b">Memuat QR pribadi…</span></div>
+     <div>
+      <div id="studentPermanentQrStatus" class="module-meta" style="margin-bottom:12px">Memuat QR aman dari database…</div>
+      <button class="btn primary" id="downloadStudentQr" type="button" disabled>⬇ DOWNLOAD QR PNG</button>
+      <p class="module-meta" style="margin-top:10px">Jangan ubah pola QR, jangan menutup bagian putih di sekelilingnya, dan jangan membagikan QR kepada orang lain.</p>
+     </div>
+    </div>
+   </div>
+<div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
    <div class="grid-stats">
     <div class="card hover"><span class="stat-icon">👥</span><div class="stat-label">TOTAL SISWA</div><div class="stat-num" id="statTotal">0</div></div>
     <div class="card hover"><span class="stat-icon">🪑</span><div class="stat-label">KURSI TERISI</div><div class="stat-num" id="statFilled">0/42</div></div>
@@ -641,19 +654,6 @@ setTimeout(()=>{const splash=document.getElementById("startupScreen");if(splash)
   </section>
   <section id="page-student-home" class="hidden">
    <div class="grid-stats"><div class="card"><div class="stat-label">STATUS AKUN</div><div class="stat-num" id="studentHomeName" style="font-size:19px">—</div></div>
-   <div class="card" id="studentPermanentQrCard" style="margin:16px 0">
-    <div class="section-title">🪪 QR ID Siswa</div>
-    <p class="module-meta" style="margin:7px 0 12px">QR pribadi permanen untuk identitas siswa. Unduh sebagai PNG lalu unggah ke Canva untuk membuat ID Card.</p>
-    <div class="content-grid" style="grid-template-columns:minmax(180px,240px) 1fr;align-items:center;gap:16px">
-     <div class="qr-stage" id="studentPermanentQr" style="min-height:230px;min-width:230px"><span style="color:#64748b">Memuat QR pribadi…</span></div>
-     <div>
-      <div id="studentPermanentQrStatus" class="module-meta" style="margin-bottom:12px">Memuat QR aman dari database…</div>
-      <button class="btn primary" id="downloadStudentQr" type="button" disabled>⬇ DOWNLOAD QR PNG</button>
-      <p class="module-meta" style="margin-top:10px">Jangan ubah pola QR, jangan menutup bagian putih di sekelilingnya, dan jangan membagikan QR kepada orang lain.</p>
-     </div>
-    </div>
-   </div>
-<div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
    <div class="content-grid"><div class="card"><div class="section-title">🪑 Tempat duduk saya</div><div id="studentHomeSeat" class="module-list"><div class="empty">Belum ada penempatan.</div></div></div><div class="card"><div class="section-title">📅 Kegiatan mendatang</div><div id="studentHomeEvents" class="module-list"></div></div></div>
    <div class="card" style="margin-top:16px"><div class="section-title">📢 Pengumuman terbaru</div><div id="studentHomeAnnouncements" class="module-list"></div></div>
   </section>
