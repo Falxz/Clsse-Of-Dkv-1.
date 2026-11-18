@@ -522,7 +522,7 @@ main section:not(#page-overview){padding-bottom:12px}main section:not(#page-over
 <style id="laptop-responsive-layout-fix">
 /* Laptop / desktop layout: keep navigation in a stable left rail and content in a fluid column. */
 @media (min-width: 761px) {
-  #appView.app { display:grid !important; grid-template-columns: clamp(224px, 20vw, 272px) minmax(0, 1fr) !important; align-items:stretch; width:100%; max-width:1680px; margin:0 auto; }
+  #appView.app { display:grid; grid-template-columns: clamp(224px, 20vw, 272px) minmax(0, 1fr) !important; align-items:stretch; width:100%; max-width:1680px; margin:0 auto; }
   #appView > .sidebar { position:sticky !important; top:0; align-self:start; display:flex !important; flex-direction:column !important; width:auto; min-width:0; height:100dvh; min-height:100dvh; overflow-y:auto; overflow-x:hidden; padding:22px 14px; gap:18px; border-right:1px solid #26364c; border-bottom:0; }
   #appView .side-brand { min-width:0; padding:0 9px 8px; }
   #appView .brand { white-space:normal; overflow-wrap:anywhere; font-size:clamp(13px, 1.1vw, 16px); }
@@ -561,6 +561,18 @@ main section:not(#page-overview){padding-bottom:12px}main section:not(#page-over
 #appView.app.hidden { display:none !important; }
   #appView > .sidebar { width:100%; min-width:0; height:auto; min-height:0; }
   #appView > .main { width:100%; min-width:0; overflow-x:hidden; }
+}
+</style>
+
+
+<style id="app-visibility-guard">
+/* Keep the application hidden until authentication succeeds.
+   The desktop layout selector #appView.app must never override .hidden. */
+#appView.app.hidden { display: none !important; }
+#appView.app:not(.hidden) { display: grid; }
+@media (max-width: 760px) {
+  #appView.app:not(.hidden) { display: block; }
+  #appView.app.hidden { display: none !important; }
 }
 </style>
 </head>
@@ -641,7 +653,11 @@ setTimeout(()=>{const splash=document.getElementById("startupScreen");if(splash)
      </div>
     </div>
    </div>
-<div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div><div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div><div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div></div>
+<div class="grid-stats">
+    <div class="card"><div class="stat-label">TOTAL HADIR</div><div class="stat-num" id="studentHomePresent">0</div></div>
+    <div class="card"><div class="stat-label">IZIN / SAKIT</div><div class="stat-num" id="studentHomeExcused">0</div></div>
+    <div class="card"><div class="stat-label">ALPA</div><div class="stat-num" id="studentHomeAbsent">0</div></div>
+   </div>
    <div class="grid-stats">
     <div class="card hover"><span class="stat-icon">👥</span><div class="stat-label">TOTAL SISWA</div><div class="stat-num" id="statTotal">0</div></div>
     <div class="card hover"><span class="stat-icon">🪑</span><div class="stat-label">KURSI TERISI</div><div class="stat-num" id="statFilled">0/42</div></div>
