@@ -619,6 +619,12 @@ main section:not(#page-overview){padding-bottom:12px}main section:not(#page-over
 }
 </style>
 
+<style id="attendance-recap-ui-fix">
+#page-attendance #attendanceSummary .card{min-width:0}
+#page-attendance #attendanceFilters .btn{font-size:11px;padding:9px 11px}
+#page-attendance #attendanceRoster .module-item{min-width:0}
+#page-attendance #attendanceRoster .field{max-width:100%}
+</style>
 </head>
 <body>
 <div id="startupScreen" role="status" aria-label="Memuat Spinner Seating">
@@ -750,7 +756,12 @@ setTimeout(()=>{const splash=document.getElementById("startupScreen");if(splash)
    <div class="card admin-only" data-permission="manage_attendance" style="margin-top:16px">
     <div class="section-title">🧾 Rekap dan input manual</div>
     <div class="toolbar"><label for="attendanceDate" style="align-self:center;margin:0">Tanggal:</label><input id="attendanceDate" type="date" class="field" style="max-width:190px"><button class="btn" id="refreshAttendance">REFRESH</button><button class="btn" id="exportAttendanceCsv">EXPORT CSV</button><button class="btn danger" id="markMissingAlpa">TANDAI YANG BELUM ABSEN = ALPA</button></div>
-    <div id="attendanceRoster" class="module-list"><div class="empty">Pilih sesi untuk melihat rekap.</div></div>
+    <div id="attendanceSummary" class="grid-stats" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:12px 0 16px"></div>
+    <div class="toolbar" id="attendanceFilters" style="margin-bottom:12px;gap:7px;flex-wrap:wrap">
+     <button type="button" class="btn primary" data-att-filter="all">SEMUA</button><button type="button" class="btn" data-att-filter="hadir">SUDAH ABSEN</button><button type="button" class="btn" data-att-filter="belum">BELUM ABSEN</button><button type="button" class="btn" data-att-filter="izin">IZIN</button><button type="button" class="btn" data-att-filter="sakit">SAKIT</button><button type="button" class="btn" data-att-filter="alpa">ALPA</button>
+    </div>
+    <input id="attendanceSearch" class="field" type="search" placeholder="Cari nama siswa..." style="margin:0 0 12px" aria-label="Cari siswa di rekap absensi">
+    <div id="attendanceRoster" class="module-list"><div class="empty">Pilih tanggal untuk melihat rekap.</div></div>
    </div>
 
   </section>
@@ -1195,6 +1206,24 @@ let qrScanner=null, nativeQrStream=null, nativeQrVideo=null, nativeQrFrame=0, na
 const asRows=d=>Array.isArray(d)?d:(d?[d]:[]);
 function rpcRow(d){return Array.isArray(d)?d[0]:d}
 function localDate(v){return v?new Date(v).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Jakarta"}):"—"}
+let attendanceRosterCache=[];
+let attendanceActiveFilter="all";
+function renderAttendanceRoster(){
+ const host=$("attendanceRoster"),q=($("attendanceSearch")?.value||"").trim().toLocaleLowerCase("id-ID");
+ const rows=attendanceRosterCache.filter(x=>(attendanceActiveFilter==="all"||x.status===attendanceActiveFilter)&&(!q||x.name.toLocaleLowerCase("id-ID").includes(q)));
+ host.innerHTML=rows.map(st=>{
+  const status=st.status||"belum",label=status==="hadir"?"SUDAH ABSEN":status.toUpperCase();
+  const meta=st.rec?`${st.rec.method==="qr"?"Scan QR":"Input Admin"} · ${localDate(st.rec.marked_at)}`:"Belum ada catatan kehadiran";
+  return `<div class="module-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div style="min-width:0;flex:1"><b>${esc(st.name)}</b><div class="module-meta">${esc(label)} · ${esc(meta)}</div></div><select class="field" aria-label="Ubah status ${esc(st.name)}" style="width:auto;min-width:135px;padding:8px" data-att-student="${st.id}"><option value="belum" ${status==="belum"?"selected":""}>Belum absen</option><option value="hadir" ${status==="hadir"?"selected":""}>Sudah absen</option><option value="izin" ${status==="izin"?"selected":""}>Izin</option><option value="sakit" ${status==="sakit"?"selected":""}>Sakit</option><option value="alpa" ${status==="alpa"?"selected":""}>Alpa</option></select></div>`;
+ }).join("")||'<div class="empty">Tidak ada siswa pada kategori pencarian ini.</div>';
+ document.querySelectorAll("[data-att-student]").forEach(sel=>sel.onchange=async()=>{
+  if(sel.value==="belum")return;
+  sel.disabled=true;
+  const {error}=await sb.rpc("mark_attendance_daily_manual",{p_student_id:sel.dataset.attStudent,p_status:sel.value,p_note:"Status diperbarui Admin",p_attendance_date:$("attendanceDate").value||jakartaToday()});
+  if(error){sel.disabled=false;toast(error.message,"error");return}
+  toast("Status absensi diperbarui.");await loadAttendanceRoster();
+ });
+}
 async function loadAttendanceRoster(){
  if(!isAdmin())return;
  const day=$("attendanceDate").value||jakartaToday();
@@ -1204,17 +1233,15 @@ async function loadAttendanceRoster(){
  ]);
  const err=r.error||s.error;if(err){$("attendanceRoster").innerHTML=`<div class="empty">${esc(err.message)}</div>`;return}
  const map=new Map((r.data||[]).map(x=>[x.student_id,x]));
- $("attendanceRoster").innerHTML=(s.data||[]).map(st=>{
-  const rec=map.get(st.id),status=rec?.status||"belum";
-  return `<div class="module-item" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><b>${esc(st.name)}</b><div class="module-meta">${rec?`${rec.method==="qr"?"Scan QR":"Input Admin"} · ${localDate(rec.marked_at)}`:"Belum tercatat"}</div></div><select class="field" style="width:auto;min-width:125px;padding:8px" data-att-student="${st.id}"><option value="belum" ${status==="belum"?"selected":""}>Belum absen</option><option value="hadir" ${status==="hadir"?"selected":""}>Hadir</option><option value="izin" ${status==="izin"?"selected":""}>Izin</option><option value="sakit" ${status==="sakit"?"selected":""}>Sakit</option><option value="alpa" ${status==="alpa"?"selected":""}>Alpa</option></select></div>`;
- }).join("")||'<div class="empty">Belum ada data siswa.</div>';
- document.querySelectorAll("[data-att-student]").forEach(sel=>sel.onchange=async()=>{
-  if(sel.value==="belum")return;
-  const {error}=await sb.rpc("mark_attendance_daily_manual",{p_student_id:sel.dataset.attStudent,p_status:sel.value,p_note:"",p_attendance_date:day});
-  if(error){toast(error.message,"error");return}
-  toast("Status absensi diperbarui.");await loadAttendanceRoster();
- });
+ attendanceRosterCache=(s.data||[]).map(st=>{const rec=map.get(st.id);return {...st,rec,status:rec?.status||"belum"}});
+ const counts={total:attendanceRosterCache.length,hadir:0,belum:0,izin:0,sakit:0,alpa:0};
+ attendanceRosterCache.forEach(x=>counts[x.status]=(counts[x.status]||0)+1);
+ const summary=$("attendanceSummary");if(summary)summary.innerHTML=[
+  ["TOTAL SISWA",counts.total], ["SUDAH ABSEN",counts.hadir], ["BELUM ABSEN",counts.belum], ["IZIN",counts.izin], ["SAKIT",counts.sakit], ["ALPA",counts.alpa]
+ ].map(([label,num])=>`<div class="card" style="padding:13px"><div class="stat-label">${label}</div><div class="stat-num" style="font-size:23px">${num}</div></div>`).join("");
+ renderAttendanceRoster();
 }
+
 async function markMissingAlpa(){
  const day=$("attendanceDate").value||jakartaToday();
  const [r,s]=await Promise.all([
@@ -1237,6 +1264,7 @@ async function submitAttendanceToken(token){
  if(error){$("attendanceScanStatus").textContent=error.message;return toast(error.message,"error")}
  const row=rpcRow(data);$("attendanceScanStatus").textContent=`Berhasil! ${row?.student_name||"Kehadiran"} tercatat pada ${localDate(row?.marked_at)}.`;
  $("attendanceTokenInput").value="";toast("Absensi berhasil dicatat.");
+ if(isAdmin())await loadAttendanceRoster();
  if(profile?.student_id){await loadStudentHome();await loadStudentProfile()}
 }
 function cameraErrorMessage(e){
@@ -1813,67 +1841,54 @@ async function loadLiveClassroom(){
 </body></html>
 
 <script id="spinner-qr-camera-hotfix">
+/* Persistent attendance scanner: after each successful read, keep camera preview/scanner running. */
 (function(){
+ if(window.__persistentAttendanceScannerInstalled)return;
+ window.__persistentAttendanceScannerInstalled=true;
+ let scanner=null, opening=false, inFlight=false, lastToken="", lastTokenAt=0;
  const $=id=>document.getElementById(id);
- let stream=null,video=null,scanner=null,raf=0,detector=null,busy=false,decoded=false;
- const status=(s)=>{const el=$('attendanceScanStatus');if(el)el.textContent=s};
- async function stop(){
-  if(raf)cancelAnimationFrame(raf);raf=0;
-  if(scanner){try{if(scanner.isScanning)await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
-  if(video){try{video.pause();video.srcObject=null}catch(e){}video=null}
-  if(stream){stream.getTracks().forEach(t=>{try{t.stop()}catch(e){}});stream=null}
-  detector=null;busy=false;decoded=false;
-  const reader=$('qr-reader');if(reader)reader.innerHTML='';
+ const status=t=>{const el=$("attendanceScanStatus");if(el)el.textContent=t};
+ async function closeScanner(clear=true){
+  const old=scanner;scanner=null;
+  if(old){try{if(old.isScanning)await old.stop()}catch(e){}if(clear){try{await old.clear()}catch(e){}}}
+  const reader=$("qr-reader");if(clear&&reader)reader.innerHTML="";
  }
- function explain(e){
-  if(!window.isSecureContext)return 'Kamera butuh HTTPS. Buka https://dkvone.vercel.app melalui Chrome.';
-  if(!navigator.mediaDevices?.getUserMedia)return 'Browser tidak menyediakan akses kamera. Gunakan Chrome terbaru.';
-  const n=e?.name||'Error',m=e?.message||String(e||'');
-  if(n==='NotAllowedError'||n==='SecurityError')return 'Izin kamera ditolak. Aktifkan izin Kamera untuk Chrome dan situs dkvone.vercel.app.';
-  if(n==='NotFoundError')return 'Kamera tidak ditemukan.';
-  if(n==='NotReadableError')return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi yang memakai kamera lalu coba lagi.';
-  return 'Kamera gagal dibuka ('+n+'): '+m;
- }
- async function open(){
-  const btn=$('startQrScan'),reader=$('qr-reader');
-  if(!btn||!reader){status('Elemen kamera tidak ditemukan. Muat ulang halaman.');return}
-  btn.disabled=true;btn.textContent='MEMBUKA KAMERA…';status('Meminta izin kamera dari Chrome…');
+ async function handleToken(token){
+  token=(token||"").trim();if(!token||inFlight)return;
+  const now=Date.now();if(token===lastToken&&now-lastTokenAt<3500)return;
+  inFlight=true;lastToken=token;lastTokenAt=now;
+  status("QR terbaca. Menyimpan absensi… kamera tetap aktif.");
   try{
-   await stop();
-   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error(explain());
-   // Request camera directly from the user gesture; this reliably triggers Android's permission prompt.
-   try{stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}})}
-   catch(first){stream=await navigator.mediaDevices.getUserMedia({audio:false,video:true})}
-   reader.innerHTML='';
-   video=document.createElement('video');video.autoplay=true;video.muted=true;video.playsInline=true;
-   video.setAttribute('playsinline','');video.style.cssText='display:block;width:100%;max-width:420px;max-height:360px;min-height:220px;object-fit:cover;margin:0 auto;border-radius:14px;background:#050b15';
-   reader.appendChild(video);video.srcObject=stream;await video.play();
-   status('Kamera berhasil dibuka. Menyiapkan pemindai QR…');
-   if(window.Html5Qrcode){
-    // Stop raw preview before html5-qrcode claims the camera to avoid Android camera contention.
-    stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;video=null;reader.innerHTML='';
-    scanner=new Html5Qrcode('qr-reader',{verbose:false});
-    await scanner.start({facingMode:'environment'},{fps:10,qrbox:(w,h)=>{const z=Math.max(160,Math.min(250,Math.floor(Math.min(w,h)*.72)));return{width:z,height:z}},aspectRatio:1},async token=>{
-      if(decoded)return;decoded=true;await stop();status('QR terbaca. Mengirim absensi…');
-      if(typeof window.submitAttendanceToken==='function')await window.submitAttendanceToken(token);
-      else if(typeof submitAttendanceToken==='function')await submitAttendanceToken(token);
-    },()=>{});
-    status('Kamera aktif. Arahkan QR ke kotak pemindai.');
-   }else if('BarcodeDetector' in window){
-    const formats=await BarcodeDetector.getSupportedFormats();if(formats.includes('qr_code'))detector=new BarcodeDetector({formats:['qr_code']});
-    if(detector){const scan=async()=>{if(!video||!stream)return;if(!busy&&video.readyState>=2){busy=true;try{const codes=await detector.detect(video);if(codes?.[0]?.rawValue){decoded=true;const token=codes[0].rawValue;await stop();status('QR terbaca. Mengirim absensi…');await submitAttendanceToken(token);return}}catch(e){}finally{busy=false}}raf=requestAnimationFrame(scan)};raf=requestAnimationFrame(scan);status('Kamera aktif. Arahkan QR ke kamera.')}
-    else status('Kamera aktif, tetapi pemindai QR belum termuat. Muat ulang halaman untuk memuat library scanner.');
-   }else status('Kamera aktif, tetapi library pemindai QR belum termuat. Periksa koneksi internet lalu muat ulang.');
-  }catch(e){await stop();status(explain(e));console.error('Spinner camera fix:',e)}
-  finally{btn.disabled=false;btn.textContent='◉ BUKA KAMERA'}
+   if(typeof window.submitAttendanceToken==="function")await window.submitAttendanceToken(token);
+   else if(typeof submitAttendanceToken==="function")await submitAttendanceToken(token);
+   status("Absensi diproses. Kamera tetap aktif — arahkan QR siswa berikutnya.");
+  }catch(e){status("Gagal menyimpan absensi: "+(e?.message||String(e)));}
+  finally{setTimeout(()=>{inFlight=false},900)}
  }
- document.addEventListener('DOMContentLoaded',()=>{
-  const b=$('startQrScan'),s=$('stopQrScan');if(b)b.onclick=open;if(s)s.onclick=async()=>{await stop();status('Kamera dihentikan.')};
+ async function openScanner(){
+  const btn=$("startQrScan"),reader=$("qr-reader");if(!btn||!reader||opening||scanner?.isScanning)return;
+  opening=true;btn.disabled=true;btn.textContent="MEMBUKA KAMERA…";status("Meminta izin kamera…");
+  try{
+   if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error("Kamera memerlukan HTTPS dan browser yang mendukung kamera.");
+   await closeScanner(true);
+   if(!window.Html5Qrcode)throw new Error("Library pemindai QR belum termuat. Muat ulang halaman dan coba lagi.");
+   scanner=new Html5Qrcode("qr-reader",{verbose:false});
+   await scanner.start({facingMode:"environment"},{fps:10,qrbox:(w,h)=>{const z=Math.max(160,Math.min(260,Math.floor(Math.min(w,h)*.72)));return{width:z,height:z}},aspectRatio:1},handleToken,()=>{});
+   status("KAMERA AKTIF. Scan siswa satu per satu; kamera tidak akan menutup otomatis.");
+  }catch(e){await closeScanner(true);status("Kamera gagal dibuka: "+(e?.message||String(e)));console.error("Persistent attendance scanner:",e)}
+  finally{opening=false;btn.disabled=false;btn.textContent="◉ BUKA KAMERA"}
+ }
+ async function stopScanner(){await closeScanner(true);status("Kamera dihentikan. Tekan BUKA KAMERA untuk memulai lagi.")}
+ document.addEventListener("DOMContentLoaded",()=>{
+  const b=$("startQrScan"),s=$("stopQrScan");if(b)b.onclick=openScanner;if(s)s.onclick=stopScanner;
+  const search=$("attendanceSearch");if(search)search.addEventListener("input",renderAttendanceRoster);
+  document.querySelectorAll("[data-att-filter]").forEach(btn=>btn.addEventListener("click",()=>{attendanceActiveFilter=btn.dataset.attFilter;document.querySelectorAll("[data-att-filter]").forEach(x=>x.classList.toggle("primary",x===btn));renderAttendanceRoster()}));
  });
- const b=$('startQrScan'),s=$('stopQrScan');if(b)b.onclick=open;if(s)s.onclick=async()=>{await stop();status('Kamera dihentikan.')};
- window.addEventListener('pagehide',()=>{stop()});
+ const b=$("startQrScan"),s=$("stopQrScan");if(b)b.onclick=openScanner;if(s)s.onclick=stopScanner;
+ const search=$("attendanceSearch");if(search)search.addEventListener("input",()=>{if(typeof renderAttendanceRoster==="function")renderAttendanceRoster()});
+ document.querySelectorAll("[data-att-filter]").forEach(btn=>btn.addEventListener("click",()=>{if(typeof attendanceActiveFilter!=="undefined")attendanceActiveFilter=btn.dataset.attFilter;document.querySelectorAll("[data-att-filter]").forEach(x=>x.classList.toggle("primary",x===btn));if(typeof renderAttendanceRoster==="function")renderAttendanceRoster()}));
+ window.addEventListener("pagehide",()=>{closeScanner(true)});
 })();
-
 </script>
 
 <script id="governance-save-buttons-fix">
