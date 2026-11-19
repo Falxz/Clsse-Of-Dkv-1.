@@ -580,6 +580,45 @@ main section:not(#page-overview){padding-bottom:12px}main section:not(#page-over
   #appView.app.hidden { display: none !important; visibility: hidden !important; }
 }
 </style>
+
+<style id="mobile-spacing-navigation-final-fix">
+/* Final layout correction: keep feature headings in normal document flow.
+   The previous sticky heading offset overlapped content and created a large gap
+   below the mobile navigation bar. */
+#appView > .main {
+  min-width: 0 !important;
+  padding-top: 14px !important;
+}
+#appView > .main > .topbar {
+  position: relative !important;
+  top: auto !important;
+  margin: 0 0 16px !important;
+  padding: 0 0 12px !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(150,180,220,.12) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+#appView > .main > section.hidden {
+  display: none !important;
+}
+#appView > .main > section:not(.hidden) {
+  display: block !important;
+}
+@media (max-width: 900px) {
+  #appView > .main {
+    padding: 12px 13px 28px !important;
+  }
+  #appView > .main > .topbar {
+    position: relative !important;
+    top: auto !important;
+    margin: 0 0 14px !important;
+    padding: 0 0 10px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div id="startupScreen" role="status" aria-label="Memuat Spinner Seating">
