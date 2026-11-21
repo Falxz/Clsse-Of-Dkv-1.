@@ -1051,7 +1051,42 @@ function subscribe(){realtime.forEach(c=>sb.removeChannel(c));realtime=[sb.chann
 
 function personalizeDashboard(){const root=$("page-overview"),banner=root?.querySelector(".premium-banner");if(!root||!banner||!profile)return;const h=banner.querySelector("h3"),p=banner.querySelector("p"),ey=banner.querySelector(".eyebrow");root.querySelector(".dev-dashboard-grid")?.remove();if(profile.role==="developer"){if(ey)ey.textContent="DEVELOPER WORKSPACE · SYSTEM CONTROL";if(h)h.textContent="Pantau dan kelola ekosistem Spinner Seating.";if(p)p.textContent="Ruang kerja khusus untuk konfigurasi, akses, dan kesehatan operasional aplikasi.";const panel=document.createElement("div");panel.className="dev-dashboard-grid";panel.innerHTML='<button class="dev-dashboard-card" type="button" data-dev-page="developer"><span class="dev-icon">✦</span><b>Developer Console</b><small>Pengaturan sistem dan maintenance</small></button><button class="dev-dashboard-card" type="button" data-dev-page="feature-management"><span class="dev-icon">◈</span><b>Manajemen Fitur</b><small>Kontrol fitur dan akses modul</small></button><button class="dev-dashboard-card" type="button" data-dev-page="accounts"><span class="dev-icon">♙</span><b>Pengelolaan Akun</b><small>Periksa role dan status akun</small></button><button class="dev-dashboard-card" type="button" data-dev-page="audit"><span class="dev-icon">◷</span><b>Audit Aktivitas</b><small>Telusuri perubahan pengelolaan</small></button>';banner.after(panel);panel.querySelectorAll("[data-dev-page]").forEach(b=>b.addEventListener("click",async()=>{const page=b.dataset.devPage;setPage(page);if(page==="developer"){await loadDeveloperSettings();await loadGlobalSettings()}if(page==="feature-management"){await loadFeatureSettings();renderFeatureSettings()}if(page==="audit")await loadAudit()}));root.querySelector(".hybrid-shortcuts")?.classList.add("hidden")}else if(profile.role==="admin"){if(ey)ey.textContent="ADMIN WORKSPACE · CLASS OVERVIEW";if(h)h.textContent="Semua aktivitas kelas, lebih rapi dan terhubung.";if(p)p.textContent="Kelola tempat duduk, kehadiran, informasi, dan aktivitas siswa dari satu dashboard.";root.querySelector(".hybrid-shortcuts")?.classList.remove("hidden")}else{root.querySelector(".hybrid-shortcuts")?.classList.add("hidden")}}
 async function enterApp(user){const {data,error}=await sb.from("profiles").select("id,email,display_name,role,is_disabled,student_id").eq("id",user.id).single();if(error)throw new Error("Profil belum tersedia. Pastikan schema SQL sudah dijalankan.");profile=data;if(profile.is_disabled){profile=null;await sb.auth.signOut();throw new Error("Akun ini dinonaktifkan oleh Developer.")}const {data:ms}=await sb.rpc("get_public_maintenance");const m=Array.isArray(ms)?ms[0]:ms;if(m)maintenanceState=m;if(maintenanceState.enabled&&!isDev()){showMaintenance(maintenanceState);profile=null;await sb.auth.signOut();throw new Error("Website sedang maintenance. Akun User/Admin belum dapat masuk.");}$("maintenanceView").classList.add("hidden");$("loginView").classList.add("hidden");$("appView").classList.remove("hidden");setRoleUI();personalizeDashboard();await loadAdminPermissionUI();await loadFeatureSettings();await loadData();await loadGlobalSettings();render();subscribe();setPage(profile.role==="user"?"student-home":"overview");if(profile.student_id)await loadStudentPermanentQr();if(isDev()){await loadDeveloperSettings();await loadGlobalSettings();await loadSnapshots()}}
-async function doSpin(){if(!isAdmin()||busy)return null;busy=true;render();$("wheel").classList.add("spinning");playSpinTone();try{const {data,error}=await sb.rpc("draw_next_student");if(error)throw error;const draw=rpcRow(data);if(!draw)throw new Error("Hasil spin tidak diterima.");await logActivity("SPIN_COMPLETED",{student_name:draw.student_name,seat_no:draw.seat_no??draw.spin_no});await new Promise(r=>setTimeout(r,globalSpinDuration));$("wheel").classList.remove("spinning");const p=seatNo((draw.seat_no??draw.spin_no)-1);$("pickedName").textContent="🎉 "+draw.student_name;$("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;await loadData();render();if(autoState==="running")toast(`🎉 ${draw.student_name} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(draw.student_name,p);return draw}catch(e){$("wheel").classList.remove("spinning");toast(e.message,"error");return null}finally{busy=false;render()}}
+async function doSpin(){
+ if(!isAdmin())return toast("Spin hanya bisa dijalankan Admin/Developer.","error"),null;
+ if(busy)return null;
+ if(!sb)return toast("Koneksi database belum siap. Muat ulang halaman.","error"),null;
+ busy=true;render();
+ const wheel=$("wheel");wheel?.classList.add("spinning");
+ try{
+  // Efek suara tidak boleh menggagalkan proses undian.
+  try{if(typeof playSpinTone==="function")playSpinTone()}catch(soundError){console.warn("Efek suara spin dilewati:",soundError)}
+  const {data,error}=await sb.rpc("draw_next_student");
+  if(error)throw new Error(error.message||"Database menolak proses spin.");
+  const draw=rpcRow(data);
+  if(!draw||typeof draw!=="object")throw new Error("Database tidak mengembalikan hasil spin. Periksa daftar siswa dan fungsi draw_next_student di Supabase.");
+  const winnerName=draw.student_name||draw.name;
+  if(!winnerName)throw new Error("Hasil undian tidak memiliki nama siswa. Periksa output fungsi draw_next_student.");
+  const rawSeat=Number(draw.seat_no??draw.spin_no);
+  if(!Number.isFinite(rawSeat)||rawSeat<1||rawSeat>42)throw new Error("Nomor kursi dari database tidak valid. Pastikan seat_no atau spin_no bernilai 1–42.");
+  await new Promise(r=>setTimeout(r,Math.max(0,Number(globalSpinDuration)||0)));
+  wheel?.classList.remove("spinning");
+  const p=seatNo(rawSeat-1);
+  $("pickedName").textContent="🎉 "+winnerName;
+  $("pickedSeat").textContent=`MEJA ${p.table} · KURSI ${p.seat}`;
+  // Log aktivitas dan refresh data bersifat sekunder: kegagalannya tidak boleh
+  // membuat undian yang sudah berhasil terlihat sebagai spin gagal.
+  try{await logActivity("SPIN_COMPLETED",{student_name:winnerName,seat_no:rawSeat})}catch(logError){console.warn("Log spin gagal disimpan:",logError)}
+  try{await loadData();render()}catch(refreshError){console.warn("Refresh setelah spin gagal:",refreshError);toast("Nama terpilih, tetapi daftar belum tersinkron. Tekan Refresh.","error")}
+  const result={...draw,student_name:winnerName,seat_no:rawSeat};
+  if(autoState==="running")toast(`🎉 ${winnerName} → Meja ${p.table}, Kursi ${p.seat}`);else showWinner(winnerName,p);
+  return result;
+ }catch(e){
+  wheel?.classList.remove("spinning");
+  console.error("Spin error:",e);
+  toast("Spin gagal: "+(e?.message||String(e)),"error");
+  return null;
+ }finally{busy=false;render()}
+}
 function showWinner(name,p){modal("🎉 Nama terpilih!",`<div style="text-align:center;padding:12px"><div style="font-size:38px">🪑</div><div style="font:800 25px 'Plus Jakarta Sans';margin:12px 0">${esc(name)}</div><div class="tag">MEJA ${p.table} · KURSI ${p.seat}</div><p>Nama berhasil ditempatkan ke denah kelas.</p></div>`,`<button class="btn primary" id="winnerOk">MANTAP!</button>`);$("winnerOk").onclick=closeModal}
 function wait(ms){return new Promise(resolve=>autoTimer=setTimeout(resolve,ms))}
 async function startAuto(){if(autoState!=="idle")return;autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
