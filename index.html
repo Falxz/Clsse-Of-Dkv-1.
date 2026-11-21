@@ -1235,22 +1235,33 @@ async function loadAttendanceRoster(){
  if(!isAdmin())return;
  const day=$("attendanceDate").value||jakartaToday();
  const host=$("attendanceRoster");if(host)host.innerHTML='<div class="empty">Memuat daftar siswa…</div>';
+ // Muat ulang sumber utama bila cache siswa belum tersedia (misalnya halaman absensi
+ // dibuka sebelum data kelas selesai dimuat atau setelah koneksi pulih).
+ if(!Array.isArray(students)||students.length===0){
+  try{await loadData()}catch(e){console.warn("Muat ulang daftar siswa:",e)}
+ }
  const [r,s]=await Promise.all([
   sb.from("attendance_daily_records").select("student_id,status,method,marked_at,note").eq("attendance_date",day),
-  sb.from("students").select("id,name,student_no").order("sort_order",{ascending:true})
+  // Jangan meminta kolom opsional student_no di sini: kolom itu tidak diperlukan
+  // untuk roster dan dapat menggagalkan seluruh query pada skema yang berbeda.
+  sb.from("students").select("id,name").order("sort_order",{ascending:true})
  ]);
- const err=r.error||s.error;if(err){if(host)host.innerHTML=`<div class="empty">Gagal memuat absensi: ${esc(err.message)}</div>`;toast(err.message,"error");return}
- // Gunakan cache daftar siswa yang sudah dimuat saat login jika query roster kosong.
- const roster=(s.data&&s.data.length?s.data:(Array.isArray(students)?students:[]));
+ const err=r.error||s.error;
+ if(err){if(host)host.innerHTML=`<div class="empty">Gagal memuat data siswa/absensi: ${esc(err.message)}. Periksa koneksi dan izin baca tabel.</div>`;toast(err.message,"error");return}
+ const queried=Array.isArray(s.data)?s.data:[];
+ const cached=Array.isArray(students)?students:[];
+ const roster=queried.length?queried:cached;
  const map=new Map((r.data||[]).map(x=>[String(x.student_id),x]));
- attendanceRosterCache=roster.map(st=>{const rec=map.get(String(st.id));return {...st,rec,status:rec?.status||"belum"}});
+ attendanceRosterCache=roster.filter(st=>st&&st.id&&st.name).map(st=>{const rec=map.get(String(st.id));return {...st,rec,status:rec?.status||"belum"}});
  const counts={total:attendanceRosterCache.length,hadir:0,belum:0,izin:0,sakit:0,alpa:0};
  attendanceRosterCache.forEach(x=>counts[x.status]=(counts[x.status]||0)+1);
  const summary=$("attendanceSummary");if(summary)summary.innerHTML=[
   ["TOTAL SISWA",counts.total], ["SUDAH ABSEN",counts.hadir], ["BELUM ABSEN",counts.belum], ["IZIN",counts.izin], ["SAKIT",counts.sakit], ["ALPA",counts.alpa]
  ].map(([label,num])=>`<div class="card" style="padding:13px"><div class="stat-label">${label}</div><div class="stat-num" style="font-size:23px">${num}</div></div>`).join("");
- if(!attendanceRosterCache.length&&host)host.innerHTML='<div class="empty">Data siswa belum ditemukan. Buka Student List dan pastikan daftar siswa sudah tersimpan di database.</div>';
- else renderAttendanceRoster();
+ if(!attendanceRosterCache.length&&host){
+  host.innerHTML='<div class="empty"><b>Daftar siswa masih kosong.</b><br>Data tidak diterima dari tabel students maupun cache aplikasi. Coba muat ulang data. Jika Student List juga kosong, periksa apakah siswa masih tersimpan di database dan kebijakan akses (RLS) mengizinkan Admin membaca tabel students.<br><button type="button" class="btn primary" id="retryAttendanceRoster" style="margin-top:12px">MUAT ULANG DAFTAR SISWA</button></div>';
+  $("retryAttendanceRoster")?.addEventListener("click",async()=>{const b=$("retryAttendanceRoster");if(b)b.disabled=true;try{await loadData();await loadAttendanceRoster()}catch(e){toast(e.message,"error");if(b)b.disabled=false}});
+ }else renderAttendanceRoster();
 }
 
 async function markMissingAlpa(){
@@ -1596,7 +1607,7 @@ async function loadAttendanceRanks(){
  const {start,end}=rankMonthRange(month);const host=$("attendanceRankPreview");host.innerHTML='<div class="empty">Menghitung peringkat…</div>';
  const [r,s]=await Promise.all([sb.from("attendance_daily_records").select("student_id,status,attendance_date").gte("attendance_date",start).lte("attendance_date",end),sb.from("students").select("id,name").order("sort_order",{ascending:true})]);
  const err=r.error||s.error;if(err){host.innerHTML=`<div class="empty">Gagal menghitung peringkat: ${esc(err.message)}</div>`;toast(err.message,"error");return}
- const counts=new Map();(s.data||[]).forEach(st=>counts.set(String(st.id),{id:st.id,name:st.name,alpa:0,sakit:0,izin:0}));
+ const rankRoster=(s.data&&s.data.length?s.data:(Array.isArray(students)?students:[]));const counts=new Map();rankRoster.forEach(st=>counts.set(String(st.id),{id:st.id,name:st.name,alpa:0,sakit:0,izin:0}));
  (r.data||[]).forEach(rec=>{const row=counts.get(String(rec.student_id));if(row&&["alpa","sakit","izin"].includes(rec.status))row[rec.status]++});
  const all=[...counts.values()];attendanceRankData={month,groups:{alpa:rankPositionRows(all.map(x=>({id:x.id,name:x.name,count:x.alpa}))),sakit:rankPositionRows(all.map(x=>({id:x.id,name:x.name,count:x.sakit}))),izin:rankPositionRows(all.map(x=>({id:x.id,name:x.name,count:x.izin})))}};
  const labels={alpa:"ALPA TERBANYAK",sakit:"SAKIT TERBANYAK",izin:"IZIN TERBANYAK"};
