@@ -1727,7 +1727,9 @@ async function loadStudentCard(){
   new QRCode($("studentCardQr"),{text:token,width:180,height:180,correctLevel:QRCode.CorrectLevel.H});window.currentCard={...data,qrToken:token};
  }catch(e){root.innerHTML=`<div class="empty">Kartu siswa gagal dimuat: ${esc(e?.message||String(e))}</div>`;console.error("Muat kartu siswa:",e)}
 }
-function printCard(){const c=window.currentCard;if(!c?.qrToken)return toast("Kartu siswa atau QR belum siap.","error");const w=window.open("","_blank","width=760,height=560");if(!w)return;const token=JSON.stringify(c.qrToken);w.document.write(`<html><head><title>Kartu Siswa</title><style>body{font-family:Arial;padding:30px;color:#172033}.card{border:2px solid #243b65;border-radius:18px;padding:24px;width:min(620px,calc(100vw - 100px));display:flex;gap:24px;justify-content:space-between;align-items:center}h2{margin:5px 0}.muted{color:#52627a;font-size:13px}#qr{background:#fff;padding:10px;border-radius:10px}</style></head><body><div class="card"><div><small>CLASS SEAT SPINNER · STUDENT ID</small><h2>${esc(c.name)}</h2><p>Nomor siswa: ${esc(c.student_no||"—")}</p><p class="muted">QR permanen untuk absensi</p></div><div id="qr"></div></div><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>new QRCode(document.getElementById('qr'),{text:${token},width:180,height:180,correctLevel:QRCode.CorrectLevel.H});window.onload=()=>setTimeout(()=>window.print(),500)<\/script></body></html>`);w.document.close()}
+function printCard(){const c=window.currentCard;if(!c?.qrToken)return toast("Kartu siswa atau QR belum siap.","error");const w=window.open("","_blank","width=760,height=560");if(!w)return;const token=JSON.stringify(c.qrToken);w.document.write(`<html><head><title>Kartu Siswa</title><style>body{font-family:Arial;padding:30px;color:#172033}.card{border:2px solid #243b65;border-radius:18px;padding:24px;width:min(620px,calc(100vw - 100px));display:flex;gap:24px;justify-content:space-between;align-items:center}h2{margin:5px 0}.muted{color:#52627a;font-size:13px}#qr{background:#fff;padding:10px;border-radius:10px}</style></head><body><div class="card"><div><small>CLASS SEAT SPINNER · STUDENT ID</small><h2>${esc(c.name)}</h2><p>Nomor siswa: ${esc(c.student_no||"—")}</p><p class="muted">QR permanen untuk absensi</p></div><div id="qr"></div></div><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>new QRCode(document.getElementById('qr'),{text:${token},width:180,height:180,correctLevel:QRCode.CorrectLevel.H});window.onload=()=>setTimeout(()=>window.print(),500)<\/script>
+
+</body></html>`);w.document.close()}
 
 async function loadGallery(){
  const host=$("galleryList");if(!host)return;host.innerHTML='<div class="empty">Memuat karya…</div>';
@@ -1986,6 +1988,62 @@ async function loadLiveClassroom(){
  const fs=document.getElementById("liveFullscreenBtn");if(fs)fs.addEventListener("click",async()=>{const page=document.getElementById("page-live-classroom");try{if(!document.fullscreenElement){document.body.classList.add("live-display-mode");await (page||document.documentElement).requestFullscreen();}else{await document.exitFullscreen();}}catch(e){document.body.classList.toggle("live-display-mode");}});
  document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement)document.body.classList.remove("live-display-mode");});
  const name=document.getElementById("liveClassName");const globalName=document.getElementById("globalClassName");if(name&&globalName&&globalName.value.trim())name.textContent=globalName.value.trim();
+})();
+</script>
+
+<script id="spin-button-binding-hotfix">
+/* Independent capture binding: Spin controls remain responsive even if a later
+   optional module interrupts the main page's bulk event initialization. */
+(()=>{
+ const bindSpinControls=()=>{
+  const spin=document.getElementById("spinBtn");
+  const auto=document.getElementById("autoBtn");
+  const pause=document.getElementById("pauseBtn");
+  const resume=document.getElementById("resumeBtn");
+  const stop=document.getElementById("stopBtn");
+  [spin,auto,pause,resume,stop].forEach(b=>{if(b)b.type="button"});
+  if(document.__spinControlsHotfix)return;
+  document.__spinControlsHotfix=true;
+  document.addEventListener("click",event=>{
+   const button=event.target?.closest?.("#spinBtn,#autoBtn,#pauseBtn,#resumeBtn,#stopBtn");
+   if(!button)return;
+   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+   if(button.disabled)return;
+   try{
+    if(button.id==="spinBtn"){
+     if(typeof doSpin!=="function")throw new Error("Modul Spin belum berhasil dimuat. Muat ulang halaman.");
+     Promise.resolve(doSpin()).catch(error=>{console.error("Spin click hotfix:",error);if(typeof toast==="function")toast("Spin gagal: "+(error?.message||String(error)),"error")});
+    }else if(button.id==="autoBtn"){
+     if(typeof startAuto!=="function")throw new Error("Modul Auto Spin belum berhasil dimuat. Muat ulang halaman.");
+     Promise.resolve(startAuto()).catch(error=>{console.error("Auto Spin click hotfix:",error);if(typeof toast==="function")toast("Auto Spin gagal: "+(error?.message||String(error)),"error")});
+    }else if(button.id==="pauseBtn"&&typeof pauseAuto==="function")pauseAuto();
+    else if(button.id==="resumeBtn"&&typeof resumeAuto==="function")Promise.resolve(resumeAuto()).catch(error=>console.error(error));
+    else if(button.id==="stopBtn"&&typeof stopAuto==="function")stopAuto();
+   }catch(error){console.error("Spin control binding:",error);if(typeof toast==="function")toast(error?.message||String(error),"error")}
+  },true);
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindSpinControls,{once:true});else bindSpinControls();
+})();
+</script>
+<script id="spin-button-binding-hotfix">
+(()=>{
+ const bindSpinControls=()=>{
+  const ids=["spinBtn","autoBtn","pauseBtn","resumeBtn","stopBtn"];
+  ids.forEach(id=>{const b=document.getElementById(id);if(b)b.type="button"});
+  if(document.__spinControlsHotfix)return;document.__spinControlsHotfix=true;
+  document.addEventListener("click",event=>{
+   const button=event.target?.closest?.("#spinBtn,#autoBtn,#pauseBtn,#resumeBtn,#stopBtn");if(!button)return;
+   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();if(button.disabled)return;
+   try{
+    if(button.id==="spinBtn"){if(typeof doSpin!=="function")throw new Error("Modul Spin belum berhasil dimuat. Muat ulang halaman.");Promise.resolve(doSpin()).catch(error=>{console.error(error);if(typeof toast==="function")toast("Spin gagal: "+(error?.message||String(error)),"error")})}
+    else if(button.id==="autoBtn"){if(typeof startAuto!=="function")throw new Error("Modul Auto Spin belum berhasil dimuat. Muat ulang halaman.");Promise.resolve(startAuto()).catch(error=>{console.error(error);if(typeof toast==="function")toast("Auto Spin gagal: "+(error?.message||String(error)),"error")})}
+    else if(button.id==="pauseBtn"&&typeof pauseAuto==="function")pauseAuto();
+    else if(button.id==="resumeBtn"&&typeof resumeAuto==="function")Promise.resolve(resumeAuto()).catch(console.error);
+    else if(button.id==="stopBtn"&&typeof stopAuto==="function")stopAuto();
+   }catch(error){console.error("Spin controls:",error);if(typeof toast==="function")toast(error?.message||String(error),"error")}
+  },true);
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindSpinControls,{once:true});else bindSpinControls();
 })();
 </script>
 </body></html>
