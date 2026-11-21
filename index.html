@@ -1155,11 +1155,11 @@ async function downloadPlan(){
    const x=pad+(i%cols)*(cardW+gap),y=top+Math.floor(i/cols)*(cardH+rowGap);
    const a=by.find(h=>Number(h.seat_no??h.spin_no)===i*2+1),b=by.find(h=>Number(h.seat_no??h.spin_no)===i*2+2);
    ctx.fillStyle="#20364b";ctx.strokeStyle="#58758a";ctx.lineWidth=2;
-   const r=22;ctx.beginPath();ctx.roundRect(x,y,cardW,cardH,r);ctx.fill();ctx.stroke();
+   const r=22;ctx.beginPath();ctx.rect(x,y,cardW,cardH);ctx.fill();ctx.stroke();
    ctx.fillStyle="#b7c8d9";ctx.font="bold 23px Arial";ctx.fillText(`MEJA ${String(i+1).padStart(2,"0")}`,x+26,y+38);
    ctx.fillStyle="#0b1729";
    for(let j=0;j<2;j++){
-    const yy=y+55+j*43;ctx.beginPath();ctx.roundRect(x+18,yy,cardW-36,34,10);ctx.fill();
+    const yy=y+55+j*43;ctx.beginPath();ctx.rect(x+18,yy,cardW-36,34);ctx.fill();
     const h=j===0?a:b;ctx.fillStyle="#83b9f4";ctx.font="bold 19px Arial";ctx.fillText(j===0?"A":"B",x+32,yy+23);
     ctx.fillStyle="#f2f6ff";ctx.font="22px Arial";
     const name=String(h?.student_name||"Menunggu siswa");ctx.save();ctx.beginPath();ctx.rect(x+68,yy+2,cardW-100,30);ctx.clip();ctx.fillText(name,x+68,yy+24);ctx.restore();ctx.fillStyle="#0b1729";
@@ -1776,6 +1776,7 @@ async function loadStudentCard(){
 }
 function printCard(){const c=window.currentCard;if(!c?.qrToken)return toast("Kartu siswa atau QR belum siap.","error");const w=window.open("","_blank","width=760,height=560");if(!w)return;const token=JSON.stringify(c.qrToken);w.document.write(`<html><head><title>Kartu Siswa</title><style>body{font-family:Arial;padding:30px;color:#172033}.card{border:2px solid #243b65;border-radius:18px;padding:24px;width:min(620px,calc(100vw - 100px));display:flex;gap:24px;justify-content:space-between;align-items:center}h2{margin:5px 0}.muted{color:#52627a;font-size:13px}#qr{background:#fff;padding:10px;border-radius:10px}</style></head><body><div class="card"><div><small>CLASS SEAT SPINNER · STUDENT ID</small><h2>${esc(c.name)}</h2><p>Nomor siswa: ${esc(c.student_no||"—")}</p><p class="muted">QR permanen untuk absensi</p></div><div id="qr"></div></div><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>new QRCode(document.getElementById('qr'),{text:${token},width:180,height:180,correctLevel:QRCode.CorrectLevel.H});window.onload=()=>setTimeout(()=>window.print(),500)<\/script>
 
+
 </body></html>`);w.document.close()}
 
 async function loadGallery(){
@@ -2093,6 +2094,8 @@ async function loadLiveClassroom(){
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindSpinControls,{once:true});else bindSpinControls();
 })();
 </script>
+
+
 </body></html>
 
 <script id="spinner-qr-camera-hotfix">
@@ -2201,3 +2204,23 @@ document.addEventListener("click",function(e){
 },true);
 
 </script>
+<script id="seating-export-controls-v4">
+(()=>{
+ const ids=["copyPlan","pdfPlan","downloadPlan"];
+ const bind=()=>{
+  ids.forEach(id=>{const b=document.getElementById(id);if(b)b.type="button";});
+  if(document.__seatingExportControlsV4)return;document.__seatingExportControlsV4=true;
+  document.addEventListener("click",event=>{
+   const button=event.target&&event.target.closest?event.target.closest("#copyPlan,#pdfPlan,#downloadPlan"):null;if(!button)return;
+   event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+   (async()=>{try{
+    if(button.id==="copyPlan"){if(typeof copyPlan!=="function")throw new Error("Modul salin denah tidak termuat.");await copyPlan();}
+    else if(button.id==="downloadPlan"){if(typeof downloadPlan!=="function")throw new Error("Modul gambar denah tidak termuat.");await downloadPlan();}
+    else{if(typeof exportPdf!=="function")throw new Error("Modul PDF tidak termuat.");await exportPdf();}
+   }catch(error){console.error("Seating export:",button.id,error);const msg="Fitur "+(button.id==="copyPlan"?"Copy Text":button.id==="pdfPlan"?"Export PDF":"Download Image")+" gagal: "+(error?.message||String(error));if(typeof toast==="function")toast(msg,"error");else alert(msg);}})();
+  },true);
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});else bind();
+})();
+</script>
+
