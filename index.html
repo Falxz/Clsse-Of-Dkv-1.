@@ -1122,8 +1122,55 @@ async function undo(){if(!history.length)return;const ok=await confirmBox("Undo 
 async function resetAll(){const ok=await confirmBox("Reset seluruh hasil?","Semua hasil spin akan dihapus. Daftar siswa tetap tersimpan dan seluruh siswa kembali ke daftar undian.","RESET");if(!ok)return;const {error}=await sb.rpc("reset_spins");if(error)return toast(error.message,"error");$("pickedName").textContent="Siap untuk spin?";$("pickedSeat").textContent="Nama terpilih akan muncul di sini";await refresh();toast("Hasil pengundian berhasil di-reset.")}
 async function shuffleStudents(){if(history.length)return toast("Shuffle hanya tersedia sebelum spin dimulai.","error");const arr=[...students];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}for(let i=0;i<arr.length;i++){const {error}=await sb.from("students").update({sort_order:i}).eq("id",arr[i].id);if(error)return toast(error.message,"error")}await refresh();toast("Urutan daftar siswa berhasil diacak.")}
 function planText(){const by=[...history].sort((a,b)=>a.spin_no-b.spin_no);return ["🪑 CLASS SEAT SPINNER","📋 HASIL DENAH TEMPAT DUDUK","",...Array.from({length:21},(_,i)=>{const a=by.find(h=>(h.seat_no??h.spin_no)===i*2+1),b=by.find(h=>(h.seat_no??h.spin_no)===i*2+2);return `Meja ${i+1} : ${a?.student_name||"—"} & ${b?.student_name||"—"}`}),"",`Terisi: ${history.length}/42 kursi`].join("\n")}
-async function copyPlan(){try{await navigator.clipboard.writeText(planText());toast("Rekap denah berhasil disalin! 📋")}catch(e){const t=document.createElement("textarea");t.value=planText();document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Rekap denah berhasil disalin! 📋")}}
-async function downloadPlan(){try{const canvas=await html2canvas($("seatCapture"),{backgroundColor:"#0a1220",scale:2,useCORS:true});const a=document.createElement("a");a.download="class-seat-plan.png";a.href=canvas.toDataURL("image/png");a.click();toast("Gambar denah berhasil diunduh.")}catch(e){toast("Gagal membuat gambar denah.","error")}}
+async function copyPlan(){
+ const text=planText();
+ try{
+  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);toast("Rekap denah berhasil disalin! 📋");return}
+ }catch(e){console.warn("Clipboard API tidak tersedia, memakai cara alternatif:",e)}
+ let t;
+ try{
+  t=document.createElement("textarea");t.value=text;t.setAttribute("readonly","");
+  t.style.cssText="position:fixed;left:-9999px;top:0;opacity:0;font-size:16px";
+  document.body.appendChild(t);t.focus();t.select();t.setSelectionRange(0,t.value.length);
+  const ok=document.execCommand("copy");
+  if(!ok)throw new Error("Browser menolak perintah salin. Izinkan clipboard atau gunakan browser Chrome.");
+  toast("Rekap denah berhasil disalin! 📋");
+ }catch(e){console.error("Copy denah gagal:",e);toast("Gagal menyalin teks. Coba buka lewat Chrome dan izinkan akses clipboard.","error")}
+ finally{t?.remove()}
+}
+async function downloadPlan(){
+ let canvas;
+ try{
+  const by=[...history].sort((a,b)=>Number(a.seat_no??a.spin_no)-Number(b.seat_no??b.spin_no));
+  const size=1600,pad=90,gap=28,cols=2,cardW=(size-pad*2-gap)/2,cardH=142,top=300,rowGap=24;
+  const rows=Math.ceil(21/cols),height=top+rows*(cardH+rowGap)+pad;
+  canvas=document.createElement("canvas");canvas.width=size;canvas.height=height;
+  const ctx=canvas.getContext("2d");if(!ctx)throw new Error("Canvas tidak didukung browser.");
+  ctx.fillStyle="#0a1220";ctx.fillRect(0,0,size,height);
+  const bg=ctx.createLinearGradient(0,0,size,height);bg.addColorStop(0,"#17263b");bg.addColorStop(1,"#0a1220");ctx.fillStyle=bg;ctx.fillRect(0,0,size,height);
+  ctx.fillStyle="#82ded7";ctx.font="bold 25px Arial";ctx.fillText("CLASSROOM LAYOUT",pad,95);
+  ctx.fillStyle="#f4f7ff";ctx.font="bold 58px Arial";ctx.fillText("SEATING PLAN · X DKV 1",pad,170);
+  ctx.fillStyle="#aebbd0";ctx.font="30px Arial";ctx.fillText(`${by.length} dari 42 kursi terisi`,pad,230);
+  for(let i=0;i<21;i++){
+   const x=pad+(i%cols)*(cardW+gap),y=top+Math.floor(i/cols)*(cardH+rowGap);
+   const a=by.find(h=>Number(h.seat_no??h.spin_no)===i*2+1),b=by.find(h=>Number(h.seat_no??h.spin_no)===i*2+2);
+   ctx.fillStyle="#20364b";ctx.strokeStyle="#58758a";ctx.lineWidth=2;
+   const r=22;ctx.beginPath();ctx.roundRect(x,y,cardW,cardH,r);ctx.fill();ctx.stroke();
+   ctx.fillStyle="#b7c8d9";ctx.font="bold 23px Arial";ctx.fillText(`MEJA ${String(i+1).padStart(2,"0")}`,x+26,y+38);
+   ctx.fillStyle="#0b1729";
+   for(let j=0;j<2;j++){
+    const yy=y+55+j*43;ctx.beginPath();ctx.roundRect(x+18,yy,cardW-36,34,10);ctx.fill();
+    const h=j===0?a:b;ctx.fillStyle="#83b9f4";ctx.font="bold 19px Arial";ctx.fillText(j===0?"A":"B",x+32,yy+23);
+    ctx.fillStyle="#f2f6ff";ctx.font="22px Arial";
+    const name=String(h?.student_name||"Menunggu siswa");ctx.save();ctx.beginPath();ctx.rect(x+68,yy+2,cardW-100,30);ctx.clip();ctx.fillText(name,x+68,yy+24);ctx.restore();ctx.fillStyle="#0b1729";
+   }
+  }
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Gagal membuat file PNG.")),"image/png"));
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`denah-tempat-duduk-${new Date().toISOString().slice(0,10)}.png`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+  toast("Gambar denah berhasil dibuat. Periksa folder Download.");
+ }catch(e){console.error("Download denah gagal:",e);toast("Gagal mengunduh gambar: "+(e?.message||String(e)),"error")}
+}
 async function createAccount(e){e.preventDefault();const role=$("newRole").value;if(role==="admin"&&!isDev())return toast("Hanya Developer yang dapat membuat Admin.","error");const {data:{session}}=await sb.auth.getSession();const {data,error}=await sb.functions.invoke("create-account",{body:{email:$("newEmail").value,password:$("newPassword").value,display_name:$("newName").value,role},headers:{Authorization:`Bearer ${session.access_token}`}});if(error)return toast(error.message,"error");if(data?.error)return toast(data.error,"error");$("accountForm").reset();toast("Akun berhasil dibuat: "+role.toUpperCase())}
 async function logout(){
  const buttons=[$("logoutBtn"),$("mobileLogout")].filter(Boolean);
