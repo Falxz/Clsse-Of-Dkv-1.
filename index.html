@@ -1058,6 +1058,9 @@ async function doSpin(){
  busy=true;render();
  const wheel=$("wheel");wheel?.classList.add("spinning");
  try{
+  // Sinkronkan daftar dan riwayat sebelum meminta undian ke database.
+  await loadData();render();
+  if(!remaining().length)throw new Error(students.length?"Semua siswa sudah mendapatkan kursi. Tekan RESET jika ingin mengulang.":"Daftar siswa masih kosong. Tambahkan siswa terlebih dahulu di Student List.");
   // Efek suara tidak boleh menggagalkan proses undian.
   try{if(typeof playSpinTone==="function")playSpinTone()}catch(soundError){console.warn("Efek suara spin dilewati:",soundError)}
   const {data,error}=await sb.rpc("draw_next_student");
@@ -1089,12 +1092,32 @@ async function doSpin(){
 }
 function showWinner(name,p){modal("🎉 Nama terpilih!",`<div style="text-align:center;padding:12px"><div style="font-size:38px">🪑</div><div style="font:800 25px 'Plus Jakarta Sans';margin:12px 0">${esc(name)}</div><div class="tag">MEJA ${p.table} · KURSI ${p.seat}</div><p>Nama berhasil ditempatkan ke denah kelas.</p></div>`,`<button class="btn primary" id="winnerOk">MANTAP!</button>`);$("winnerOk").onclick=closeModal}
 function wait(ms){return new Promise(resolve=>autoTimer=setTimeout(resolve,ms))}
-async function startAuto(){if(autoState!=="idle")return;autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
+async function startAuto(){if(autoState!=="idle"||busy)return;try{await loadData();render()}catch(e){return toast("Gagal memuat daftar siswa: "+(e?.message||String(e)),"error")}if(!remaining().length)return toast(students.length?"Semua siswa sudah terpilih. Reset hasil jika ingin mengulang.":"Daftar siswa kosong. Tambahkan siswa terlebih dahulu.","error");autoState="running";render();toast("Auto Spin dimulai 🚀");while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua siswa sudah mendapatkan tempat duduk. Denah kelas berhasil diselesaikan!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")};}else if(autoState!=="paused"){autoState="idle"}render()}
 function pauseAuto(){if(autoState==="running"){autoState="paused";toast("Auto Spin dijeda","success");render()}}
 async function resumeAuto(){if(autoState!=="paused")return;autoState="running";render();await startAutoLoop()}
 async function startAutoLoop(){while(autoState==="running"&&remaining().length&&history.length<42){const result=await doSpin();if(!result)break;if(autoState!=="running")break;await wait(2400)}if(history.length>=42||remaining().length===0){autoState="idle";modal("🏆 SEATING PLAN COMPLETED","<p>Semua kursi berhasil terisi!</p>",'<button class="btn primary" id="doneOk">LIHAT DENAH</button>');$("doneOk").onclick=()=>{closeModal();setPage("seating")}}else if(autoState!=="paused")autoState="idle";render()}
 function stopAuto(){autoState="idle";clearTimeout(autoTimer);toast("Auto Spin dihentikan");render()}
-async function addStudents(){if(!isAdmin())return;if(history.length){toast("Undo/reset hasil spin sebelum mengubah daftar siswa.","error");return}const names=$("bulkNames").value.split(/\r?\n/).map(n=>n.trim()).filter(Boolean);const unique=[...new Set(names.map(n=>n.toLocaleLowerCase()).map((n,i)=>names.find(x=>x.toLocaleLowerCase()===n)))];if(!unique.length)return toast("Masukkan minimal satu nama.","error");if(students.length+unique.length>42)return toast("Maksimal 42 siswa.","error");const existing=new Set(students.map(s=>s.name.toLocaleLowerCase()));const fresh=unique.filter(n=>!existing.has(n.toLocaleLowerCase()));if(!fresh.length)return toast("Semua nama sudah ada.","error");const rows=fresh.map((name,i)=>({name,sort_order:students.length+i}));const {error}=await sb.from("students").insert(rows);if(error)return toast(error.message,"error");$("bulkNames").value="";await refresh();toast(`${fresh.length} nama berhasil ditambahkan.`)}
+async function addStudents(){
+ if(!isAdmin())return toast("Hanya Admin/Developer yang dapat menambah siswa.","error");
+ const input=$("bulkNames");if(!input)return;
+ const names=input.value.split(/\r?\n/).map(n=>n.trim()).filter(Boolean);
+ const unique=[...new Map(names.map(n=>[n.toLocaleLowerCase("id-ID"),n])).values()];
+ if(!unique.length)return toast("Masukkan minimal satu nama, satu nama per baris.","error");
+ try{
+  await loadData();
+  if(students.length+unique.length>42)return toast(`Kapasitas maksimal 42 siswa. Saat ini ${students.length}, sisa ${42-students.length}.`,"error");
+  const existing=new Set(students.map(s=>(s.name||"").trim().toLocaleLowerCase("id-ID")));
+  const fresh=unique.filter(n=>!existing.has(n.toLocaleLowerCase("id-ID")));
+  if(!fresh.length)return toast("Semua nama yang dimasukkan sudah ada di daftar siswa.","error");
+  const maxOrder=students.reduce((m,x)=>Math.max(m,Number(x.sort_order)||0),-1);
+  const rows=fresh.map((name,i)=>({name,sort_order:maxOrder+i+1}));
+  const {data,error}=await sb.from("students").insert(rows).select("id,name,sort_order");
+  if(error)throw error;
+  input.value="";
+  await loadData();render();
+  toast(`${(data||rows).length} siswa berhasil ditambahkan. Siswa lama dan hasil spin tetap aman.`);
+ }catch(e){console.error("Tambah siswa gagal:",e);toast("Gagal menambahkan siswa: "+(e?.message||String(e)),"error")}
+}
 async function undo(){if(!history.length)return;const ok=await confirmBox("Undo hasil terakhir?","Nama terakhir akan dikembalikan ke daftar undian dan kursinya dikosongkan.","UNDO","primary");if(!ok)return;const {data,error}=await sb.rpc("undo_last_spin");if(error)return toast(error.message,"error");await refresh();toast("Hasil spin terakhir berhasil dibatalkan.")}
 async function resetAll(){const ok=await confirmBox("Reset seluruh hasil?","Semua hasil spin akan dihapus. Daftar siswa tetap tersimpan dan seluruh siswa kembali ke daftar undian.","RESET");if(!ok)return;const {error}=await sb.rpc("reset_spins");if(error)return toast(error.message,"error");$("pickedName").textContent="Siap untuk spin?";$("pickedSeat").textContent="Nama terpilih akan muncul di sini";await refresh();toast("Hasil pengundian berhasil di-reset.")}
 async function shuffleStudents(){if(history.length)return toast("Shuffle hanya tersedia sebelum spin dimulai.","error");const arr=[...students];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}for(let i=0;i<arr.length;i++){const {error}=await sb.from("students").update({sort_order:i}).eq("id",arr[i].id);if(error)return toast(error.message,"error")}await refresh();toast("Urutan daftar siswa berhasil diacak.")}
